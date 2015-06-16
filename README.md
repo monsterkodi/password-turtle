@@ -1,4 +1,4 @@
 
 # sheepword
 
-a simple password generator for Mac OS X
+![screenshot](https://raw.githubusercontent.com/monsterkodi/sheepword/master/img/sheepword.png)
