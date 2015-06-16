@@ -1,0 +1,860 @@
+/*
+*   0000000  000000000  000   000  000      00000000
+*  000          000      000 000   000      000     
+*  0000000      000       00000    000      0000000 
+*       000     000        000     000      000     
+*  0000000      000        000     0000000  00000000
+*/
+
+@font-face
+    font-family: UbuntuMono
+    src: url('./font/UbuntuMono-R.ttf')
+
+shadow()
+    -webkit-box-shadow: shadowDef
+    box-shadow:         shadowDef
+
+shadowInner()
+    -webkit-box-shadow: shadowInnerDef
+    box-shadow:         shadowInnerDef
+
+defaultCursor()
+    cursor:             default
+
+handCursor()
+    cursor:             pointer
+
+bgColorHover(c)
+    background-color:   c
+    &:hover
+        background-color: lighten(c, 5)
+    &:active
+        background-color: lighten(c, 10)
+
+noSelection()
+    user-select:        none
+    -moz-user-select:   none
+    -webkit-user-select:   none
+
+*
+    noSelection()
+
+textCursor()
+    cursor:             text
+    -moz-user-select:   text
+    -user-select:       text
+
+/*
+*  000000000   0000000   00000000   000      00000000  000   000  00000000  000    
+*     000     000   000  000   000  000      000       000   000  000       000    
+*     000     000   000  00000000   000      0000000    000 000   0000000   000    
+*     000     000   000  000        000      000          000     000       000    
+*     000      0000000   000        0000000  00000000      0      00000000  0000000
+*/
+
+body
+    font-family:      "Verdana"
+    height:           100%
+    margin:           0px
+    background-color: colors.stage
+
+html
+    height:           100%
+
+a
+    text-decoration: none
+    color:           textColors.link
+    &:hover
+        color:       textColors.link-hover
+
+#stage
+    position:         relative
+    width:            100%
+    height:           100%
+    overflow:         hidden
+    color:            textColors.global
+
+#stage_content
+    position:         relative
+    width:            100%
+    height:           100%
+    overflow:         hidden
+
+#stage_svg
+    position:         absolute
+    width:            100%
+    height:           100%
+    background-color: transparent
+
+#stage_canvas
+    position:         absolute
+    width:            100%
+    height:           100%
+    background-color: rgba(255,255,255,0.15)
+
+.tiny-text
+    font-size:        10px
+    color:            textColors.discreet
+
+/*
+*  000   0000000   0000000   000   000
+*  000  000       000   000  0000  000
+*  000  000       000   000  000 0 000
+*  000  000       000   000  000  0000
+*  000   0000000   0000000   000   000
+*/
+
+.icon
+    border           : 0px
+    background-color : transparent
+    text-align       : center
+    color            : colors.bg
+    & i
+        width        : 20px
+    &:hover
+        color        : colors.button-hover-text
+    &:active
+        color        : colors.button-active-text
+    
+.context-menu .content .button .icon
+.menu .icon
+    & i
+        width : 30px
+    color     : textColors.menu
+    &:hover
+        color : textColors.menu-hover
+    &:active
+        color : textColors.menu-active
+    
+/*
+*  0000000    000   000  000000000  000000000   0000000   000   000
+*  000   000  000   000     000        000     000   000  0000  000
+*  0000000    000   000     000        000     000   000  000 0 000
+*  000   000  000   000     000        000     000   000  000  0000
+*  0000000     0000000      000        000      0000000   000   000
+*/
+
+.toggle
+.button
+    handCursor()
+    overflow:             hidden
+    box-sizing:           border-box
+    padding-left:         6px
+    padding-right:        6px
+    text-align:           center
+    font-size:            14px
+    font-weight:          bold
+    border-radius:        buttonRadius
+    border:               borders.button
+    background-color:     colors.button
+    color:                textColors.button
+    height:               buttonHeight
+    &:hover
+        background-color: colors.button-hover
+        color:            colors.button-hover-text
+    &:hover *
+        color:            colors.button-hover-text
+    &:active
+        background-color: colors.button-active
+        color:            colors.button-active-text
+    &:hover *
+        color:            colors.button-active-text
+
+.value-button
+    handCursor()
+    overflow:             hidden
+    font-size:            13px
+    padding-left:         6px
+    padding-right:        6px
+    font-weight:          bold
+    border-radius:        valueRadius
+    border:               borders.button
+    background-color:     colors.button
+    color:                textColors.button
+    height:               buttonHeight
+    &:hover
+        background-color: colors.button-hover
+        color:            colors.button-hover-text
+    &:hover *
+        color:            colors.button-hover-text
+    &:active
+        background-color: colors.button-active
+        color:            colors.button-active-text
+    &:hover *
+        color:            colors.button-active-text
+    
+/*
+*  000000000   0000000    0000000    0000000   000      00000000
+*     000     000   000  000        000        000      000     
+*     000     000   000  000  0000  000  0000  000      0000000 
+*     000     000   000  000   000  000   000  000      000     
+*     000      0000000    0000000    0000000   0000000  00000000
+*/
+
+.toggle
+    text-align:           left
+    background-color:     colors.toggle
+    color:                colors.toggle-text
+
+    &:hover
+        background-color: colors.toggle-hover
+        color:            colors.toggle-hover-text
+    &:hover *
+        color:            colors.toggle-hover-text
+    &:active
+        background-color: colors.toggle-active
+        color:            colors.toggle-active-text
+    &:hover *
+        color:            colors.toggle-active-text
+
+.toggle.on
+    background-color:     colors.toggle-on
+    color:                colors.toggle-on-text
+
+.toggle.off
+    background-color:     colors.toggle-off
+    color:                colors.toggle-off-text
+
+/*
+*  00     00  00000000  000   000  000   000
+*  000   000  000       0000  000  000   000
+*  000000000  0000000   000 0 000  000   000
+*  000 0 000  000       000  0000  000   000
+*  000   000  00000000  000   000   0000000 
+*/
+
+.menu
+    position:         absolute
+    height:           menuHeight
+    overflow:         hidden
+    & > *
+        color:        textColors.menu
+
+#menu
+    border-bottom-right-radius: 6px
+
+#tool
+    border-bottom-left-radius: 6px
+
+.context-menu .content 
+    padding: 0px
+    & > div
+        margin-bottom: 0px
+
+.context-menu .content .button
+.menu .button
+    overflow:         hidden
+    float:            left
+    font-weight:      normal
+    height:           menuHeight
+    padding-top:      2px
+    bgColorHover(colors.menu)
+    border-radius:    0
+    &:hover
+        color: textColors.menu-hover
+    &:active
+        color: textColors.menu-active
+
+.context-menu .content .button
+    color:              textColors.menu
+    background-color:   colors.bg
+    padding-top: 5px
+    padding-bottom: 5px
+    height: 30px
+    border: 0px
+    box-shadow: none
+
+.submenu 
+.context-menu .content
+    overflow: visible
+    & .button
+        float: none
+
+.context-menu .content .icon
+    padding-left: 5px
+    padding-right: 4px
+ 
+.submenu .button
+.context-menu .content .button
+    text-align: left
+    padding-right: 9px 
+        
+.tool-button
+    padding-left: 0
+    padding-right: 0
+    border-radius: 0
+
+/*
+*  000   000  000  000   000  0000000     0000000   000   000
+*  000 0 000  000  0000  000  000   000  000   000  000 0 000
+*  000000000  000  000 0 000  000   000  000   000  000000000
+*  000   000  000  000  0000  000   000  000   000  000   000
+*  00     00  000  000   000  0000000     0000000   00     00
+*/
+
+.window
+    box-sizing:       content-box
+    position:         absolute
+    overflow:         hidden
+    border:               borders.bg
+    background-color:     colors.bg
+    border-top-left-radius:     widgetTopRadius
+    border-top-right-radius:    widgetTopRadius
+    border-bottom-left-radius:  widgetBotRadius
+    border-bottom-right-radius: widgetBotRadius
+    shadow()
+    &.tooltip
+        border:           0px solid black
+
+.content
+    padding-left:  10px
+    padding-right: 10px
+    padding-top:   10px
+
+.content > div
+    margin-bottom: 10px
+    
+.window .title
+    color:            textColors.title
+    height:           widgetHeaderSize
+    text-align:       center
+    vertical-align:   top
+    overflow:         hidden
+    font-size:        widgetTitleFontSize
+    border-bottom:    borders.title
+    bgColorHover(colors.title)
+    defaultCursor()
+
+.window .close
+.window .window-button-left
+    float:            left
+    border-right:     borders.title
+    border-bottom:    borders.title
+    bgColorHover(colors.close)
+    box-sizing: content-box
+
+.window .shade
+.window .window-button-right
+    float:            right
+    border-left:      borders.title
+    border-bottom:    borders.title
+    bgColorHover(colors.shade)
+    box-sizing: content-box
+
+.window .shade
+   width:             widgetHeaderSize
+
+.window .shade
+.window .close
+   & *
+       color: colors.title
+   &:hover *
+       color: colors.button-hover-text
+   &:active *
+       color: colors.button-active-text
+
+.window .shade
+.window .close
+.window .window-button-left
+.window .window-button-right
+    height:           widgetHeaderSize
+    width:            widgetHeaderSize
+    margin-bottom:  - widgetBorderWidth
+    handCursor()
+    &:hover *
+        color: colors.button-hover-text
+    &:active *
+        color: colors.button-active-text
+
+/*
+*   0000000   0000000   000   000   0000000   0000000   000      00000000
+*  000       000   000  0000  000  000       000   000  000      000     
+*  000       000   000  000 0 000  0000000   000   000  000      0000000 
+*  000       000   000  000  0000       000  000   000  000      000     
+*   0000000   0000000   000   000  0000000    0000000   0000000  00000000
+*/
+
+.console-window
+    box-sizing:       border-box    
+    .content
+        padding: 0
+        margin: 0
+        background-color: colors.console
+        *
+            margin:  0px
+
+.console
+    background-color: colors.console
+    color:            textColors.console
+    padding-bottom: 6px
+    padding-left:   8px
+    padding-top:    6px
+    // box-sizing:       border-box    
+    & *
+        // box-sizing:       border-box    
+        textCursor()
+
+.console-error
+    color:          textColors.console-error
+    font-size:      24px
+
+.console-warning
+    color:          textColors.console-warning
+    font-size:      18px
+
+.log_info
+    color:          textColors.console-info
+
+.console-type
+    color: textColors.console-type
+
+.console-punct
+    color: textColors.console-punct
+
+.console-quote
+    color: textColors.console-quote
+
+.console-string
+    color: textColors.console-string
+
+.console-number
+    color: textColors.console-number
+
+.console-link
+    cursor: alias
+
+.console-class
+    display: inline-block
+    min-width: 100px
+    color: darken(textColors.link, 20)
+    &:hover
+        color: textColors.link-hover
+
+.console-method-type
+    display: inline-block
+    min-width: 12px
+    color: darken(textColors.link, 50)
+
+.console-method
+    display: inline-block
+    min-width: 140px
+
+.console .icon
+    color: textColors.console-punct
+    font-size: 19px
+    top: 2px;
+    position: relative;
+
+/*
+*   0000000   0000000  00000000    0000000   000      000    
+*  000       000       000   000  000   000  000      000    
+*  0000000   000       0000000    000   000  000      000    
+*       000  000       000   000  000   000  000      000    
+*  0000000    0000000  000   000   0000000   0000000  0000000
+*/
+
+.scroll
+    overflow:         hidden
+    border-radius:    widgetTopRadius
+    border:           borders.scroll
+    background-color: colors.scroll
+    box-sizing:       border-box
+
+.scroll-handle
+    position:         relative
+    border-radius:    widgetTopRadius - scrollBorderWidth
+    border:           0
+    background-color:     colors.scroll-handle
+    &:hover
+        background-color: colors.scroll-handle-hover
+    &:active
+        background-color: colors.scroll-handle
+
+/*
+*   0000000  000      000  0000000    00000000  00000000 
+*  000       000      000  000   000  000       000   000
+*  0000000   000      000  000   000  0000000   0000000  
+*       000  000      000  000   000  000       000   000
+*  0000000   0000000  000  0000000    00000000  000   000
+*/
+
+.slider
+    max-height:       valueHeight
+    overflow:         hidden
+    border-radius:    valueRadius
+    background-color: colors.slider
+    &:hover
+        background-color: colors.slider-hover
+
+.slider-bar
+    position:         relative
+    box-sizing:       border-box
+    border:                       borders.slider
+    border-top-right-radius:      knobSize + sliderBorderWidth
+    border-bottom-right-radius:   knobSize + sliderBorderWidth
+    border-top-left-radius:       valueHeight
+    border-bottom-left-radius:    valueHeight
+    height:                       valueHeight
+    max-height:                   valueHeight
+    margin:           0
+    padding:          0
+    background-color: colors.slider-bar
+
+.slider-knob
+    border:           0
+    position:         absolute
+    right:            0
+    top:              ( valueHeight - 2 * sliderBorderWidth - knobSize ) * 0.5
+    border-radius:    knobSize
+    height:           knobSize
+    width:            knobSize
+    min-height:       knobSize
+    min-width:        knobSize
+    background-color: colors.slider-knob
+    &:hover
+      background-color: colors.slider-knob-hover
+    &:active
+      background-color: colors.slider-knob
+
+/*
+*   0000000   0000000   000   000  000   000  00000000   0000000  000000000   0000000   00000000 
+*  000       000   000  0000  000  0000  000  000       000          000     000   000  000   000
+*  000       000   000  000 0 000  000 0 000  0000000   000          000     000   000  0000000  
+*  000       000   000  000  0000  000  0000  000       000          000     000   000  000   000
+*   0000000   0000000   000   000  000   000  00000000   0000000     000      0000000   000   000
+*/
+
+.connector
+    overflow:         hidden
+    min-width:        valueHeight
+    min-height:       valueHeight
+    max-width:        valueHeight
+    max-height:       valueHeight
+    border-radius:    valueHeight
+    border:           borders.connector
+    box-sizing:       border-box
+    background-clip:  padding-box
+    shadowInner()
+    &.out
+    &.signal
+        background-color:       colors.connector-signal
+        &.connected
+            background-color:   colors.connector-signal-connected
+            border:             borders.connector-signal-connected
+        &.highlight
+            border:             borders.connector-signal-highlight
+    &.in
+    &.slot
+        background-color:       colors.connector-slot
+        &.connected
+            background-color:   colors.connector-slot-connected
+            border:             borders.connector-slot-connected
+        &.highlight
+            border:             borders.connector-slot-highlight
+
+.connector-handle
+    handCursor()
+    position:         absolute
+    box-sizing:       border-box
+    border-radius:    10px
+    width:            20px
+    height:           20px
+    margin-left:      - 10px
+    margin-top:       - 10px
+    background-color: colors.button-hover
+
+.connector-handle.highlight
+    background-color: colors.connector-connectable
+
+.path
+    stroke-width:     pathStrokeWidth
+
+.connector
+    stroke:           colors.connector-unconnectable
+
+.path.connector 
+    filter:           drop-shadow( shadowDef )
+
+.connectable
+
+    stroke:           colors.connector-connectable
+
+/*
+*   0000000   0000000   000   000  000   000  00000000   0000000  000000000  000   0000000   000   000
+*  000       000   000  0000  000  0000  000  000       000          000     000  000   000  0000  000
+*  000       000   000  000 0 000  000 0 000  0000000   000          000     000  000   000  000 0 000
+*  000       000   000  000  0000  000  0000  000       000          000     000  000   000  000  0000
+*   0000000   0000000   000   000  000   000  00000000   0000000     000     000   0000000   000   000
+*/
+
+.connection
+
+    stroke:           colors.connection
+    stroke-width:     connectionStrokeWidth
+    filter:           drop-shadow( shadowDef )
+
+.highlight
+    stroke:           colors.connection-highlight
+
+/*
+*  00000000    0000000   0000000  
+*  000   000  000   000  000   000
+*  00000000   000000000  000   000
+*  000        000   000  000   000
+*  000        000   000  0000000  
+*/
+
+.pad
+    background-color: colors.pad
+    shadowInner()
+    border-radius:    buttonRadius
+    
+.pad-path
+    stroke:           colors.pad-path
+    stroke-width:     padPathWidth
+
+.pad-ruler
+    stroke:           colors.pad-handle
+    stroke-width:     padRulerWidth
+
+.pad-handle
+    fill:             colors.pad-handle
+    &.sustain
+        fill:         colors.pad-handle-sustain
+    
+/*
+*   0000000  00000000   000  000   000
+*  000       000   000  000  0000  000
+*  0000000   00000000   000  000 0 000
+*       000  000        000  000  0000
+*  0000000   000        000  000   000
+*/
+
+.spin
+.spinner
+    height:           valueHeight
+    overflow:         hidden
+    handCursor()
+    border-radius:    valueRadius
+    border:           borders.spin
+    background-color: colors.spin
+
+.spin-table
+.spin-row
+.spin-td
+    border-collapse:  collapse
+    margin:           0
+    padding:          0
+    max-height:       valueHeight
+
+.spin-content
+    position:         relative
+    width:            100%
+    max-height:       valueHeight
+    margin:           0
+    padding:          0
+    font-size:        12px
+    background-color: colors.spin-input
+    &:hover
+        background-color: colors.spin-input-hover
+
+.spinner .spin-content
+    text-align:       center
+    color:            colors.spin-active
+
+.spin-knob
+    background-color: colors.spin-knob
+    position:         absolute
+    height:           spinKnobHeight
+    width:            spinKnobWidth
+    bottom:           0
+    
+.spinner-knob
+    background-color: colors.spinner-knob
+    position:         absolute
+    height:           spinnerKnobSize
+    top:              0
+
+.spin-input
+    textCursor()
+    padding:          0
+    margin:           0
+    border:           0
+    text-align:       right
+    background-color: transparent
+    color:            colors.spin-active
+    box-sizing:       border-box
+    font-size:        15px
+    font-family:      UbuntuMono
+    position:         absolute
+    top:              0px
+    height:           valueHeight
+    width:            100%
+    &::-moz-selection
+      background:     colors.spin-active
+      color:          black
+
+/*
+*  000000000  000  00     00  00000000  000      000  000   000  00000000
+*     000     000  000   000  000       000      000  0000  000  000     
+*     000     000  000000000  0000000   000      000  000 0 000  0000000 
+*     000     000  000 0 000  000       000      000  000  0000  000     
+*     000     000  000   000  00000000  0000000  000  000   000  00000000
+*/
+
+.record.on *
+.playpause.play *
+.editMode.single *
+.follow.on *
+.quantise.on *
+    color : colors.tool-button-on
+
+/*
+*  00000000   000   000  000      00000000  00000000 
+*  000   000  000   000  000      000       000   000
+*  0000000    000   000  000      0000000   0000000  
+*  000   000  000   000  000      000       000   000
+*  000   000   0000000   0000000  00000000  000   000
+*/
+
+.TimeRuler
+    min-height:    23px
+    height:        23px
+    
+.RulerCell
+    height:        23px
+    color : colors.tool-button-on    
+    border-left : 2px solid colors.slider
+    border-right : 2px solid colors.slider
+    &.on
+        background-color: colors.slider-bar
+        color:            colors.slider-knob
+    &:hover
+        background-color: colors.slider-bar
+    &.off
+        background-color: colors.bg
+        color:            colors.slider
+                
+/*
+*  00000000  000   000  00000000  000   000  000000000   0000000   00000000   000  0000000  
+*  000       000   000  000       0000  000     000     000        000   000  000  000   000
+*  0000000    000 000   0000000   000 0 000     000     000  0000  0000000    000  000   000
+*  000          000     000       000  0000     000     000   000  000   000  000  000   000
+*  00000000      0      00000000  000   000     000      0000000   000   000  000  0000000  
+*/
+
+.EventGridBox
+    background-color: colors.pad
+    shadowInner()
+    border-radius:    buttonRadius
+
+.EventLine
+    background-color: colors.blueDark
+    opacity: 0.2
+
+.EventCell
+    background-color : colors.blue
+    &.selected
+        background-color : colors.red
+
+/*
+*  00     00  000   0000000   0000000
+*  000   000  000  000       000     
+*  000000000  000  0000000   000     
+*  000 0 000  000       000  000     
+*  000   000  000  0000000    0000000
+*/
+
+.selectangle
+    background-color: colors.selectangle
+    border:           borders.selectangle
+
+.register-key
+    border: 1px colors.interactive-key solid
+
+.window.selected
+    border-color: colors.widget-selected
+    border-width: widgetBorderWidthSelected
+
+.analyser 
+    color: colors.analyser
+.analyser_trace 
+    color: colors.analyser-trace
+.analyser_trigger
+    color: colors.analyser-trigger
+
+.synth_canvas 
+    color: colors.synth-canvas 
+.synth_trace 
+    color: colors.synth-trace
+
+.about-svg
+    text-align:       center
+
+.about-svg-path
+    fill:            textColors.link
+
+/*
+*  000   000  00000000  000   000  0000000     0000000    0000000   00000000   0000000  
+*  000  000   000        000 000   000   000  000   000  000   000  000   000  000   000
+*  0000000    0000000     00000    0000000    000   000  000000000  0000000    000   000
+*  000  000   000          000     000   000  000   000  000   000  000   000  000   000
+*  000   000  00000000     000     0000000     0000000   000   000  000   000  0000000  
+*/
+
+.keyboard-key-sharp
+    background-color : black
+    color            : transparent
+    position         : absolute
+    width            : 30px
+    height           : 60px
+    padding          : 0px
+    margin-left      : -15px
+    padding-top      : 6px
+    text-align       : center
+    border-top-right-radius : 0px
+    border-top-left-radius  : 0px
+    &:hover
+        color        : white
+        border       : 2px solid black
+
+.button.keyboard-key-sharp:active
+    padding-top  : 7px
+    background-color : yellow
+
+.keyboard-key
+    background-color : white
+    color            : transparent
+    box-sizing       : border-box
+    border           : 2px solid black
+    width            : 40px
+    height           : 120px
+    padding-bottom   : 6px
+    text-align       : center
+    &:hover
+        color            : black
+    &:active
+        background-color : rgb(240,240,240)
+        border           : 3px solid black
+    
+/*
+*  00000000    0000000    0000000  000  000000000  000   0000000   000   000
+*  000   000  000   000  000       000     000     000  000   000  0000  000
+*  00000000   000   000  0000000   000     000     000  000   000  000 0 000
+*  000        000   000       000  000     000     000  000   000  000  0000
+*  000         0000000   0000000   000     000     000   0000000   000   000
+*/
+
+.relative
+    position:         relative
+    display:          block
+
+.top-right
+    position:         absolute
+    top:              0px
+    right:            0px
+
+.top-left
+    position:         absolute
+    top:              0px
+    left:             0px

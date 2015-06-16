@@ -1,0 +1,4 @@
+{
+    "home-url":   "http://localhost:4000/",
+    "source-url": "new Ajax.Request(\"http://localhost:8888/%s:%d\");"
+}

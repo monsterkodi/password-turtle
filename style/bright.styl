@@ -1,0 +1,181 @@
+/*
+*  0000000    00000000   000   0000000   000   000  000000000
+*  000   000  000   000  000  000        000   000     000   
+*  0000000    0000000    000  000  0000  000000000     000   
+*  000   000  000   000  000  000   000  000   000     000   
+*  0000000    000   000  000   0000000   000   000     000   
+*/
+
+colors = {}
+colors.grayVeryDark         = #090A0E
+colors.grayDark             = #191A1E
+colors.grayStage            = #1d2025
+colors.grayDarkMedium       = #24252A
+colors.grayMediumDark       = #2E3138
+colors.grayMedium           = #454954
+colors.grayMediumBright     = #9B9BA0
+colors.grayBrightMedium     = #E2E2E2
+colors.grayBright           = #F6F6F6
+colors.redDark              = #D0461F
+colors.red                  = #EC4F23
+colors.redBright            = #EFAF31
+colors.blueDark             = #2E92B9
+colors.blue                 = #33A2D1
+colors.greenDark            = #72A01C
+colors.green                = #8BB62D
+
+colors.stage                = colors.grayMediumBright
+colors.bg                   = lighten(colors.stage,10)
+colors.menu                 = colors.grayMediumBright
+colors.title                = lighten(colors.stage,5)
+colors.close                = colors.title
+colors.shade                = colors.title
+colors.button               = colors.blueDark
+colors.button-hover         = colors.blue
+colors.button-active        = colors.blueDark
+colors.toggle               = darken(colors.bg,4)
+colors.toggle-text          = colors.button
+colors.toggle-on            = colors.button
+colors.toggle-on-text       = black
+colors.toggle-off           = colors.button
+colors.toggle-off-text      = black
+colors.toggle-hover         = darken(colors.bg,6)
+colors.toggle-active-text   = black
+colors.toggle-active        = white
+colors.slider               = colors.toggle
+colors.slider-bar           = colors.blueDark
+colors.slider-hover         = colors.grayDark
+colors.slider-knob          = colors.redBright
+colors.slider-knob-hover    = yellow
+colors.spin                 = colors.slider
+colors.spin-border          = colors.grayMedium
+colors.spin-active          = colors.button
+colors.spin-input           = transparent
+colors.spin-input-hover     = transparent
+colors.spin-knob            = colors.slider-bar
+colors.console              = colors.bg
+colors.spinner-knob         = colors.slider-bar
+colors.pad                  = colors.slider
+colors.pad-path             = colors.slider-bar
+colors.pad-handle           = black
+colors.pad-handle-sustain   = white
+colors.tool-button-on       = white
+
+colors.connector-highlight                  = colors.slider-bar
+colors.connector-signal                     = colors.slider
+colors.connector-slot                       = colors.slider
+colors.connector-signal-connected           = colors.slider-bar
+colors.connector-slot-connected             = colors.button
+colors.connector-slot-border-connected      = black
+colors.connector-signal-border-connected    = black
+colors.connector-signal-border-highlight    = white
+colors.connector-slot-border-highlight      = white
+colors.connector-connectable                = white
+colors.connector-unconnectable              = darken(colors.connector-connectable, 20)
+colors.connection                           = colors.button
+colors.connection-highlight                 = colors.connector-connectable
+
+colors.button-hover-text  = #000
+colors.button-active-text = #fff
+colors.toggle-hover-text  = colors.button-hover-text
+colors.toggle-active-text = colors.button-active-text
+
+colors.analyser           = colors.blueDark
+colors.analyser-trace     = white
+colors.analyser-trigger   = rgba(0,0,0,0.25)
+
+colors.synth-canvas       = colors.slider
+colors.synth-trace        = black
+
+colors.widget-selected    = black
+colors.tool-button-on     = white
+colors.selectangle        = transparent
+colors.interactive-key    = white
+
+textColors                = {}
+textColors.global         = black
+textColors.title          = textColors.global
+textColors.button         = textColors.global
+textColors.menu           = textColors.global
+textColors.menu-hover     = colors.button-hover-text
+textColors.menu-active    = colors.button-active-text
+textColors.discreet       = darken(colors.bg, 6)
+textColors.link           = colors.button
+textColors.link-hover     = colors.button-hover
+textColors.console        = textColors.global
+textColors.console-type   = lighten(textColors.console, 40)
+textColors.console-punct  = lighten(textColors.console, 50)
+textColors.console-error  = white
+textColors.console-warning = orange
+
+borderColors              = {}
+borderColors.widget       = colors.grayMediumBright
+borderColors.menu         = borderColors.widget
+borderColors.button       = borderColors.menu
+
+/*
+*   0000000  000  0000000  00000000
+*  000       000     000   000     
+*  0000000   000    000    0000000 
+*       000  000   000     000     
+*  0000000   000  0000000  00000000
+*/
+
+widgetHeaderSize        = 20px
+widgetTitleFontSize     = widgetHeaderSize - 6px
+
+widgetBorderWidth         = 0px
+widgetBorderWidthSelected = 2px
+sliderBorderWidth       = widgetBorderWidth
+scrollBorderWidth       = sliderBorderWidth
+widgetTopRadius         = (widgetHeaderSize) * 0.5 + widgetBorderWidth
+widgetBotRadius         = widgetTopRadius
+borders                 = {}
+borders.bg              = widgetBorderWidth solid borderColors.widget
+borders.title           = widgetBorderWidth solid borderColors.widget
+borders.menu            = widgetBorderWidth solid borderColors.menu
+borders.button          = 0px solid borderColors.button
+borders.slider          = sliderBorderWidth solid borderColors.widget
+borders.scroll          = borders.slider
+borders.spin            = 0px solid colors.spin-border
+borders.selectangle     = 1px solid rgba(0,0,0,0.2)
+
+borders.connector                   = 0px solid white
+borders.connector-signal-connected  = 2px solid colors.connector-signal-border-connected
+borders.connector-slot-connected    = 2px solid colors.connector-slot-border-connected
+borders.connector-signal-highlight  = 2px solid colors.connector-signal-border-highlight
+borders.connector-slot-highlight    = 2px solid colors.connector-slot-border-highlight
+
+pathStrokeWidth         = 16
+padPathWidth            = 16
+padRulerWidth           = 1
+connectionStrokeWidth   = 10
+
+buttonRadius            = widgetTopRadius
+valueRadius             = widgetTopRadius
+buttonHeight            = 20px
+menuHeight              = 24px
+valueHeight             = 20px
+knobSize                = 0px
+spinnerKnobSize         = 2px
+spinKnobHeight          = 2px
+spinKnobWidth           = 8px
+shadowDef               = 2px 2px 10px rgba(0,0,0,0.1)
+shadowInnerDef          = inset 1px 1px 2px rgba(0,0,0,0.05)
+
+::selection
+    background: colors.blue
+    color: black
+
+::-moz-selection
+    background: colors.blue
+    color: black
+
+.slider-bar
+    box-shadow:         1px 0px 2px rgba(0,0,0,0.05)
+
+.slider
+.toggle
+.spin-table
+    -webkit-box-shadow: shadowInnerDef
+    box-shadow:         shadowInnerDef
