@@ -21,7 +21,16 @@ module.exports = (grunt) ->
                 refresh: false
             coffee:
                 files:
-                    'asciiText':   [ 'sheep.coffee', 'coffee/**/*.coffee' ]
+                    'asciiText': [ 'sheep.coffee', 'coffee/**/*.coffee' ]
+            style: 
+                options:
+                    verbose     : false
+                    textMarker  : '//!'
+                    textPrefix  : '/*'
+                    textFill    : '*  '
+                    textPostfix : '*/'
+                files:
+                    'asciiText' : ['./style/*.styl']
 
         stylus:
             options:

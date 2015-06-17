@@ -27,9 +27,11 @@ extractDomain = _url.extractDomain
 containsLink  = _url.containsLink
 jsonStr       = (a) -> JSON.stringify a, null, " "
 
-mstr      = undefined
-stashFile = process.env.HOME+'/.config/sheepword.stash'
-stash     = undefined
+mstr        = undefined
+stashFile   = process.env.HOME+'/.config/sheepword.stash'
+stash       = undefined
+stashExists = false
+stashLoaded = false
 
 log   = () -> ipc.send 'knixlog',   [].slice.call arguments, 0
 dbg   = () -> ipc.send 'knixlog',   [].slice.call arguments, 0
@@ -40,29 +42,37 @@ resetStash = ->
         pattern: 'sh33p-w0rd'
         configs: {}
 
-masterConfirmed = -> 
+masterConfirmed = ->
     log 'master confirm'
-    $("site").focus()
+    if mstr?.length
+        if stashExists
+            log 'stash exists'
+            readStash () -> 
+                log 'stash read'
+                if stashLoaded
+                    log 'stash loaded'
+                    showSitePassword()
+                    $("site").focus()   
+                    masterSitePassword()
+                else
+                    log 'can\'t open stash file', stashFile 
+        else
+            log 'no stash'
+            $("pattern").focus()
 
-masterChanged = -> 
-    mstr = $("master").value 
-    $("master-ghost").setStyle opacity: if mstr?.length then 0 else 1
+masterChanged = ->
+    mstr = $("master").value
+    hideSitePassword()
+    hideSettings()
+    stashLoaded = false
     masterSitePassword()
     
-masterFocus = -> $("master-border").addClassName 'focus'
-    
 masterBlurred = ->
-    $("master-border").removeClassName 'focus'
     if $("master").value.length
         while $("master").value.length < 18
             $("master").value += 'x'
             
-siteFocus       = -> $("site-border").addClassName 'focus'
-siteBlurred     = -> $("site-border").removeClassName 'focus'
-passwordFocus   = -> $("password-border").addClassName 'focus'
-passwordBlurred = -> $("password-border").removeClassName 'focus'
-
-siteConfirmed   = -> 
+siteConfirmed = -> 
     log 'site confirm'
     pw = $("password").value
     if pw.length
@@ -74,26 +84,50 @@ setSite = (site) ->
     siteChanged()
     
 siteChanged = -> 
-    $("site-ghost").setStyle opacity: if $("site").value.length then 0 else 1
     masterSitePassword()
     
-openPrefs = ->
-    log 'openPrefs'
+###
+000       0000000    0000000   0000000    00000000  0000000  
+000      000   000  000   000  000   000  000       000   000
+000      000   000  000000000  000   000  0000000   000   000
+000      000   000  000   000  000   000  000       000   000
+0000000   0000000   000   000  0000000    00000000  0000000  
+###
 
 document.observe 'dom:loaded', ->
-    
-    resetStash()
-    
-    for inputName in ['master', 'site', 'password']
-        $(inputName).on 'focus', eval inputName+'Focus'
-        $(inputName).on 'blur', eval inputName+'Blurred'
-    
+        
+    for input in $$('input')
+        input.on 'focus', (e) -> 
+            $(e.target.name+'-border').addClassName 'focus'
+        input.on 'blur',  (e) -> 
+            $(e.target.name+'-border').removeClassName 'focus'
+        input.on 'input', (e) ->
+            $(e.target.name+'-ghost').setStyle opacity: if e.target.value.length then 0 else 1
+        
+    $("master").on 'blur',   masterBlurred
     $("master").on 'input',  masterChanged
     $("site"  ).on 'input',  siteChanged
-    $("sheep" ).on 'click',  openPrefs
+    $("sheep" ).on 'click',  ->
+        log stashLoaded, $("settings").visible()
+        if stashLoaded and $("settings").visible()
+            hideSettings()
+            showSitePassword()
+        else
+            showSettings()
+            hideSitePassword()
     $("master").focus()
     if domain = extractDomain clipboard.readText()
         setSite domain 
+
+    hideSitePassword()
+    resetStash()
+    stashExists = fs.existsSync stashFile
+    if stashExists
+        log 'found stash file', stashFile
+        hideSettings()
+    else
+        log 'no stash file!'
+        showSettings()
 
 win.on 'focus', (event) -> 
     if mstr? and mstr.length
@@ -107,17 +141,34 @@ win.on 'focus', (event) ->
     else
         $("master").focus()
         
+###
+000   000  00000000  000   000  0000000     0000000   000   000  000   000
+000  000   000        000 000   000   000  000   000  000 0 000  0000  000
+0000000    0000000     00000    000   000  000   000  000000000  000 0 000
+000  000   000          000     000   000  000   000  000   000  000  0000
+000   000  00000000     000     0000000     0000000   00     00  000   000
+###
+        
 document.on 'keydown', (event) ->
+    if event.which == 188 # comma
+        if event.getModifierState 'Meta'
+            log 'settings'
     if event.which == 27 # escape
         win.hide()
     if event.which == 13 # enter
         log 'enter'
-        if document.activeElement == $("master")
+        e =  document.activeElement
+        if e == $("master")
             log 'master enter'
             masterConfirmed()
-        else if document.activeElement == $("site")
+        else if e == $("site")
             log 'site enter'
             siteConfirmed()
+        else if e == $("pattern")
+            log 'pattern enter'
+            if $("pattern").value.length
+                stash.pattern = $("pattern").value
+                writeStash()
 
 undirty = -> log 'undirty'
 dirty   = -> log 'dirty'
@@ -131,27 +182,35 @@ dirty   = -> log 'dirty'
 ###
     
 writeStash = () ->
-    buf = new Buffer(JSON.stringify(stash), "utf8")
+    stashString = JSON.stringify(stash)
+    buf = new Buffer(stashString, "utf8")
+    log 'write stash', buf.length, stashFile, mstr, JSON.stringify(stash)
     cryptools.encryptFile stashFile, buf, mstr
-    undirty()
+    readStash () -> 
+        log 'stash loaded', stashLoaded
+        if stashLoaded  and JSON.stringify(stash) == stashString
+            log 'stash confirmed'
+            hideSettings()
+            showSitePassword()
+            $('site').focus()
 
 readStash = (cb) ->
     if fs.existsSync stashFile
         log 'stash exists' + stashFile + ' ' + mstr
         decryptFile stashFile, mstr, (err, json) -> 
             if err?
-                if err[0] == 'can\'t decrypt file'
-                    error err
-                    stash = undefined
-                    cb()
-                else
-                    error err
+                error err
+                stashLoaded = false
+                resetStash()
             else
+                stashLoaded = true
                 stash = JSON.parse(json)
                 undirty()
-                cb()
+            cb()
     else
+        log 'stash doesn\'t exists' + stashFile
         resetStash()
+        stashLoaded = false
         undirty()
         cb()
 
@@ -174,15 +233,13 @@ showPassword = (config) ->
     url    = decrypt config.url, mstr
     pass   = makePassword genHash(url+mstr), config
     dbg pass
-    $("password").value = pass
-    $("password-ghost").setStyle opacity: 0
+    setInput 'password', pass
     pass
     
 masterSitePassword = () ->
     site = trim $("site").value
     if not site?.length or not mstr?.length
-        $("password").value = ""
-        $("password-ghost").setStyle opacity: 1
+        clearInput 'password'
         return ""
     
     hash = genHash site+mstr    
@@ -198,10 +255,36 @@ masterSitePassword = () ->
     pass = showPassword config
     
 ###
-00     00   0000000   000  000   000
-000   000  000   000  000  0000  000
-000000000  000000000  000  000 0 000
-000 0 000  000   000  000  000  0000
-000   000  000   000  000  000   000
+ 0000000  00000000  000000000  000000000  000  000   000   0000000    0000000
+000       000          000        000     000  0000  000  000        000     
+0000000   0000000      000        000     000  000 0 000  000  0000  0000000 
+     000  000          000        000     000  000  0000  000   000       000
+0000000   00000000     000        000     000  000   000   0000000   0000000 
 ###
 
+showSettings = ->
+    $("settings").show()
+    if stashLoaded
+        setInput 'pattern', stash.pattern
+    
+hideSettings = ->
+    $("settings").hide()
+    clearInput 'pattern'
+
+hideSitePassword = ->
+    clearInput 'site'
+    clearInput 'password'
+    $('site-border').setStyle opacity: 0
+    $('password-border').setStyle opacity: 0
+
+showSitePassword = ->
+    $('site-border').setStyle opacity: 1
+    $('password-border').setStyle opacity: 1
+
+clearInput = (input) ->
+    $(input).value = ''
+    $(input+'-ghost').setStyle opacity: 1
+    
+setInput = (input, value) ->
+    $(input).value = value
+    $(input+'-ghost').setStyle opacity: 0
