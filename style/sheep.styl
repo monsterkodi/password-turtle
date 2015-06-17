@@ -74,6 +74,11 @@ input
         &:focus
             box-shadow: 0 0 10px color.blue-very-bright
             color:  color.blue-very-bright
+    &#pattern
+        color:      color.gray
+        &:focus
+            box-shadow: 0 0 10px color.white
+            color:  color.white
 
 .ghost
     pointer-events: none
@@ -125,7 +130,6 @@ input
         box-shadow:      0px 0px  5px rgba(0, 0, 0, 0.5)
         opacity:         0.8
 
-#pattern-border
 #password-border
 #master-border
 #site-border
@@ -144,6 +148,7 @@ input
 #pattern-border
     &.focus
         background-color: color.gray
+        box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.75)
             
 /*
 *   0000000  00000000  000000000  000000000  000  000   000   0000000    0000000

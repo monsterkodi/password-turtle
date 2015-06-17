@@ -52,14 +52,12 @@ masterConfirmed = ->
                 if stashLoaded
                     log 'stash loaded'
                     showSitePassword()
-                    $("site").focus()   
                     masterSitePassword()
                 else
                     log 'can\'t open stash file', stashFile 
         else
             log 'no stash'
             showSettings()
-            $("pattern").focus()
 
 masterChanged = ->
     mstr = $("master").value
@@ -184,11 +182,9 @@ writeStash = () ->
     cryptools.encryptFile stashFile, buf, mstr
     readStash () -> 
         log 'stash loaded', stashLoaded
-        if stashLoaded  and JSON.stringify(stash) == stashString
+        if stashLoaded and JSON.stringify(stash) == stashString
             log 'stash confirmed'
-            hideSettings()
-            showSitePassword()
-            $('site').focus()
+            toggleSettings()
 
 readStash = (cb) ->
     if fs.existsSync stashFile
@@ -266,13 +262,14 @@ toggleSettings = ->
             hideSettings()
             showSitePassword()
         else
-            showSettings()
             hideSitePassword()
+            showSettings()
 
 showSettings = ->
     $("settings").show()
     if stashLoaded
         setInput 'pattern', stash.pattern
+    $('pattern').focus()
     
 hideSettings = ->
     $("settings").hide()
@@ -288,6 +285,7 @@ hideSitePassword = ->
 showSitePassword = ->
     $('site-border').setStyle opacity: 1
     $('password-border').setStyle opacity: 1
+    $('site').focus()
 
 clearInput = (input) ->
     setInput input, ''
