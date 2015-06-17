@@ -10,12 +10,13 @@ clipboard = require 'clipboard'
 trim      = require 'lodash.trim'
 pad       = require 'lodash.pad'
 fs        = require 'fs'
-_url      = require './js/coffee/tools/urltools'
-password  = require './js/coffee/tools/password' 
-cryptools = require './js/coffee/tools/cryptools'
+_url      = require './js/tools/urltools'
+password  = require './js/tools/password' 
+cryptools = require './js/tools/cryptools'
 remote    = require 'remote'
 ipc       = require 'ipc'
-win       = remote.getCurrentWindow()
+
+win = remote.getCurrentWindow()
 
 genHash       = cryptools.genHash
 encrypt       = cryptools.encrypt
@@ -25,31 +26,48 @@ extractSite   = _url.extractSite
 extractDomain = _url.extractDomain
 containsLink  = _url.containsLink
 jsonStr       = (a) -> JSON.stringify a, null, " "
-error         = () -> alert(arguments)
 
 mstr      = undefined
-stash     = {}
 stashFile = process.env.HOME+'/.config/sheepword.stash'
-pattern   = 'sh33p-w0rd'
+stash     = undefined
 
-log = () -> ipc.send 'knixlog', [].slice.call arguments, 0
-dbg = () -> ipc.send 'knixlog', [].slice.call arguments, 0
+log   = () -> ipc.send 'knixlog',   [].slice.call arguments, 0
+dbg   = () -> ipc.send 'knixlog',   [].slice.call arguments, 0
+error = () -> ipc.send 'knixerror', [].slice.call arguments, 0
+
+resetStash = ->
+    stash =     
+        pattern: 'sh33p-w0rd'
+        configs: {}
+
+masterConfirmed = -> 
+    log 'master confirm'
+    $("site").focus()
 
 masterChanged = -> 
     mstr = $("master").value 
     $("master-ghost").setStyle opacity: if mstr?.length then 0 else 1
-    updateSitePassword $("site").value
-masterFocus = ->
-    $("master-border").addClassName 'focus'
+    masterSitePassword()
+    
+masterFocus = -> $("master-border").addClassName 'focus'
+    
 masterBlurred = ->
     $("master-border").removeClassName 'focus'
     if $("master").value.length
         while $("master").value.length < 18
             $("master").value += 'x'
+            
 siteFocus       = -> $("site-border").addClassName 'focus'
 siteBlurred     = -> $("site-border").removeClassName 'focus'
 passwordFocus   = -> $("password-border").addClassName 'focus'
 passwordBlurred = -> $("password-border").removeClassName 'focus'
+
+siteConfirmed   = -> 
+    log 'site confirm'
+    pw = $("password").value
+    if pw.length
+        clipboard.writeText pw
+        $("password").focus()
     
 setSite = (site) ->
     $("site").value = site
@@ -57,20 +75,22 @@ setSite = (site) ->
     
 siteChanged = -> 
     $("site-ghost").setStyle opacity: if $("site").value.length then 0 else 1
-    updateSitePassword $("site").value
+    masterSitePassword()
     
 openPrefs = ->
     log 'openPrefs'
 
 document.observe 'dom:loaded', ->
     
+    resetStash()
+    
     for inputName in ['master', 'site', 'password']
         $(inputName).on 'focus', eval inputName+'Focus'
         $(inputName).on 'blur', eval inputName+'Blurred'
     
-    $("master").on 'input', masterChanged    
-    $("site"  ).on 'input', siteChanged
-    $("sheep" ).on 'click', openPrefs
+    $("master").on 'input',  masterChanged
+    $("site"  ).on 'input',  siteChanged
+    $("sheep" ).on 'click',  openPrefs
     $("master").focus()
     if domain = extractDomain clipboard.readText()
         setSite domain 
@@ -91,7 +111,13 @@ document.on 'keydown', (event) ->
     if event.which == 27 # escape
         win.hide()
     if event.which == 13 # enter
-        readStash main
+        log 'enter'
+        if document.activeElement == $("master")
+            log 'master enter'
+            masterConfirmed()
+        else if document.activeElement == $("site")
+            log 'site enter'
+            siteConfirmed()
 
 undirty = -> log 'undirty'
 dirty   = -> log 'dirty'
@@ -115,23 +141,17 @@ readStash = (cb) ->
         decryptFile stashFile, mstr, (err, json) -> 
             if err?
                 if err[0] == 'can\'t decrypt file'
-                    log 'err[0]' + err
+                    error err
                     stash = undefined
                     cb()
                 else
-                    log 'err' + err
-                    error.apply @, err
+                    error err
             else
                 stash = JSON.parse(json)
-                stash.decryptall = false
                 undirty()
                 cb()
     else
-        stash = 
-            pattern:    pattern 
-            decryptall: false
-            seed:       false
-            configs:    {}
+        resetStash()
         undirty()
         cb()
 
@@ -139,50 +159,17 @@ numConfigs = () ->
     keysIn(stash.configs).length
 
 ###
-000   000  00000000  000   000   0000000  000  000000000  00000000
-0000  000  000       000 0 000  000       000     000     000     
-000 0 000  0000000   000000000  0000000   000     000     0000000 
-000  0000  000       000   000       000  000     000     000     
-000   000  00000000  00     00  0000000   000     000     00000000
+ 0000000  000  000000000  00000000
+000       000     000     000     
+0000000   000     000     0000000 
+     000  000     000     000     
+0000000   000     000     00000000
 ###
-
-newSeed = (config) ->
-    config.seed = cryptools.genSalt config.pattern.length
-    
-clearSeed = (config) ->
-    if config.pattern?.length
-        config.seed = pad '', config.pattern.length, ' '
     
 makePassword = (hash, config) ->
     log "hash:" + hash + "config:" + jsonStr(config)
-    password.make hash, config.pattern, config.seed
-    
-newSite = (site) ->
-    pass = updateSitePassword site
-    if pass.length
-        clipboard.writeText pass
-        dirty()
-        $("password").focus()
-    
-updateSitePassword = (site) ->
-    site = trim site
-    if not site?.length or not mstr?.length
-        $("password").value = ""
-        $("password-ghost").setStyle opacity: 1
-        return ""
-    config = {}
-    config.url = encrypt site, mstr
-    config.pattern = stash.pattern
-
-    if stash.seed
-        newSeed config
-    else
-        clearSeed config
-
-    hash = genHash site+mstr
-    stash.configs[hash] = config
-    pass = showPassword config
-
+    password.make hash, config.pattern
+        
 showPassword = (config) ->
     url    = decrypt config.url, mstr
     pass   = makePassword genHash(url+mstr), config
@@ -190,6 +177,25 @@ showPassword = (config) ->
     $("password").value = pass
     $("password-ghost").setStyle opacity: 0
     pass
+    
+masterSitePassword = () ->
+    site = trim $("site").value
+    if not site?.length or not mstr?.length
+        $("password").value = ""
+        $("password-ghost").setStyle opacity: 1
+        return ""
+    
+    hash = genHash site+mstr    
+        
+    if stash.configs?[hash]?
+        config = stash.configs[hash]
+    else        
+        config = {}
+        config.url = encrypt site, mstr
+        config.pattern = stash.pattern
+        stash.configs[hash] = config
+        
+    pass = showPassword config
     
 ###
 00     00   0000000   000  000   000
@@ -199,24 +205,3 @@ showPassword = (config) ->
 000   000  000   000  000  000   000
 ###
 
-main = () ->
-
-    if not stash?
-        $("site").value = "no stash: " + stashFile
-        return
-
-    site = trim $("site").value
-
-    log 'site:', site, 'mstr: ', mstr
-    if not site? or site.length == 0
-        $("password").value = ""
-        
-    $("site").focus()
-                    
-    hash = genHash site+mstr
-
-    if stash.configs?[hash]?
-        pass = showPassword stash.configs[hash]
-    else
-        newSite site
-        

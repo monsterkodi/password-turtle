@@ -28,11 +28,11 @@ isValidPattern = (pattern) ->
         return false if not setWithChar(c)?
     true
 
-make = (hash, pattern, seed) ->
+make = (hash, pattern) ->
     pw = ""
     ss = Math.floor(hash.length / pattern.length)
     for i in [0...pattern.length]        
-        sum = seed.charCodeAt i
+        sum = 0
         for s in [0...ss]
             sum += parseInt(hash[i*ss+s], 16)
         sum += pattern.charCodeAt i

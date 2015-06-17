@@ -25,7 +25,9 @@ knx = undefined
 000   000  000   000  000  000   000  0000000   0000000    0000000 
 ###
 
-ipc.on 'knixlog', (event, args) -> knx.webContents.send 'logknix', args
+ipc.on 'knixlog', (event, args) -> knx.webContents.send 'knix_log', args
+ipc.on 'knixerror', (event, args) -> knx.webContents.send 'knix_error', args
+ipc.on 'knixwarning', (event, args) -> knx.webContents.send 'knix_warning', args
 
 ###
  0000000  000   000   0000000   000   000
