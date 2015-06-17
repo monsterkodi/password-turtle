@@ -85,7 +85,7 @@ setSite = (site) ->
     
 siteChanged = ->
     if $("site").value.length == 0
-        hideSiteLock()
+        hideLock()
     masterSitePassword()
     
 ###
@@ -163,6 +163,19 @@ document.on 'keydown', (event) ->
             if $("pattern").value.length
                 stash.pattern = $("pattern").value
                 writeStash()
+        else if e == $("password")
+            log 'password enter'
+            site = $('site').value
+            hash = genHash(site+mstr)
+            if stash.configs[hash]?
+                delete stash.configs[hash]
+                showLockOpen()
+            else
+                showLockClosed()
+                stash.configs[hash] = 
+                    url: encrypt site, mstr
+                    pattern: stash.pattern
+            writeStash()
 
 undirty = -> log 'undirty'
 dirty   = -> log 'dirty'
@@ -180,11 +193,12 @@ writeStash = () ->
     buf = new Buffer(stashString, "utf8")
     log 'write stash', buf.length, stashFile, mstr, JSON.stringify(stash)
     cryptools.encryptFile stashFile, buf, mstr
-    readStash () -> 
-        log 'stash loaded', stashLoaded
-        if stashLoaded and JSON.stringify(stash) == stashString
-            log 'stash confirmed'
-            toggleSettings()
+    if not stashLoaded
+        readStash () -> 
+            log 'stash loaded', stashLoaded
+            if stashLoaded and JSON.stringify(stash) == stashString
+                log 'stash confirmed'
+                toggleSettings()
 
 readStash = (cb) ->
     if fs.existsSync stashFile
@@ -232,19 +246,19 @@ masterSitePassword = () ->
     site = trim $("site").value
     if not site?.length or not mstr?.length
         clearInput 'password'
+        hideLock()
         return ""
     
     hash = genHash site+mstr    
         
     if stash.configs?[hash]?
         config = stash.configs[hash]
-        showSiteLock()
+        showLockClosed()
     else        
         config = {}
         config.url = encrypt site, mstr
         config.pattern = stash.pattern
-        hideSiteLock()
-        # stash.configs[hash] = config
+        showLockOpen()
         
     pass = showPassword config
     
@@ -276,7 +290,7 @@ hideSettings = ->
     clearInput 'pattern'
 
 hideSitePassword = ->
-    hideSiteLock()
+    hideLock()
     clearInput 'site'
     clearInput 'password'
     $('site-border').setStyle opacity: 0
@@ -294,9 +308,15 @@ setInput = (input, value) ->
     $(input).value = value
     $(input+'-ghost').setStyle opacity: (value.length == 0 and 1 or 0)
     
-showSiteLock = ->
-    $('site-lock').innerHTML = '<span><i class="fa fa-lock fa-lg"></i></span>'
-    $('site-lock').setStyle opacity: 1
+showLockClosed = ->
+    $('lock').innerHTML = '<span><i class="fa fa-lock fa-lg"></i></span>'
+    $('lock').setStyle opacity: 1
+    $('lock').addClassName 'closed'
 
-hideSiteLock = ->
-    $('site-lock').setStyle opacity: 0
+showLockOpen = ->
+    $('lock').innerHTML = '<span><i class="fa fa-unlock fa-lg"></i></span>'
+    $('lock').setStyle opacity: 1
+    $('lock').removeClassName 'closed'
+
+hideLock = ->
+    $('lock').setStyle opacity: 0
