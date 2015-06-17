@@ -38,25 +38,22 @@ dbg   = () -> ipc.send 'knixlog',   [].slice.call arguments, 0
 error = () -> ipc.send 'knixerror', [].slice.call arguments, 0
 
 resetStash = ->
+    stashLoaded = false
+    showDirty()
     stash =     
         pattern: 'sh33p-w0rd'
-        configs: {}
+        configs: {}                
 
 masterConfirmed = ->
-    log 'master confirm'
     if mstr?.length
         if stashExists
-            log 'stash exists'
             readStash () -> 
-                log 'stash read'
                 if stashLoaded
-                    log 'stash loaded'
                     showSitePassword()
                     masterSitePassword()
                 else
                     log 'can\'t open stash file', stashFile 
         else
-            log 'no stash'
             showSettings()
 
 masterChanged = ->
@@ -66,6 +63,10 @@ masterChanged = ->
     stashLoaded = false
     masterSitePassword()
     
+patternChanged = ->
+    stash.pattern = $("pattern").value
+    showDirty()
+    
 masterBlurred = ->
     if stashLoaded
         if $("master").value.length
@@ -73,7 +74,6 @@ masterBlurred = ->
                 $("master").value += 'x'
             
 siteConfirmed = -> 
-    log 'site confirm'
     pw = $("password").value
     if pw.length
         clipboard.writeText pw
@@ -106,11 +106,12 @@ document.observe 'dom:loaded', ->
         input.on 'input', (e) ->
             $(e.target.name+'-ghost').setStyle opacity: if e.target.value.length then 0 else 1
         
-    $("master").on 'blur',   masterBlurred
-    $("master").on 'input',  masterChanged
-    $("site"  ).on 'input',  siteChanged
-    $("sheep" ).on 'click',  toggleSettings
-    $("master").focus()
+    $("master" ).on 'blur' , masterBlurred
+    $("master" ).on 'input', masterChanged
+    $("site"   ).on 'input', siteChanged
+    $("pattern").on 'input', patternChanged
+    $("sheep"  ).on 'click', toggleSettings
+    $("master" ).focus()
     if domain = extractDomain clipboard.readText()
         setSite domain 
 
@@ -150,21 +151,16 @@ document.on 'keydown', (event) ->
     if event.which == 27 # escape
         win.hide()
     if event.which == 13 # enter
-        log 'enter'
         e =  document.activeElement
         if e == $("master")
-            log 'master enter'
             masterConfirmed()
         else if e == $("site")
-            log 'site enter'
             siteConfirmed()
         else if e == $("pattern")
-            log 'pattern enter'
             if $("pattern").value.length
                 stash.pattern = $("pattern").value
                 writeStash()
         else if e == $("password")
-            log 'password enter'
             site = $('site').value
             hash = genHash(site+mstr)
             if stash.configs[hash]?
@@ -176,9 +172,6 @@ document.on 'keydown', (event) ->
                     url: encrypt site, mstr
                     pattern: stash.pattern
             writeStash()
-
-undirty = -> log 'undirty'
-dirty   = -> log 'dirty'
 
 ###
  0000000  000000000   0000000    0000000  000   000
@@ -193,6 +186,7 @@ writeStash = () ->
     buf = new Buffer(stashString, "utf8")
     log 'write stash', buf.length, stashFile, mstr, JSON.stringify(stash)
     cryptools.encryptFile stashFile, buf, mstr
+    showSaved()
     if not stashLoaded
         readStash () -> 
             log 'stash loaded', stashLoaded
@@ -206,18 +200,15 @@ readStash = (cb) ->
         decryptFile stashFile, mstr, (err, json) -> 
             if err?
                 error err
-                stashLoaded = false
                 resetStash()
             else
                 stashLoaded = true
                 stash = JSON.parse(json)
-                undirty()
+                showSaved()
             cb()
     else
         log 'stash doesn\'t exists' + stashFile
         resetStash()
-        stashLoaded = false
-        undirty()
         cb()
 
 numConfigs = () ->
@@ -232,13 +223,13 @@ numConfigs = () ->
 ###
     
 makePassword = (hash, config) ->
-    log "hash:" + hash + "config:" + jsonStr(config)
+    # log "hash:" + hash + "config:" + jsonStr(config)
     password.make hash, config.pattern
         
 showPassword = (config) ->
     url    = decrypt config.url, mstr
     pass   = makePassword genHash(url+mstr), config
-    dbg pass
+    # dbg pass
     setInput 'password', pass
     pass
     
@@ -317,6 +308,9 @@ showLockOpen = ->
     $('lock').innerHTML = '<span><i class="fa fa-unlock fa-lg"></i></span>'
     $('lock').setStyle opacity: 1
     $('lock').removeClassName 'closed'
+    
+showDirty = -> $('floppy').removeClassName 'saved'
+showSaved = -> $('floppy').addClassName 'saved'
 
 hideLock = ->
     $('lock').setStyle opacity: 0

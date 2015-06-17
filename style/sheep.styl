@@ -57,28 +57,26 @@ input
     &:focus
         background-color: color.gray-very-dark
         outline:    none
-    &#master
-        color:      color.gray-dark
-        &:focus
-            box-shadow: 0 0 10px color.yellow
-            color:  color.orange
-    &#site
-        color:      color.green-dark
-        &::selection
-            color:  color.green-bright
-        &:focus
-            box-shadow: 0 0 10px color.green-bright
-            color:  color.green
-    &#password
-        color:      color.blue-medium
-        &:focus
-            box-shadow: 0 0 10px color.blue-very-bright
-            color:  color.blue-very-bright
-    &#pattern
-        color:      color.gray
-        &:focus
-            box-shadow: 0 0 10px color.white
-            color:  color.white
+#master
+    color:      color.gray-dark
+    &:focus
+        box-shadow: 0 0 10px color.yellow
+        color:  color.orange
+#site
+    color:      color.green-dark
+    &:focus
+        box-shadow: 0 0 10px color.green-bright
+        color:  color.green
+#password
+    color:      color.blue-medium
+    &:focus
+        box-shadow: 0 0 10px color.blue-very-bright
+        color:  color.blue-very-brights
+#pattern
+    color:      color.gray
+    &:focus
+        box-shadow: 0 0 10px color.white
+        color:  color.white
 
 .ghost
     pointer-events: none
@@ -103,6 +101,13 @@ input
     color:          color.gray-dark
     &.closed
         color:      color.blue-medium
+
+#floppy
+    font-size:      20px
+    top:            12px
+    color:          color.white
+    &.saved
+        color:      color.gray-dark
         
 .border
     -webkit-transition:  all 0.3s ease-in-out
