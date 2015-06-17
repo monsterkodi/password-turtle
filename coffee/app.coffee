@@ -39,9 +39,10 @@ error = () -> ipc.send 'knixerror', [].slice.call arguments, 0
 
 resetStash = ->
     stashLoaded = false
+    clearInput 'pattern'
     showDirty()
     stash =     
-        pattern: 'sh33p-w0rd'
+        pattern: ''
         configs: {}                
 
 masterConfirmed = ->
@@ -145,33 +146,48 @@ win.on 'focus', (event) ->
 ###
         
 document.on 'keydown', (event) ->
-    if event.which == 188 # comma
-        if event.getModifierState 'Meta'
-            toggleSettings()
-    if event.which == 27 # escape
-        win.hide()
-    if event.which == 13 # enter
-        e =  document.activeElement
-        if e == $("master")
-            masterConfirmed()
-        else if e == $("site")
-            siteConfirmed()
-        else if e == $("pattern")
-            if $("pattern").value.length
-                stash.pattern = $("pattern").value
+    key  = event.which
+    site = $('site').value
+    hash = genHash(site+mstr)
+    e    = document.activeElement
+    
+    if e == $('password')
+        switch key
+            when 8 # delete / backspace?
+                if stash.configs[hash]?
+                    delete stash.configs[hash]
+                    writeStash()
+                    masterSitePassword()
+                return
+            when 37, 38, 39, 40 # cursor keys
+                $('site').focus()
+                $('site').setSelectionRange 0, $('site').value.length
+                event.preventDefault()
+                return
+            when 13 # enter
+                if not stash.configs[hash]?
+                    stash.configs[hash] = 
+                        url: encrypt site, mstr
+                stash.configs[hash].pattern = $('pattern').value
                 writeStash()
-        else if e == $("password")
-            site = $('site').value
-            hash = genHash(site+mstr)
-            if stash.configs[hash]?
-                delete stash.configs[hash]
-                showLockOpen()
-            else
-                showLockClosed()
-                stash.configs[hash] = 
-                    url: encrypt site, mstr
-                    pattern: stash.pattern
-            writeStash()
+                masterSitePassword()
+                return
+    
+    switch key
+        when 188 # comma
+            if event.getModifierState 'Meta'
+                toggleSettings()
+        when 27 then win.hide() # escape
+        when 13 # enter
+            switch e
+                when $("master") then masterConfirmed()
+                when $("site")   then siteConfirmed()
+                when $("pattern")
+                    if $("pattern").value.length
+                        stash.pattern = $("pattern").value
+                        writeStash()
+        else
+            dbg key
 
 ###
  0000000  000000000   0000000    0000000  000   000
@@ -186,12 +202,12 @@ writeStash = () ->
     buf = new Buffer(stashString, "utf8")
     log 'write stash', buf.length, stashFile, mstr, JSON.stringify(stash)
     cryptools.encryptFile stashFile, buf, mstr
-    showSaved()
+    if $('pattern').value == stash.pattern then showSaved()
     if not stashLoaded
         readStash () -> 
-            log 'stash loaded', stashLoaded
+            # log 'stash loaded', stashLoaded
             if stashLoaded and JSON.stringify(stash) == stashString
-                log 'stash confirmed'
+                # log 'stash confirmed'
                 toggleSettings()
 
 readStash = (cb) ->
@@ -204,6 +220,7 @@ readStash = (cb) ->
             else
                 stashLoaded = true
                 stash = JSON.parse(json)
+                setInput 'pattern', stash.pattern
                 showSaved()
             cb()
     else
@@ -244,12 +261,17 @@ masterSitePassword = () ->
         
     if stash.configs?[hash]?
         config = stash.configs[hash]
-        showLockClosed()
+        log "cfgpattern", jsonStr config
+        log "patterlval", $('pattern').value
+        if config.pattern == $('pattern').value
+            showLockClosed()
+        else 
+            showLockOpen()
     else        
         config = {}
         config.url = encrypt site, mstr
-        config.pattern = stash.pattern
-        showLockOpen()
+        config.pattern = $('pattern').value
+        hideLock()
         
     pass = showPassword config
     
@@ -272,13 +294,9 @@ toggleSettings = ->
 
 showSettings = ->
     $("settings").show()
-    if stashLoaded
-        setInput 'pattern', stash.pattern
     $('pattern').focus()
     
-hideSettings = ->
-    $("settings").hide()
-    clearInput 'pattern'
+hideSettings = -> $("settings").hide()
 
 hideSitePassword = ->
     hideLock()
