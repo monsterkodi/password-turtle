@@ -58,6 +58,7 @@ masterConfirmed = ->
                     log 'can\'t open stash file', stashFile 
         else
             log 'no stash'
+            showSettings()
             $("pattern").focus()
 
 masterChanged = ->
@@ -68,9 +69,10 @@ masterChanged = ->
     masterSitePassword()
     
 masterBlurred = ->
-    if $("master").value.length
-        while $("master").value.length < 18
-            $("master").value += 'x'
+    if stashLoaded
+        if $("master").value.length
+            while $("master").value.length < 18
+                $("master").value += 'x'
             
 siteConfirmed = -> 
     log 'site confirm'
@@ -83,7 +85,9 @@ setSite = (site) ->
     $("site").value = site
     siteChanged()
     
-siteChanged = -> 
+siteChanged = ->
+    if $("site").value.length == 0
+        hideSiteLock()
     masterSitePassword()
     
 ###
@@ -107,27 +111,19 @@ document.observe 'dom:loaded', ->
     $("master").on 'blur',   masterBlurred
     $("master").on 'input',  masterChanged
     $("site"  ).on 'input',  siteChanged
-    $("sheep" ).on 'click',  ->
-        log stashLoaded, $("settings").visible()
-        if stashLoaded and $("settings").visible()
-            hideSettings()
-            showSitePassword()
-        else
-            showSettings()
-            hideSitePassword()
+    $("sheep" ).on 'click',  toggleSettings
     $("master").focus()
     if domain = extractDomain clipboard.readText()
         setSite domain 
 
     hideSitePassword()
+    hideSettings()
     resetStash()
     stashExists = fs.existsSync stashFile
     if stashExists
         log 'found stash file', stashFile
-        hideSettings()
     else
         log 'no stash file!'
-        showSettings()
 
 win.on 'focus', (event) -> 
     if mstr? and mstr.length
@@ -152,7 +148,7 @@ win.on 'focus', (event) ->
 document.on 'keydown', (event) ->
     if event.which == 188 # comma
         if event.getModifierState 'Meta'
-            log 'settings'
+            toggleSettings()
     if event.which == 27 # escape
         win.hide()
     if event.which == 13 # enter
@@ -246,11 +242,13 @@ masterSitePassword = () ->
         
     if stash.configs?[hash]?
         config = stash.configs[hash]
+        showSiteLock()
     else        
         config = {}
         config.url = encrypt site, mstr
         config.pattern = stash.pattern
-        stash.configs[hash] = config
+        hideSiteLock()
+        # stash.configs[hash] = config
         
     pass = showPassword config
     
@@ -262,6 +260,15 @@ masterSitePassword = () ->
 0000000   00000000     000        000     000  000   000   0000000   0000000 
 ###
 
+toggleSettings = ->
+    if stashLoaded
+        if  $("settings").visible()
+            hideSettings()
+            showSitePassword()
+        else
+            showSettings()
+            hideSitePassword()
+
 showSettings = ->
     $("settings").show()
     if stashLoaded
@@ -272,6 +279,7 @@ hideSettings = ->
     clearInput 'pattern'
 
 hideSitePassword = ->
+    hideSiteLock()
     clearInput 'site'
     clearInput 'password'
     $('site-border').setStyle opacity: 0
@@ -282,9 +290,15 @@ showSitePassword = ->
     $('password-border').setStyle opacity: 1
 
 clearInput = (input) ->
-    $(input).value = ''
-    $(input+'-ghost').setStyle opacity: 1
+    setInput input, ''
     
 setInput = (input, value) ->
     $(input).value = value
-    $(input+'-ghost').setStyle opacity: 0
+    $(input+'-ghost').setStyle opacity: (value.length == 0 and 1 or 0)
+    
+showSiteLock = ->
+    $('site-lock').innerHTML = '<span><i class="fa fa-lock fa-lg"></i></span>'
+    $('site-lock').setStyle opacity: 1
+
+hideSiteLock = ->
+    $('site-lock').setStyle opacity: 0
