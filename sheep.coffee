@@ -14,7 +14,7 @@ events        = require 'events'
 Tray          = require 'tray'
 BrowserWindow = require 'browser-window'
 
-debug = false
+debug = true
 win   = undefined
 knx   = undefined
 
@@ -118,7 +118,7 @@ createWindow = () ->
 
         win.loadUrl 'file://' + cwd + '/sheep.html'
         
-        win.on 'blur', win.hide
+        # win.on 'blur', win.hide
         
         shortcut.register 'ctrl+`', toggleWindow
         

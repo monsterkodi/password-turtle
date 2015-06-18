@@ -7,6 +7,7 @@
 ###
 
 clipboard = require 'clipboard'
+random    = require 'lodash.random'
 trim      = require 'lodash.trim'
 pad       = require 'lodash.pad'
 fs        = require 'fs'
@@ -50,18 +51,35 @@ masterConfirmed = ->
         if stashExists
             readStash () -> 
                 if stashLoaded
+                    say()
                     showSitePassword()
                     masterSitePassword()
                 else
-                    log 'can\'t open stash file', stashFile 
+                    say 'can\'t open stash file:', stashFile 
         else
+            say ['Well chosen!', 'Nice one!', 'Good choice!', 'I didn\'t expect that :)', 'I never would have guessed that!'][random 5], 
+                'And your <span class="open" onclick="openUrl(\'http://github.com\');">password pattern?</span>'
             showSettings()
+
+patternConfirmed = ->
+    if $("pattern").value.length
+        if stash.pattern == ''
+            say ['Also nice!', 'What a beautiful pattern!', 'Not bad either!', 'Congratulations!'][random 4], 
+                'Have fun generating passwords!'
+            setTimeout 5000, -> say()
+        else
+            say()
+        stash.pattern = $("pattern").value
+        writeStash()
+
+openUrl = (url) -> (require 'opener') url
 
 masterChanged = ->
     mstr = $("master").value
     hideSitePassword()
     hideSettings()
     stashLoaded = false
+    greet()
     masterSitePassword()
     
 patternChanged = ->
@@ -127,6 +145,7 @@ document.observe 'dom:loaded', ->
         log 'found stash file', stashFile
     else
         log 'no stash file!'
+    greet()
 
 win.on 'focus', (event) -> 
     if stashLoaded
@@ -187,12 +206,9 @@ document.on 'keydown', (event) ->
                 win.hide() 
         when 13 # enter
             switch e
-                when $("master") then masterConfirmed()
-                when $("site")   then siteConfirmed()
-                when $("pattern")
-                    if $("pattern").value.length
-                        stash.pattern = $("pattern").value
-                        writeStash()
+                when $("master")  then masterConfirmed()
+                when $("site")    then siteConfirmed()
+                when $("pattern") then patternConfirmed()
         else
             dbg key
 
@@ -310,7 +326,6 @@ hideSettings = ->
     $('settings').hide()
     if $('pattern').value.length == 0 and stash?.pattern
         setInput 'pattern', stash.pattern
-        # showSaved()
         patternChanged()
 
 hideSitePassword = ->
@@ -344,3 +359,19 @@ showSaved = -> $('floppy').addClassName 'saved'
 
 hideLock = ->
     $('lock').setStyle opacity: 0
+
+greet = ->
+    if stashExists
+        say()
+    else
+        say 'Welcome to <b>sheepword</b>.', 
+            'What will be your <span class="open" onclick="openUrl(\'http://github.com\');">master key?</span>'
+
+say = -> 
+    if arguments.length == 0
+        $('bubble').setStyle opacity: 0
+    else
+        $('bubble').setStyle opacity: 1
+        args = [].slice.call arguments, 0
+        # log args.join "<p>"
+        $('say').innerHTML = args.join "<p>"

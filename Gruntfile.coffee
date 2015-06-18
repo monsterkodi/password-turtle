@@ -87,12 +87,12 @@ module.exports = (grunt) ->
 
         bumpup:
             file: 'package.json'
-
+            
+        clean: ['sheepword.app']
+            
         shell:
             kill:
                 command: "killall Electron"
-            clean: 
-                command: "rm -rf sheepword.app"
             build: 
                 command: "node_modules/electron-packager/cli.js . sheepword --platform=darwin --arch=x64 --version=0.26.0 --ignore=node_modules/electron --icon=img/sheepword.icns"
             test: 
@@ -107,6 +107,7 @@ module.exports = (grunt) ->
     npm install --save-dev grunt-contrib-watch
     npm install --save-dev grunt-contrib-coffee
     npm install --save-dev grunt-contrib-stylus
+    npm install --save-dev grunt-contrib-clean
     npm install --save-dev grunt-bower-concat
     npm install --save-dev grunt-bumpup
     npm install --save-dev grunt-pepper
@@ -116,12 +117,13 @@ module.exports = (grunt) ->
     grunt.loadNpmTasks 'grunt-contrib-watch'
     grunt.loadNpmTasks 'grunt-contrib-coffee'
     grunt.loadNpmTasks 'grunt-contrib-stylus'
+    grunt.loadNpmTasks 'grunt-contrib-clean'
     grunt.loadNpmTasks 'grunt-bower-concat'
     grunt.loadNpmTasks 'grunt-bumpup'
     grunt.loadNpmTasks 'grunt-pepper'
     grunt.loadNpmTasks 'grunt-shell'
 
     grunt.registerTask 'build',     [ 'bumpup', 'stylus', 'salt', 'pepper', 'bower_concat', 'coffee', 'shell:clean', 'shell:build', 'shell:start' ]
-    grunt.registerTask 'test',      [ 'bumpup', 'stylus', 'salt', 'pepper', 'bower_concat', 'coffee', 'shell:clean', 'shell:build', 'shell:test' ]
+    grunt.registerTask 'test',      [ 'bumpup', 'stylus', 'salt', 'pepper', 'bower_concat', 'coffee', 'clean', 'shell:test' ]
     grunt.registerTask 'default',   [ 'test' ]
     #grunt.registerTask 'publish',   [ 'bumpup', 'shell:publish', 'shell:npmpage' ]
