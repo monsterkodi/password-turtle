@@ -65,8 +65,12 @@ masterChanged = ->
     masterSitePassword()
     
 patternChanged = ->
-    stash.pattern = $("pattern").value
-    showDirty()
+    # stash.pattern = $("pattern").value
+    if stash.pattern != $("pattern").value
+        showDirty()
+    else
+        showSaved()
+    masterSitePassword()
     
 masterBlurred = ->
     if stashLoaded
@@ -177,7 +181,11 @@ document.on 'keydown', (event) ->
         when 188 # comma
             if event.getModifierState 'Meta'
                 toggleSettings()
-        when 27 then win.hide() # escape
+        when 27 # escape
+            if e == $('pattern')
+                toggleSettings()
+            else
+                win.hide() 
         when 13 # enter
             switch e
                 when $("master") then masterConfirmed()
@@ -289,19 +297,27 @@ toggleSettings = ->
             hideSettings()
             showSitePassword()
         else
-            hideSitePassword()
+            if $('site').value.length and not stash.configs?[genHash $('site').value+mstr]?
+                $('site-border').setStyle opacity: 0
+            else
+                hideSitePassword()
             showSettings()
 
 showSettings = ->
-    $("settings").show()
+    $('settings').show()
     $('pattern').focus()
     
-hideSettings = -> $("settings").hide()
+hideSettings = ->
+    $('settings').hide()
+    if $('pattern').value.length == 0 and stash?.pattern
+        setInput 'pattern', stash.pattern
+        # showSaved()
+        patternChanged()
 
 hideSitePassword = ->
-    hideLock()
-    clearInput 'site'
-    clearInput 'password'
+    # hideLock()
+    # clearInput 'site'
+    # clearInput 'password'
     $('site-border').setStyle opacity: 0
     $('password-border').setStyle opacity: 0
 

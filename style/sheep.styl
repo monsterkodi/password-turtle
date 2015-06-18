@@ -22,7 +22,7 @@ color.blue-medium      = #6666ff
 color.blue-bright      = #8888ff
 color.blue-very-bright = #aaaaff
 
-body
+body 
     background-color: #222222
     margin:           0px
     height:           100%
@@ -98,15 +98,16 @@ input
     
 #lock
     top:            14px
-    color:          color.gray-dark
+    color:          color.orange
     &.closed
         color:      color.blue-medium
 
 #floppy
-    font-size:      20px
-    top:            14px
+    font-size:      19px
+    top:            15px
     color:          color.white
-    left:           none
+    text-align:     right
+    padding-right:  20px
     &.saved
         color:      color.gray-dark
         
@@ -137,9 +138,9 @@ input
     -webkit-transition: all 0.2s ease-in-out
     margin:        12px
     border-radius: 12px
-    box-shadow:    inset 2px 2px 15px rgba(0, 0, 0, 1.0)    
+    box-shadow:    inset 2px 2px 15px rgba(0, 0, 0, 1.0)
     &:hover
-        box-shadow:      2px 2px 15px rgba(0, 0, 0, 0.5)    
+        box-shadow:      2px 2px 15px rgba(0, 0, 0, 0.5)
     &:active
         box-shadow:      0px 0px  5px rgba(0, 0, 0, 0.5)
         opacity:         0.8
@@ -173,6 +174,9 @@ input
 */
 
 #settings
-    background-color: black
-    padding-top: 12px
-    padding-bottom: 12px
+    position: absolute
+    left: 0
+    right: 0
+    // background-color: color.gray-dark
+    // padding-top: 12px
+    // padding-bottom: 12px
