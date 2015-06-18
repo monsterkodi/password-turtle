@@ -28,7 +28,7 @@ containsLink  = _url.containsLink
 jsonStr       = (a) -> JSON.stringify a, null, " "
 
 mstr        = undefined
-stashFile   = process.env.HOME+'/.config/sheepword.stash'
+stashFile   = process.env.HOME+'/Library/Preferences/sheepword.stash'
 stash       = undefined
 stashExists = false
 stashLoaded = false
@@ -65,7 +65,6 @@ masterChanged = ->
     masterSitePassword()
     
 patternChanged = ->
-    # stash.pattern = $("pattern").value
     if stash.pattern != $("pattern").value
         showDirty()
     else
@@ -73,9 +72,9 @@ patternChanged = ->
     masterSitePassword()
     
 masterBlurred = ->
-    if stashLoaded
+    if stashLoaded or not stashExists
         if $("master").value.length
-            while $("master").value.length < 18
+            while $("master").value.length < 23
                 $("master").value += 'x'
             
 siteConfirmed = -> 
@@ -85,7 +84,7 @@ siteConfirmed = ->
         $("password").focus()
     
 setSite = (site) ->
-    $("site").value = site
+    setInput 'site',  site
     siteChanged()
     
 siteChanged = ->
@@ -130,7 +129,7 @@ document.observe 'dom:loaded', ->
         log 'no stash file!'
 
 win.on 'focus', (event) -> 
-    if mstr? and mstr.length
+    if stashLoaded
         if domain = extractDomain clipboard.readText()
             setSite domain
             clipboard.writeText $("password").value
@@ -315,9 +314,6 @@ hideSettings = ->
         patternChanged()
 
 hideSitePassword = ->
-    # hideLock()
-    # clearInput 'site'
-    # clearInput 'password'
     $('site-border').setStyle opacity: 0
     $('password-border').setStyle opacity: 0
 

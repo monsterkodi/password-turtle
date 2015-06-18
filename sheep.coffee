@@ -14,8 +14,9 @@ events        = require 'events'
 Tray          = require 'tray'
 BrowserWindow = require 'browser-window'
 
-win = undefined
-knx = undefined
+debug = false
+win   = undefined
+knx   = undefined
 
 ###
 000   000  000   000  000  000   000  000       0000000    0000000 
@@ -25,9 +26,9 @@ knx = undefined
 000   000  000   000  000  000   000  0000000   0000000    0000000 
 ###
 
-ipc.on 'knixlog', (event, args) -> knx.webContents.send 'knix_log', args
-ipc.on 'knixerror', (event, args) -> knx.webContents.send 'knix_error', args
-ipc.on 'knixwarning', (event, args) -> knx.webContents.send 'knix_warning', args
+ipc.on 'knixlog', (event, args) -> knx?.webContents.send 'knix_log', args
+ipc.on 'knixerror', (event, args) -> knx?.webContents.send 'knix_error', args
+ipc.on 'knixwarning', (event, args) -> knx?.webContents.send 'knix_warning', args
 
 ###
  0000000  000   000   0000000   000   000
@@ -59,9 +60,9 @@ showWindow = () ->
 toggleWindow = () ->
     if win && win.isVisible()
         win.hide()
-        knx.hide()
+        knx?.hide()
     else
-        knx.show()
+        knx?.show()
         win.show()
 
 createWindow = () ->
@@ -86,17 +87,19 @@ createWindow = () ->
         000   000  000   000  000   000
         ###
 
-        knx = new BrowserWindow
-            dir:           cwd
-            preloadWindow: true
-            x:             0
-            y:             0
-            width:         658
-            height:        800
-            frame:         false
-            show:          true
-            
-        knx.loadUrl 'file://' + cwd + '/knx.html'
+        if debug
+            knx = new BrowserWindow
+                dir:           cwd
+                preloadWindow: true
+                x:             0
+                y:             0
+                width:         658
+                height:        800
+                frame:         false
+                show:          true
+                transparent:   true
+                
+            knx.loadUrl 'file://' + cwd + '/knx.html'
 
         ###
         000   000  000  000   000
@@ -115,10 +118,28 @@ createWindow = () ->
 
         win.loadUrl 'file://' + cwd + '/sheep.html'
         
-        # win.on 'blur', win.hide
+        win.on 'blur', win.hide
         
         shortcut.register 'ctrl+`', toggleWindow
         
         setTimeout showWindow, 10
               
 createWindow()            
+
+###
+000000000   0000000   0000000     0000000 
+   000     000   000  000   000  000   000
+   000     000   000  000   000  000   000
+   000     000   000  000   000  000   000
+   000      0000000   0000000     0000000 
+###
+###
+- timeout
+- config list
+- talking sheep
+- bright style
+- clean sheep
+- preferences
+    - timeout delay
+    - bright/dark style
+###
