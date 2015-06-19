@@ -46,7 +46,7 @@ body
 *  000  000   000  000         0000000      000   
 */
      
-input
+.main-input
     -webkit-app-region: no-drag
     font-size:        24px
     width:            100%
@@ -58,31 +58,46 @@ input
     border:           1px solid color.black
     text-align:       center
     -webkit-transition:  all 0.3s ease-in-out
-
     &:focus
         background-color: color.gray-very-dark
-        outline:    none
+        outline:          none
+        
 #master
     color:      color.gray-dark
     &:focus
         box-shadow: 0 0 10px color.yellow
-        color:  color.orange
+        color:      color.orange
+        
+color.site        = color.green-dark       
+color.site-medium = color.green 
+color.site-bright = color.green-bright 
 #site
-    color:      color.green-dark
+    color:                   color.site
     &:focus
-        box-shadow: 0 0 10px color.green-bright
-        color:  color.green
-#password
-    color:      color.blue-medium
-    &:focus
-        box-shadow: 0 0 10px color.blue-very-bright
-        color:  color.blue-very-brights
+        box-shadow: 0 0 10px color.site-bright
+        color:               color.site-medium
+                
+color.pattern        = color.gray
+color.pattern-medium = color.white
+color.pattern-bright = color.white
 #pattern
-    color:      color.gray
+    color:                   color.pattern 
     &:focus
-        box-shadow: 0 0 10px color.white
-        color:  color.white
+        box-shadow: 0 0 10px color.pattern-bright
+        color:               color.pattern-medium
 
+color.password        = color.blue-medium
+color.password-medium = color.blue-very-bright
+color.password-bright = color.blue-very-bright
+#password
+    color:                   color.password
+    &:focus
+        box-shadow: 0 0 10px color.password-bright
+        color:               color.password-medium
+
+.no-pointer
+    pointer-events: none
+    
 .ghost
     pointer-events: none
     font-family:    sans-serif
@@ -139,7 +154,6 @@ input
 */
 
 #sheep
-    pointer-events: none
     -webkit-app-region: no-drag
     -webkit-transition: all 0.2s ease-in-out
     margin:        12px
@@ -182,12 +196,15 @@ input
 color.bubble = rgba(0,0,0,0.38)
 
 #bubble
+    pointer-events: none
     position: absolute
     top:      170px
     left:     27px
     right:    27px
     -webkit-transition:  all 0.5s ease-in-out
     -webkit-app-region: no-drag
+    &.whisper
+        left:     157px
 
 #bubble-tri
     position:      absolute
@@ -199,8 +216,7 @@ color.bubble = rgba(0,0,0,0.38)
     border-bottom: 20px solid color.bubble
 
 #say
-    text-align: center
-    // font-size: 14px
+    text-align:       center
     font-family:      UbuntuMono
     text-shadow:      2px 2px 5px black
     position:         absolute
@@ -212,12 +228,24 @@ color.bubble = rgba(0,0,0,0.38)
     padding:          6px
     padding-top:      12px
     padding-left:     18px
-    color: color.orange
+    padding-right:    18px
+    color:            color.orange
     background-color: color.bubble
-    & b
-        color: color.yellow
-    & p
+#say b
+        color: color.site-medium
+#say i
+        color: color.pattern-medium
+        font-style: normal
+#say u
+        color: color.password-medium
+        text-decoration: none
+#say p
         margin-top: 8px
+    
+#bubble.whisper #say    
+    height:           21px
+    padding-left:     8px
+    padding-right:    8px
     
 .open
     color: color.blue-medium
@@ -237,3 +265,52 @@ color.bubble = rgba(0,0,0,0.38)
     position: absolute
     left: 0
     right: 0
+
+#button-list
+    margin-top    23px
+    margin-left   12px
+    margin-right  12px
+    
+.button-border
+    -webkit-app-region: no-drag
+    -webkit-transition:  all 0.3s ease-in-out
+    box-shadow:    inset 2px 2px 17px rgba(0, 0, 0, 0.25)
+    border:        1px solid color.gray-very-dark
+    padding:       10px
+    padding-top:   25px
+    padding-bottom: 11px
+    border-radius: 10px
+    margin-right:  7px
+    position:      relative
+    box-sizing:    padding-box
+    background-color: color.gray-dark
+    &:hover
+    &.focus
+        background-color: color.orange
+        box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.75)
+    color:          gray
+    &:hover
+        color: white
+    
+#help-border
+    margin-right:  0px
+    
+.button-icon
+    pointer-events: none
+    position:       absolute
+    left:           21px
+    top:            19px
+    
+.button
+    -webkit-app-region: no-drag
+    -webkit-transition:  all 0.3s ease-in-out
+    box-sizing:       border-box
+    position:         static
+    height:           35px
+    width:            35px
+    border-radius:    4px
+    border:           1px solid color.black
+    background-color: color.gray-very-dark
+    &:focus
+        background-color: color.gray-very-dark
+        outline:          none

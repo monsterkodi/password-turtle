@@ -134,12 +134,16 @@ createWindow()
    000      0000000   0000000     0000000 
 ###
 ###
+- delete stash
 - timeout
+- about
 - config list
-- talking sheep
 - bright style
-- clean sheep
+- render clean sheep image(s)
 - preferences
+    - global shortcut
     - timeout delay
     - bright/dark style
+- fix tab focus when pattern
+- add list, settings, about, delete, help buttons to pattern without site
 ###

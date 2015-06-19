@@ -51,26 +51,32 @@ masterConfirmed = ->
         if stashExists
             readStash () -> 
                 if stashLoaded
+                    $("sheep"  ).removeClassName 'no-pointer'
                     say()
                     showSitePassword()
                     masterSitePassword()
                 else
-                    say 'can\'t open stash file:', stashFile 
+                    log 'can\'t open stash file:', stashFile 
+                    whisper ['oops?', 'what?', 'again?', '...?', 'I didn\'t get that!'][random 4]
         else
-            say ['Well chosen!', 'Nice one!', 'Good choice!', 'I didn\'t expect that :)', 'I never would have guessed that!'][random 5], 
+            say ['Well chosen!', 'Nice one!', 'Good choice!', 'I didn\'t expect that :)', 'I never would have guessed that!'][random 4], 
                 'And your <span class="open" onclick="openUrl(\'http://github.com\');">password pattern?</span>'
             showSettings()
+            $("sheep"  ).removeClassName 'no-pointer'
 
 patternConfirmed = ->
-    if $("pattern").value.length
+    if $("pattern").value.length and stash.pattern != $("pattern").value
         if stash.pattern == ''
-            say ['Also nice!', 'What a beautiful pattern!', 'Not bad either!', 'Congratulations!'][random 4], 
-                'Have fun generating passwords!'
-            setTimeout 5000, -> say()
+            say ['Also nice!', 'What a beautiful pattern!', 'Not bad either!', 'Congratulations!', 'The setup is done!'][random 4], 
+                'Have fun generating passwords!', 3000
         else
-            say()
+            if not ask 'change the default <i>pattern</i>?', 'if yes, press return again.'
+                return
+            say 'the new default pattern is', '<i>'+$("pattern").value+'</i>', 6000
         stash.pattern = $("pattern").value
         writeStash()
+    else if stash.pattern == $("pattern").value
+        toggleSettings()
 
 openUrl = (url) -> (require 'opener') url
 
@@ -83,10 +89,7 @@ masterChanged = ->
     masterSitePassword()
     
 patternChanged = ->
-    if stash.pattern != $("pattern").value
-        showDirty()
-    else
-        showSaved()
+    updateFloppy()
     masterSitePassword()
     
 masterBlurred = ->
@@ -100,6 +103,7 @@ siteConfirmed = ->
     if pw.length
         clipboard.writeText pw
         $("password").focus()
+        say '<u>' + pw + '</u>', 'on the clipboard', 5000
     
 setSite = (site) ->
     setInput 'site',  site
@@ -122,17 +126,23 @@ document.observe 'dom:loaded', ->
         
     for input in $$('input')
         input.on 'focus', (e) -> 
-            $(e.target.name+'-border').addClassName 'focus'
+            $(e.target.id+'-border').addClassName 'focus'
         input.on 'blur',  (e) -> 
-            $(e.target.name+'-border').removeClassName 'focus'
+            say()
+            $(e.target.id+'-border').removeClassName 'focus'
         input.on 'input', (e) ->
-            $(e.target.name+'-ghost').setStyle opacity: if e.target.value.length then 0 else 1
+            $(e.target.id+'-ghost').setStyle opacity: if e.target.value.length then 0 else 1
+        input.on 'mouseenter', (e) ->
+            $(e.target).focus()
+        
+    $('bubble').opacity = 0
         
     $("master" ).on 'blur' , masterBlurred
     $("master" ).on 'input', masterChanged
     $("site"   ).on 'input', siteChanged
     $("pattern").on 'input', patternChanged
     $("sheep"  ).on 'click', toggleSettings
+    $("sheep"  ).addClassName 'no-pointer'
     $("master" ).focus()
     if domain = extractDomain clipboard.readText()
         setSite domain 
@@ -177,9 +187,11 @@ document.on 'keydown', (event) ->
         switch key
             when 8 # delete / backspace?
                 if stash.configs[hash]?
-                    delete stash.configs[hash]
-                    writeStash()
-                    masterSitePassword()
+                    if ask 'Forget <i>'+stash.configs[hash].pattern+'</i>', 'for <b>'+site+'</b>?'
+                        delete stash.configs[hash]
+                        say 'The <b>' + site + '</b>', '<i>pattern</i> is forgotten now.', 2000
+                        writeStash()
+                        masterSitePassword()
                 return
             when 37, 38, 39, 40 # cursor keys
                 $('site').focus()
@@ -190,6 +202,11 @@ document.on 'keydown', (event) ->
                 if not stash.configs[hash]?
                     stash.configs[hash] = 
                         url: encrypt site, mstr
+                    say 'Remembering <i>' + $('pattern').value+'</i>', 'for <b>'+site+'</b>', 2000
+                else if stash.configs[hash].pattern != $('pattern').value
+                    if not ask 'Replace <i>'+stash.configs[hash].pattern+'</i>', 'with <i>'+$('pattern').value+'</i>?'
+                        return
+                    say 'Using <i>'+$('pattern').value+'</i>', 'for <b>'+site+'</b>', 2000
                 stash.configs[hash].pattern = $('pattern').value
                 writeStash()
                 masterSitePassword()
@@ -200,6 +217,8 @@ document.on 'keydown', (event) ->
             if event.getModifierState 'Meta'
                 toggleSettings()
         when 27 # escape
+            $('pattern').value = stash.pattern
+            masterSitePassword()
             if e == $('pattern')
                 toggleSettings()
             else
@@ -209,8 +228,8 @@ document.on 'keydown', (event) ->
                 when $("master")  then masterConfirmed()
                 when $("site")    then siteConfirmed()
                 when $("pattern") then patternConfirmed()
-        else
-            dbg key
+        # else
+        #     dbg key
 
 ###
  0000000  000000000   0000000    0000000  000   000
@@ -286,7 +305,7 @@ masterSitePassword = () ->
         config = stash.configs[hash]
         log "cfgpattern", jsonStr config
         log "patterlval", $('pattern').value
-        if config.pattern == $('pattern').value
+        if config.pattern == stash.pattern
             showLockClosed()
         else 
             showLockOpen()
@@ -319,22 +338,28 @@ toggleSettings = ->
             showSettings()
 
 showSettings = ->
+    updateFloppy()
     $('settings').show()
     $('pattern').focus()
     
 hideSettings = ->
     $('settings').hide()
+    say()
     if $('pattern').value.length == 0 and stash?.pattern
         setInput 'pattern', stash.pattern
         patternChanged()
 
 hideSitePassword = ->
     $('site-border').setStyle opacity: 0
+    $('site-border').addClassName 'no-pointer'
     $('password-border').setStyle opacity: 0
+    $('password-border').addClassName 'no-pointer'
 
 showSitePassword = ->
-    $('site-border').setStyle opacity: 1
+    $('site-border').setStyle  opacity: 1
+    $('site-border').removeClassName 'no-pointer'
     $('password-border').setStyle opacity: 1
+    $('password-border').removeClassName 'no-pointer'
     $('site').focus()
 
 clearInput = (input) ->
@@ -356,6 +381,12 @@ showLockOpen = ->
     
 showDirty = -> $('floppy').removeClassName 'saved'
 showSaved = -> $('floppy').addClassName 'saved'
+updateFloppy = ->
+    if stash.pattern != $("pattern").value
+        showDirty()
+    else
+        say()
+        showSaved()
 
 hideLock = ->
     $('lock').setStyle opacity: 0
@@ -367,11 +398,32 @@ greet = ->
         say 'Welcome to <b>sheepword</b>.', 
             'What will be your <span class="open" onclick="openUrl(\'http://github.com\');">master key?</span>'
 
+whisper = (boo) -> 
+    $('bubble').setStyle opacity: 1
+    $('bubble').addClassName 'whisper'
+    $('say').innerHTML = boo
+
+unsay = undefined
 say = -> 
+    # log [].slice.call arguments, 0
+    clearTimeout(unsay) if unsay?
+    unsay = undefined
     if arguments.length == 0
+        $('say').innerHTML += ' '
         $('bubble').setStyle opacity: 0
     else
-        $('bubble').setStyle opacity: 1
         args = [].slice.call arguments, 0
-        # log args.join "<p>"
+        if args.length == 3
+            delay = args.pop()
+            unsay = setTimeout say, delay
+            
+        $('bubble').removeClassName 'whisper'
+        $('bubble').setStyle opacity: 1
         $('say').innerHTML = args.join "<p>"
+
+ask = ->
+    log arguments[arguments.length-1]
+    if not $('say').innerHTML.endsWith(arguments[arguments.length-1]+'</p>')
+        say.apply say, arguments
+        return false
+    true

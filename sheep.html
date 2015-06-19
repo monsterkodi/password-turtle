@@ -2,39 +2,46 @@
 <html>
     <head>
         <title>sheepword</title>
-        <script src="./js/lib/bower.js"></script>
-        <link   rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.css">
-        <link   rel="stylesheet" href="style/sheep.css" type="text/css">
-        <script src="./js/app.js"></script>
+        <script src='./js/lib/bower.js'></script>
+        <link   rel='stylesheet' href='bower_components/font-awesome/css/font-awesome.css'>
+        <link   rel='stylesheet' href='style/sheep.css' type='text/css'>
+        <script src='./js/app.js'></script>
     </head>
     <body>
-        <div id="bubble">
-            <div id="bubble-tri"></div>
-            <div id="say"></div>
+        <div id='bubble'>
+            <div id='bubble-tri'></div>
+            <div id='say'></div>
         </div>
-        <img src="./img/sheep.png" id="sheep"><br>
-        <div class="border" id="master-border">
-            <input type="password" name="master" id="master"/>
-            <div class="ghost" id='master-ghost'>master</div>
+        <img src='./img/sheep.png' id='sheep'><br>
+        <div class='border' id='master-border'>
+            <input class='main-input' type='password' name='master' id='master'/>
+            <div class='ghost' id='master-ghost'>master</div>
         </div>
-        <div id="settings">
-            <div class="border" id="pattern-border">
-                <input type="input" name="pattern" id="pattern"/>
+        <div id='settings'>
+            <div class='border' id='pattern-border'>
+                <input class='main-input' type='input' name='pattern' id='pattern'/>
                 <span>
-                    <div class="ghost" id='floppy'><span><i class="fa fa-floppy-o fa-lg"></i></span></div>
-                    <div class="ghost" id='pattern-ghost'>pattern</div>
+                    <div class='ghost' id='floppy'><span><i class='fa fa-floppy-o fa-lg'></i></span></div>
+                    <div class='ghost' id='pattern-ghost'>pattern</div>
                 </span>
             </div>    
+            <div id='button-list'>
+                <span class='button-border' id='list-border'  ><input type='button' class='button' id='list'  /><i class="button-icon fa fa-database"></i></span>
+                <span class='button-border' id='delete-border'><input type='button' class='button' id='delete'/><i class="button-icon fa fa-trash-o"></i></span>
+                <span class='button-border' id='setup-border' ><input type='button' class='button' id='setup' /><i class="button-icon fa fa-cog"></i></span>
+                <span class='button-border' id='about-border' ><input type='button' class='button' id='about' /><i class="button-icon fa fa-info-circle"></i></span>
+                <span class='button-border' id='help-border'  ><input type='button' class='button' id='help'  /><i class="button-icon fa fa-question-circle"></i></span>
+            </div>
         </div>
-        <div class="border" id="site-border">
-            <input type="input" name="site" id="site"/>
-                <div class="ghost" id='site-ghost'>site</div>
+        <div class='border' id='site-border'>
+            <input class='main-input' type='input' name='site' id='site'/>
+                <div class='ghost' id='site-ghost'>site</div>
         </div>
-        <div class="border" id="password-border">
-            <input type="button" name="password" id="password"/>
+        <div class='border' id='password-border'>
+            <input class='main-input' type='button' name='password' id='password'/>
             <span>
-                <div class="ghost" id='lock'></div>
-                <div class="ghost" id='password-ghost'>password</div>
+                <div class='ghost' id='lock'></div>
+                <div class='ghost' id='password-ghost'>password</div>
             </span>
         </div>
     </body>

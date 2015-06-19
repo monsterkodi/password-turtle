@@ -92,13 +92,13 @@ module.exports = (grunt) ->
             
         shell:
             kill:
-                command: "killall Electron"
+                command: "killall Electron || echo 1"
             build: 
                 command: "node_modules/electron-packager/cli.js . sheepword --platform=darwin --arch=x64 --version=0.26.0 --ignore=node_modules/electron --icon=img/sheepword.icns"
             test: 
-                command: "killall Electron || sleep 1 && electron ."
+                command: "electron ."
             start: 
-                command: "killall Electron || sleep 1 && open sheepword.app"
+                command: "open sheepword.app"
             publish:
                 command: 'npm publish'
             npmpage:
@@ -123,7 +123,7 @@ module.exports = (grunt) ->
     grunt.loadNpmTasks 'grunt-pepper'
     grunt.loadNpmTasks 'grunt-shell'
 
-    grunt.registerTask 'build',     [ 'bumpup', 'stylus', 'salt', 'pepper', 'bower_concat', 'coffee', 'shell:clean', 'shell:build', 'shell:start' ]
-    grunt.registerTask 'test',      [ 'bumpup', 'stylus', 'salt', 'pepper', 'bower_concat', 'coffee', 'clean', 'shell:test' ]
+    grunt.registerTask 'build',     [ 'bumpup', 'stylus', 'salt', 'pepper', 'bower_concat', 'coffee', 'clean', 'shell:kill', 'shell:start' ]
+    grunt.registerTask 'test',      [ 'bumpup', 'stylus', 'salt', 'pepper', 'bower_concat', 'coffee', 'clean', 'shell:kill', 'shell:test' ]
     grunt.registerTask 'default',   [ 'test' ]
     #grunt.registerTask 'publish',   [ 'bumpup', 'shell:publish', 'shell:npmpage' ]
