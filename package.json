@@ -1,6 +1,6 @@
 {
   "name": "sheepword",
-  "version": "0.0.1043",
+  "version": "0.0.1154",
   "description": "a password generator",
   "dependencies": {
     "bcryptjs": "^2.1.0",
@@ -26,6 +26,7 @@
     "lodash.zipobject": "^3.0.0",
     "node-uuid": "^1.4.3",
     "opener": "^1.4.1",
+    "sleep": "^2.0.0",
     "underscore.string": "^3.1.1"
   },
   "devDependencies": {

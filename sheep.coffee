@@ -113,7 +113,7 @@ createWindow = () ->
             dir:           cwd
             preloadWindow: true
             width:         364
-            height:        466
+            height:        330
             frame:         false
 
         win.loadUrl 'file://' + cwd + '/sheep.html'

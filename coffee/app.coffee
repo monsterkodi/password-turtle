@@ -15,6 +15,7 @@ _url      = require './js/tools/urltools'
 password  = require './js/tools/password' 
 cryptools = require './js/tools/cryptools'
 remote    = require 'remote'
+sleep     = require 'sleep'
 ipc       = require 'ipc'
 
 win = remote.getCurrentWindow()
@@ -46,18 +47,42 @@ resetStash = ->
         pattern: ''
         configs: {}                
 
+masterAnimDir = 0
+masterAnim = ->
+    if masterAnimDir == 1
+        if $("master").value.length < 24
+            $("master").value += 'x'        
+            setTimeout masterAnim, 24-$("master").value.length
+            return
+        else 
+            masterAnimDir = -1
+    if masterAnimDir == -1
+        if $("master").value.length > 1
+            $("master").value = $("master").value.substr(0, Math.max(1, $("master").value.length-2))
+            win.setSize win.getSize()[0], Math.max(win.getSize()[1], 492-$("master").value.length*6)
+            masterAnim()
+        else
+            masterAnimDir = 0
+            showSitePassword()
+            masterSitePassword()
+            
+masterFade = ->
+    if win.getSize()[1] > 355
+        win.setSize win.getSize()[0], win.getSize()[1]-12
+        setTimeout masterFade, 0
+
 masterConfirmed = ->
     if mstr?.length
         if stashExists
             readStash () -> 
                 if stashLoaded
-                    $("sheep"  ).removeClassName 'no-pointer'
+                    $("sheep").removeClassName 'no-pointer'
                     say()
-                    showSitePassword()
-                    masterSitePassword()
+                    masterAnimDir = 1
+                    masterAnim()
                 else
                     log 'can\'t open stash file:', stashFile 
-                    whisper ['oops?', 'what?', 'again?', '...?', 'I didn\'t get that!'][random 4]
+                    whisper ['oops?', 'what?', 'again?', '...?', 'nope!'][random 4]
         else
             say ['Well chosen!', 'Nice one!', 'Good choice!', 'I didn\'t expect that :)', 'I never would have guessed that!'][random 4], 
                 'And your <span class="open" onclick="openUrl(\'http://github.com\');">password pattern?</span>'
@@ -87,17 +112,17 @@ masterChanged = ->
     stashLoaded = false
     greet()
     masterSitePassword()
+    masterFade()
     
 patternChanged = ->
     updateFloppy()
     masterSitePassword()
-    
+        
 masterBlurred = ->
-    if stashLoaded or not stashExists
-        $("master").value = 'x'
-        # if $("master").value.length
-        #     while $("master").value.length < 23
-        #         $("master").value += 'x'
+    if 0 #stashLoaded or not stashExists
+        if $("master").value.length > 1 and masterAnimDir == 0
+            masterAnimDir = 1
+            masterAnim()
             
 siteConfirmed = -> 
     pw = $("password").value
