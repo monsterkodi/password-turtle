@@ -55,13 +55,13 @@ body
     background-color: color.gray-very-dark
     color:            color.gray
     border-radius:    4px
-    border:           1px solid color.black
+    border:           1px solid color.gray-very-dark
     text-align:       center
+    outline:          none
     -webkit-transition:  all 0.3s ease-in-out
     &:focus
         background-color: color.gray-very-dark
-        outline:          none
-        
+        border:           1px solid color.gray-most-dark
 #master
     color:      color.gray-dark
     &:focus
@@ -131,6 +131,14 @@ color.password-bright = color.blue-very-bright
     &.saved
         color:      color.gray-dark
         
+/*
+*  0000000     0000000   00000000   0000000    00000000  00000000 
+*  000   000  000   000  000   000  000   000  000       000   000
+*  0000000    000   000  0000000    000   000  0000000   0000000  
+*  000   000  000   000  000   000  000   000  000       000   000
+*  0000000     0000000   000   000  0000000    00000000  000   000
+*/
+    
 .border
     -webkit-transition:  all 0.3s ease-in-out
     box-shadow:    inset 2px 2px 17px rgba(0, 0, 0, 0.25)
@@ -143,6 +151,26 @@ color.password-bright = color.blue-very-bright
     background-color: color.gray-dark
     &.focus
         background-color: color.orange
+        box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.75)
+
+#password-border
+#master-border
+#site-border
+    margin-bottom: 12px
+
+#site-border
+    &.focus
+        background-color: color.site-medium
+        box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.75)
+
+#pattern-border
+    &.focus
+        background-color: color.pattern
+        box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.75)
+
+#password-border
+    &.focus
+        background-color: color.password
         box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.75)
 
 /*
@@ -159,31 +187,12 @@ color.password-bright = color.blue-very-bright
     margin:        12px
     border-radius: 12px
     box-shadow:    inset 2px 2px 15px rgba(0, 0, 0, 1.0)
-    &:hover
+    outline:       none
+    &:focus
         box-shadow:      2px 2px 15px rgba(0, 0, 0, 0.5)
     &:active
         box-shadow:      0px 0px  5px rgba(0, 0, 0, 0.5)
         opacity:         0.8
-
-#password-border
-#master-border
-#site-border
-    margin-bottom: 12px
-
-#site-border
-    &.focus
-        background-color: color.green
-        box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.75)
-
-#password-border
-    &.focus
-        background-color: color.blue
-        box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.75)
-
-#pattern-border
-    &.focus
-        background-color: color.gray
-        box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.75)
         
 /*
 *  0000000    000   000  0000000    0000000    000      00000000
@@ -194,6 +203,7 @@ color.password-bright = color.blue-very-bright
 */
 
 color.bubble = rgba(0,0,0,0.38)
+color.bubble-ask = rgba(0,0,0,0.8)
 
 #bubble
     pointer-events: none
@@ -205,8 +215,11 @@ color.bubble = rgba(0,0,0,0.38)
     -webkit-app-region: no-drag
     &.whisper
         left:     157px
+    &.deflated
+        left:     217px
 
-#bubble-tri
+#say-tri
+    -webkit-transition:  all 0.5s ease-in-out
     position:      absolute
     width:         0
     height:        0
@@ -214,10 +227,14 @@ color.bubble = rgba(0,0,0,0.38)
     border-left:   20px solid transparent 
     border-right:  20px solid transparent 
     border-bottom: 20px solid color.bubble
+    &.ask
+        border-bottom: 20px solid color.bubble-ask
 
 #say
+    -webkit-transition:  all 0.5s ease-in-out
     text-align:       center
     font-family:      UbuntuMono
+    font-size: 16px
     text-shadow:      2px 2px 5px black
     position:         absolute
     top:              20px
@@ -231,6 +248,9 @@ color.bubble = rgba(0,0,0,0.38)
     padding-right:    18px
     color:            color.orange
     background-color: color.bubble
+    &.ask
+        background-color: color.bubble-ask
+    
 #say b
         color: color.site-medium
 #say i
@@ -241,11 +261,17 @@ color.bubble = rgba(0,0,0,0.38)
         text-decoration: none
 #say p
         margin-top: 8px
-    
+            
 #bubble.whisper #say    
+    font-size:        16px
     height:           21px
     padding-left:     8px
     padding-right:    8px
+#bubble.deflated #say    
+    font-size:        0px
+    height:           8px
+    padding-left:     0px
+    padding-right:    0px
     
 .open
     color: color.blue-medium
@@ -271,36 +297,6 @@ color.bubble = rgba(0,0,0,0.38)
     margin-left   12px
     margin-right  12px
     
-.button-border
-    -webkit-app-region: no-drag
-    -webkit-transition:  all 0.3s ease-in-out
-    box-shadow:    inset 2px 2px 17px rgba(0, 0, 0, 0.25)
-    border:        1px solid color.gray-very-dark
-    padding:       10px
-    padding-top:   25px
-    padding-bottom: 11px
-    border-radius: 10px
-    margin-right:  7px
-    position:      relative
-    box-sizing:    padding-box
-    background-color: color.gray-dark
-    &:hover
-    &.focus
-        background-color: color.orange
-        box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.75)
-    color:          gray
-    &:hover
-        color: white
-    
-#help-border
-    margin-right:  0px
-    
-.button-icon
-    pointer-events: none
-    position:       absolute
-    left:           21px
-    top:            19px
-    
 .button
     -webkit-app-region: no-drag
     -webkit-transition:  all 0.3s ease-in-out
@@ -309,8 +305,77 @@ color.bubble = rgba(0,0,0,0.38)
     height:           35px
     width:            35px
     border-radius:    4px
-    border:           1px solid color.black
+    border:           1px solid color.gray-very-dark
     background-color: color.gray-very-dark
+    outline:          none    
     &:focus
+        box-shadow:       0 0 10px color.yellow
+        border:           1px solid color.black
         background-color: color.gray-very-dark
-        outline:          none
+    &:active
+        background-color: color.gray-most-dark
+    
+#list
+    &:focus
+        box-shadow: 0 0 10px color.password-bright
+        color:               color.password-medium
+
+#setup
+    &:focus
+        box-shadow: 0 0 10px color.pattern-bright
+        color:               color.pattern-medium
+
+#about
+    &:focus
+        box-shadow: 0 0 10px color.site-bright
+        color:               color.site-medium
+    
+.button-border
+    -webkit-app-region:   no-drag
+    -webkit-transition:   all 0.3s ease-in-out
+    box-shadow:           inset 2px 2px 17px rgba(0, 0, 0, 0.25)
+    border:               1px solid color.gray-very-dark
+    margin:               0px
+    padding:              10px
+    padding-top:          25px
+    padding-bottom:       11px
+    border-radius:        10px
+    margin-right:         7px
+    position:             relative
+    box-sizing:           padding-box
+    background-color:     color.gray-dark
+    color:                gray
+    &.focus
+        color:            color.yellow
+        background-color: color.orange        
+        box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.75)
+    
+#help-border
+    margin-right:  0px
+    
+#list-border
+    &.focus
+        color:            color.password-bright
+        background-color: color.password
+        box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.75)
+
+#setup-border
+    &.focus
+        color:            color.pattern-bright
+        background-color: color.pattern
+        box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.75)
+    
+#about-border
+    &.focus
+        color:            color.site-bright
+        background-color: color.site-medium
+        box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.75)
+    
+    
+.button-icon
+    pointer-events: none
+    position:       absolute
+    left:           21px
+    top:            19px
+    
+    

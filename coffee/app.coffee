@@ -94,9 +94,10 @@ patternChanged = ->
     
 masterBlurred = ->
     if stashLoaded or not stashExists
-        if $("master").value.length
-            while $("master").value.length < 23
-                $("master").value += 'x'
+        $("master").value = 'x'
+        # if $("master").value.length
+        #     while $("master").value.length < 23
+        #         $("master").value += 'x'
             
 siteConfirmed = -> 
     pw = $("password").value
@@ -132,8 +133,14 @@ document.observe 'dom:loaded', ->
             $(e.target.id+'-border').removeClassName 'focus'
         input.on 'input', (e) ->
             $(e.target.id+'-ghost').setStyle opacity: if e.target.value.length then 0 else 1
-        input.on 'mouseenter', (e) ->
-            $(e.target).focus()
+        if input.id != 'master'
+            input.on 'mouseenter', (e) ->
+                $(e.target).focus()
+            
+    for border in $$('.border')
+        if border.id != 'master-border'
+            border.on 'mouseenter', (e) ->
+                $(e.target.id.substr(0,e.target.id.length-7)).focus()
         
     $('bubble').opacity = 0
         
@@ -143,6 +150,8 @@ document.observe 'dom:loaded', ->
     $("pattern").on 'input', patternChanged
     $("sheep"  ).on 'click', toggleSettings
     $("sheep"  ).addClassName 'no-pointer'
+    $("sheep"  ).on 'mouseenter', (e) -> $('sheep').focus()
+
     $("master" ).focus()
     if domain = extractDomain clipboard.readText()
         setSite domain 
@@ -189,7 +198,7 @@ document.on 'keydown', (event) ->
                 if stash.configs[hash]?
                     if ask 'Forget <i>'+stash.configs[hash].pattern+'</i>', 'for <b>'+site+'</b>?'
                         delete stash.configs[hash]
-                        say 'The <b>' + site + '</b>', '<i>pattern</i> is forgotten now.', 2000
+                        say 'The <b>' + site + '</b>', '<i>pattern</i> is forgotten.', 2000
                         writeStash()
                         masterSitePassword()
                 return
@@ -217,11 +226,16 @@ document.on 'keydown', (event) ->
             if event.getModifierState 'Meta'
                 toggleSettings()
         when 27 # escape
-            $('pattern').value = stash.pattern
-            masterSitePassword()
             if e == $('pattern')
-                toggleSettings()
+                if $('pattern').value != stash.pattern
+                    setInput 'pattern', stash.pattern
+                    patternChanged()
+                    say()
+                else
+                    toggleSettings()
             else
+                $('pattern').value = stash.pattern
+                patternChanged()
                 win.hide() 
         when 13 # enter
             switch e
@@ -331,10 +345,7 @@ toggleSettings = ->
             hideSettings()
             showSitePassword()
         else
-            if $('site').value.length and not stash.configs?[genHash $('site').value+mstr]?
-                $('site-border').setStyle opacity: 0
-            else
-                hideSitePassword()
+            hideSitePassword()
             showSettings()
 
 showSettings = ->
@@ -400,6 +411,7 @@ greet = ->
 
 whisper = (boo) -> 
     $('bubble').setStyle opacity: 1
+    $('bubble').removeClassName 'deflated'
     $('bubble').addClassName 'whisper'
     $('say').innerHTML = boo
 
@@ -408,22 +420,28 @@ say = ->
     # log [].slice.call arguments, 0
     clearTimeout(unsay) if unsay?
     unsay = undefined
+    $('say').removeClassName 'ask'
+    $('say-tri').removeClassName 'ask'
     if arguments.length == 0
         $('say').innerHTML += ' '
         $('bubble').setStyle opacity: 0
+        $('bubble').addClassName 'deflated'
     else
         args = [].slice.call arguments, 0
         if args.length == 3
             delay = args.pop()
             unsay = setTimeout say, delay
             
+        $('bubble').removeClassName 'deflated'
         $('bubble').removeClassName 'whisper'
         $('bubble').setStyle opacity: 1
         $('say').innerHTML = args.join "<p>"
 
 ask = ->
-    log arguments[arguments.length-1]
+    # log arguments[arguments.length-1]
     if not $('say').innerHTML.endsWith(arguments[arguments.length-1]+'</p>')
         say.apply say, arguments
+        $('say').addClassName 'ask'
+        $('say-tri').addClassName 'ask'
         return false
     true
