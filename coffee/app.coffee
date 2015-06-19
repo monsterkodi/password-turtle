@@ -363,12 +363,14 @@ hideSettings = ->
 hideSitePassword = ->
     $('site-border').setStyle opacity: 0
     $('site-border').addClassName 'no-pointer'
+    $('site').addClassName 'no-pointer'
     $('password-border').setStyle opacity: 0
     $('password-border').addClassName 'no-pointer'
 
 showSitePassword = ->
     $('site-border').setStyle  opacity: 1
     $('site-border').removeClassName 'no-pointer'
+    $('site').removeClassName 'no-pointer'
     $('password-border').setStyle opacity: 1
     $('password-border').removeClassName 'no-pointer'
     $('site').focus()

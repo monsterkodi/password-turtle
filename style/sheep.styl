@@ -46,7 +46,11 @@ body
 *  000  000   000  000         0000000      000   
 */
      
+.no-pointer
+    pointer-events: none
+
 .main-input
+    -webkit-transition:  all 0.4s ease-in-out
     -webkit-app-region: no-drag
     font-size:        24px
     width:            100%
@@ -58,7 +62,6 @@ body
     border:           1px solid color.gray-very-dark
     text-align:       center
     outline:          none
-    -webkit-transition:  all 0.3s ease-in-out
     &:focus
         background-color: color.gray-very-dark
         border:           1px solid color.gray-most-dark
@@ -94,11 +97,9 @@ color.password-bright = color.blue-very-bright
     &:focus
         box-shadow: 0 0 10px color.password-bright
         color:               color.password-medium
-
-.no-pointer
-    pointer-events: none
     
 .ghost
+    -webkit-transition: all 0.8s ease-in-out
     pointer-events: none
     font-family:    sans-serif
     font-weight:    bold
@@ -110,7 +111,6 @@ color.password-bright = color.blue-very-bright
     text-align:     left
     padding-left:   20px
     color:          rgba(255, 255, 255, 0.1)
-    -webkit-transition: all 0.8s ease-in-out
     
 #lock
 #password-ghost
@@ -140,7 +140,7 @@ color.password-bright = color.blue-very-bright
 */
     
 .border
-    -webkit-transition:  all 0.3s ease-in-out
+    -webkit-transition:  all 0.4s ease-in-out
     box-shadow:    inset 2px 2px 17px rgba(0, 0, 0, 0.25)
     border:        1px solid color.gray-very-dark
     position:      relative
@@ -183,7 +183,7 @@ color.password-bright = color.blue-very-bright
 
 #sheep
     -webkit-app-region: no-drag
-    -webkit-transition: all 0.2s ease-in-out
+    -webkit-transition: box-shadow 0.3s ease-in-out
     margin:        12px
     border-radius: 12px
     box-shadow:    inset 2px 2px 15px rgba(0, 0, 0, 1.0)
@@ -293,13 +293,16 @@ color.bubble-ask = rgba(0,0,0,0.8)
     right: 0
 
 #button-list
-    margin-top    23px
+    margin-top    12px
     margin-left   12px
+    margin-right  12px
     margin-right  12px
     
 .button
     -webkit-app-region: no-drag
-    -webkit-transition:  all 0.3s ease-in-out
+    -webkit-transition-property: box-shadow, border  
+    -webkit-transition-duration: 0.4s
+    -webkit-transition-timing-function: ease-in-out
     box-sizing:       border-box
     position:         static
     height:           35px
@@ -331,18 +334,17 @@ color.bubble-ask = rgba(0,0,0,0.8)
         color:               color.site-medium
     
 .button-border
-    -webkit-app-region:   no-drag
-    -webkit-transition:   all 0.3s ease-in-out
+    -webkit-app-region:   drag
+    -webkit-transition:   all 0.4s ease-in-out
+    pointer-events:       all
     box-shadow:           inset 2px 2px 17px rgba(0, 0, 0, 0.25)
     border:               1px solid color.gray-very-dark
-    margin:               0px
-    padding:              10px
-    padding-top:          25px
-    padding-bottom:       11px
-    border-radius:        10px
-    margin-right:         7px
+    display:              inline-block
     position:             relative
-    box-sizing:           padding-box
+    padding:              10px
+    margin:               0px
+    margin-right:         7px
+    border-radius:        10px
     background-color:     color.gray-dark
     color:                gray
     &.focus
@@ -371,11 +373,9 @@ color.bubble-ask = rgba(0,0,0,0.8)
         background-color: color.site-medium
         box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.75)
     
-    
 .button-icon
     pointer-events: none
     position:       absolute
     left:           21px
     top:            19px
-    
     
