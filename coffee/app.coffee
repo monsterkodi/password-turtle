@@ -37,7 +37,6 @@ stashLoaded = false
 
 log   = () -> ipc.send 'knixlog',   [].slice.call arguments, 0
 dbg   = () -> ipc.send 'knixlog',   [].slice.call arguments, 0
-error = () -> ipc.send 'knixerror', [].slice.call arguments, 0
 
 resetStash = ->
     stashLoaded = false
@@ -88,7 +87,6 @@ masterConfirmed = ->
                     masterAnimDir = 1
                     masterAnim()
                 else
-                    log 'can\'t open stash file:', stashFile 
                     whisper ['oops?', 'what?', 'again?', '...?', 'nope!'][random 4], 2000
         else
             say ['Well chosen!', 'Nice one!', 'Good choice!', 'I didn\'t expect that :)', 'Amazing!'][random 4], 
@@ -170,9 +168,7 @@ document.observe 'dom:loaded', ->
         if border.id != 'master-border'
             border.on 'mouseenter', (e) ->
                 $(e.target.id.substr(0,e.target.id.length-7)).focus()
-        
-    # $('bubble').opacity = 0
-        
+                
     $("master" ).on 'input', masterChanged
     $("site"   ).on 'input', siteChanged
     $("pattern").on 'input', patternChanged
@@ -190,10 +186,7 @@ document.observe 'dom:loaded', ->
     hideSettings()
     resetStash()
     stashExists = fs.existsSync stashFile
-    if stashExists
-        # log 'found stash file', stashFile
-        say()
-    else
+    if not stashExists
         masterChanged()
 
 win.on 'focus', (event) -> 
@@ -272,8 +265,6 @@ document.on 'keydown', (event) ->
                 when $("master")  then masterConfirmed()
                 when $("site")    then siteConfirmed()
                 when $("pattern") then patternConfirmed()
-        # else
-        #     dbg key
 
 ###
  0000000  000000000   0000000    0000000  000   000
@@ -286,17 +277,18 @@ document.on 'keydown', (event) ->
 deleteStash = () ->
     if ask 'delete all remembered <i>patterns</i>?', 'if yes, confirm again.'
         fs.unlink stashFile, (err) ->
-            resetStash()
-            stashExists = false
-            $('master').value = ''
-            $('master').focus()
-            masterChanged()
-            # whisper 'I remember nothing!', 3000
+            if err
+                say 'woops!', 'can\'t remove file!'
+            else
+                resetStash()
+                stashExists = false
+                $('master').value = ''
+                $('master').focus()
+                masterChanged()
     
 writeStash = () ->
     stashString = JSON.stringify(stash)
     buf = new Buffer(stashString, "utf8")
-    # log 'write stash', buf.length, stashFile, mstr, JSON.stringify(stash)
     cryptools.encryptFile stashFile, buf, mstr
     updateFloppy()
     if not stashLoaded
@@ -308,7 +300,6 @@ readStash = (cb) ->
     if fs.existsSync stashFile
         decryptFile stashFile, mstr, (err, json) -> 
             if err?
-                error err
                 resetStash()
             else
                 stashLoaded = true
@@ -317,7 +308,6 @@ readStash = (cb) ->
                 updateFloppy()
             cb()
     else
-        log 'stash doesn\'t exists' + stashFile
         resetStash()
         cb()
 
@@ -332,9 +322,7 @@ numConfigs = () ->
 0000000   000     000     00000000
 ###
     
-makePassword = (hash, config) ->
-    # log "hash:" + hash + "config:" + jsonStr(config)
-    password.make hash, config.pattern
+makePassword = (hash, config) -> password.make hash, config.pattern
         
 showPassword = (config) ->
     url    = decrypt config.url, mstr
@@ -353,8 +341,6 @@ masterSitePassword = () ->
         
     if stash.configs?[hash]?
         config = stash.configs[hash]
-        log "cfgpattern", jsonStr config
-        log "patterlval", $('pattern').value
         if config.pattern == stash.pattern
             showLockClosed()
         else 
@@ -442,41 +428,28 @@ unsay = undefined
 whisper = (boo) -> 
     clearTimeout(unsay) if unsay?
     unsay = undefined
-    $('say').removeClassName 'ask'
-    $('say-tri').removeClassName 'ask'    
     if arguments.length > 1
         unsay = setTimeout say, arguments[1]
-    $('bubble').setStyle opacity: 1
-    $('bubble').removeClassName 'deflated'
-    $('bubble').addClassName 'whisper'
+    $('bubble').className = 'whisper'
     $('say').innerHTML = boo
 
 say = -> 
-    # log [].slice.call arguments, 0
     clearTimeout(unsay) if unsay?
     unsay = undefined
-    $('say').removeClassName 'ask'
-    $('say-tri').removeClassName 'ask'
     if arguments.length == 0
         $('say').innerHTML += ' '
-        $('bubble').setStyle opacity: 0
-        $('bubble').addClassName 'deflated'
+        $('bubble').className = 'silent'
     else
         args = [].slice.call arguments, 0
         if args.length == 3
             delay = args.pop()
             unsay = setTimeout say, delay
-            
-        $('bubble').removeClassName 'deflated'
-        $('bubble').removeClassName 'whisper'
-        $('bubble').setStyle opacity: 1
+        $('bubble').className = "say"
         $('say').innerHTML = args.join "<p>"
 
 ask = ->
-    # log arguments[arguments.length-1]
     if not $('say').innerHTML.endsWith(arguments[arguments.length-1]+'</p>')
         say.apply say, arguments
-        $('say').addClassName 'ask'
-        $('say-tri').addClassName 'ask'
+        $('bubble').className = "ask"
         return false
     true
