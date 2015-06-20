@@ -50,6 +50,14 @@ resetStash = ->
         pattern: ''
         configs: {}                
 
+###
+ 0000000   000   000  000  00     00
+000   000  0000  000  000  000   000
+000000000  000 0 000  000  000000000
+000   000  000  0000  000  000 0 000
+000   000  000   000  000  000   000
+###
+
 masterAnimDir = 0
 masterAnim = ->
     if masterAnimDir == 1
@@ -130,7 +138,7 @@ patternChanged = ->
     updateFloppy()
     masterSitePassword()
                     
-siteConfirmed = -> 
+copyPassword = -> 
     pw = $("password").value
     if pw.length
         clipboard.writeText pw
@@ -147,11 +155,11 @@ siteChanged = ->
     masterSitePassword()
     
 ###
-000  000   000  000  000000000  00000000  000   000  00000000  000   000  000000000   0000000
-000  0000  000  000     000     000       000   000  000       0000  000     000     000     
-000  000 0 000  000     000     0000000    000 000   0000000   000 0 000     000     0000000 
-000  000  0000  000     000     000          000     000       000  0000     000          000
-000  000   000  000     000     00000000      0      00000000  000   000     000     0000000 
+00000000  000   000  00000000  000   000  000000000   0000000
+000       000   000  000       0000  000     000     000     
+0000000    000 000   0000000   000 0 000     000     0000000 
+000          000     000       000  0000     000          000
+00000000      0      00000000  000   000     000     0000000 
 ###
     
 initEvents = () ->
@@ -171,14 +179,15 @@ initEvents = () ->
             border.on 'mouseenter', (e) ->
                 $(e.target.id.substr(0,e.target.id.length-7)).focus()
                 
-    $("master" ).on 'input', masterChanged
-    $("site"   ).on 'input', siteChanged
-    $("pattern").on 'input', patternChanged
-    $('sheep'  ).on 'click', toggleSettings
-    $('sheep'  ).disabled = true
-    $('sheep'  ).on 'mouseenter', (e) -> $('sheep').focus()
-    $("delete" ).on 'click', deleteStash
-    $("list"   ).on 'click', listStash
+    $('master'  ).on 'input', masterChanged
+    $('site'    ).on 'input', siteChanged
+    $('password').on 'click', copyPassword
+    $('pattern' ).on 'input', patternChanged
+    $('sheep'   ).on 'click', toggleSettings
+    $('delete'  ).on 'click', deleteStash
+    $('list'    ).on 'click', listStash
+    $('sheep'   ).on 'mouseenter', (e) -> $('sheep').focus()
+    # $('sheep'   ).disabled = true
     
 ###
 000       0000000    0000000   0000000    00000000  0000000  
@@ -287,7 +296,7 @@ onDocumentKeyDown = (event) ->
         when 13 # enter
             switch e
                 when $("master")  then masterConfirmed()
-                when $("site")    then siteConfirmed()
+                when $("site")    then copyPassword()
                 when $("pattern") then patternConfirmed()
 
 document.on 'keydown', onDocumentKeyDown
@@ -367,37 +376,47 @@ onListKey = (event) ->
             e.parentElement.remove()
             writeStash()
         when 13 # enter
-            log 'open item >'+e.nextSibling.innerHTML+'<'
             $('stashlist').closeList e.nextSibling.innerHTML
+        when 188 # comma
+            if event.getModifierState 'Meta'
+                $('stashlist').closeList()
+                hideSitePassword()
+                showSettings()
         else
             log key
 
 listStash = () ->
-    if isempty stash.configs
-        return
-    savedBody = document.body.innerHTML
-    document.body.innerHTML = '<div id="stashlist"></div>'
+    
+    if isempty stash.configs then return
+    savedFocus = document.activeElement.id
+    savedSite  = $('site').value
+    savedBody  = document.body.innerHTML
+    document.body.innerHTML = '<div id="stashlist"></div>'    
+    
     $('stashlist').closeList = (site) ->
         document.body.innerHTML = savedBody
         initEvents()
         setInput 'pattern', stash.pattern
         setInput 'master',  mstr[0]
-        setInput 'site',    site
-        updateFloppy()
-        $('list').focus()
+        if site?
+            hideSettings()
+            showSitePassword()
+            setInput 'site', site
+            masterSitePassword()            
+            copyPassword()
+        else
+            setInput 'site', savedSite
+            $(savedFocus)?.focus()
+            masterSitePassword()
+            updateFloppy()
         
     for hash in Object.keys stash.configs
         config = stash.configs[hash]
         site = decrypt config.url, mstr
-        item = new Element 'div',
-            class: 'stash-item-border border'
-        item.insert (new Element 'input',
-            id:    hash
-            type:  'button',
-            class: 'stash-item')
-        item.insert (new Element 'span',
-            class: 'site').update site
-        lock = new Element 'span', class: 'lock'
+        item =       new Element 'div', class: 'stash-item-border border'
+        item.insert  new Element 'input', id: hash, type: 'button', class: 'stash-item'
+        item.insert (new Element 'span', class: 'site').update site
+        lock =       new Element 'span', class: 'lock'
         item.insert lock
         if config.pattern == stash.pattern
             lockClosed lock
@@ -406,9 +425,10 @@ listStash = () ->
             item.insert (new Element 'span', 
                 class: 'pattern').update config.pattern
             
-        item.on 'mouseenter', (e) -> e.target.childElements[0].focus()
-    
         $('stashlist').insert item
+            
+        item.on 'mouseenter', (e) -> e.target.childElements[0].focus()    
+        $(hash).on 'click',   (e) -> $('stashlist').closeList e.target.nextSibling.innerHTML
 
     for input in $$('input')
         input.on 'focus',      (e) -> $(e.target.parentElement).addClassName 'focus'
@@ -495,7 +515,6 @@ hideSettings = ->
 hideSitePassword = ->
     $('site-border').setStyle opacity: 0
     $('site-border').addClassName 'no-pointer'
-    # $('site').addClassName 'no-pointer'
     $('site').disabled = true
     $('password-border').setStyle opacity: 0
     $('password-border').addClassName 'no-pointer'
@@ -504,7 +523,6 @@ hideSitePassword = ->
 showSitePassword = ->
     $('site-border').setStyle  opacity: 1
     $('site-border').removeClassName 'no-pointer'
-    # $('site').removeClassName 'no-pointer'
     $('site').disabled = false    
     $('password-border').setStyle opacity: 1
     $('password-border').removeClassName 'no-pointer'
@@ -536,6 +554,14 @@ updateFloppy = ->
         $('floppy').removeClassName 'saved'
     else
         $('floppy').addClassName 'saved'
+        
+###
+000000000   0000000   000      000   000
+   000     000   000  000      000  000 
+   000     000000000  000      0000000  
+   000     000   000  000      000  000 
+   000     000   000  0000000  000   000
+###
 
 unsay = undefined
 
