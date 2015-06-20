@@ -134,15 +134,19 @@ createWindow()
    000      0000000   0000000     0000000 
 ###
 ###
-- delete stash
 - timeout
 - about
 - config list
 - bright style
 - render clean sheep image(s)
+- snatch site from firefox
 - preferences
     - global shortcut
     - timeout delay
     - bright/dark style
+    - mask saved passwords
+    - enable site snatching
+    - less verbose mode?
 - fix blind tab focus
+- tests?
 ###

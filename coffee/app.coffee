@@ -118,6 +118,7 @@ masterChanged = ->
     hideSitePassword()
     hideSettings()
     stashLoaded = false
+    say()
     # masterSitePassword()
     masterFade()
     
@@ -261,7 +262,7 @@ document.on 'keydown', (event) ->
             if event.getModifierState 'Meta'
                 toggleSettings()
         when 27 # escape
-            if e == $('pattern')
+            if e == $('pattern') or $('settings').visible()
                 if $('pattern').value != stash.pattern
                     setInput 'pattern', stash.pattern
                     patternChanged()
@@ -289,7 +290,7 @@ document.on 'keydown', (event) ->
 ###
 
 deleteStash = () ->
-    if ask 'delete all remembered <i>patterns</i>?', 'if yes, press return again.'
+    if ask 'delete all remembered <i>patterns</i>?', 'if yes, confirm again.'
         fs.unlink stashFile, (err) ->
             resetStash()
             stashExists = false
@@ -396,7 +397,8 @@ showSettings = ->
     
 hideSettings = ->
     $('settings').hide()
-    #say()
+    say() if stashExists
+    stashExists = fs.existsSync stashFile
     if $('pattern').value.length == 0 and stash?.pattern
         setInput 'pattern', stash.pattern
         patternChanged()
@@ -445,6 +447,8 @@ updateFloppy = ->
 hideLock = ->
     $('lock').setStyle opacity: 0
 
+unsay = undefined
+
 whisper = (boo) -> 
     clearTimeout(unsay) if unsay?
     unsay = undefined
@@ -457,7 +461,6 @@ whisper = (boo) ->
     $('bubble').addClassName 'whisper'
     $('say').innerHTML = boo
 
-unsay = undefined
 say = -> 
     # log [].slice.call arguments, 0
     clearTimeout(unsay) if unsay?
