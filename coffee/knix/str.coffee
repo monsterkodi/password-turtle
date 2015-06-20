@@ -14,16 +14,16 @@ strIndent = "    "
 str = (o,indent="",visited=[]) ->
     if not o? 
         if o == null
-            return "<null>"
+            return "null"
         if o == undefined
-            return "<undefined>"
-        return "<0>"
+            return "undefined"
+        return "0"
     t = typeof o
     if t == 'string'
         return o
     else if t == 'object'
         if o in visited
-            if o.id? and typeof o.id == 'string' and o.localName? then return "<" + o.localName + "#" + o.id + ">"
+            if o.id? and typeof o.id == 'string' and o.localName? then return "{" + o.localName + "#" + o.id + "}"
             return "<visited>"
         protoname = o.constructor.name
         if not protoname? or protoname == ""
@@ -41,7 +41,7 @@ str = (o,indent="",visited=[]) ->
             if o._str?
                 return o._str()
             else
-                s = "<" + protoname + ">\n"
+                s = "{" + protoname + "}\n"
                 visited.push o
                 s += ( indent+strIndent+k + ": " + str(o[k],indent+strIndent,visited) for k in Object.getOwnPropertyNames(o) when not isFunction o[k] ).join("\n")
                 # s += ( indent+strIndent+k + ": " + str(o[k],indent+strIndent,visited) for k in Object.getOwnPropertyNames(o) ).join("\n")
@@ -50,7 +50,7 @@ str = (o,indent="",visited=[]) ->
         return "->"
     else
         return String(o) # plain values
-    return "<???>"
+    return "???"
 
 String.prototype.fmt = ->
     vsprintf this, [].slice.call arguments

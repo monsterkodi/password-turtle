@@ -7,6 +7,7 @@
 ###
 
 clipboard = require 'clipboard'
+values    = require 'lodash.values'
 random    = require 'lodash.random'
 trim      = require 'lodash.trim'
 pad       = require 'lodash.pad'
@@ -144,15 +145,14 @@ siteChanged = ->
     masterSitePassword()
     
 ###
-000       0000000    0000000   0000000    00000000  0000000  
-000      000   000  000   000  000   000  000       000   000
-000      000   000  000000000  000   000  0000000   000   000
-000      000   000  000   000  000   000  000       000   000
-0000000   0000000   000   000  0000000    00000000  0000000  
+000  000   000  000  000000000  00000000  000   000  00000000  000   000  000000000   0000000
+000  0000  000  000     000     000       000   000  000       0000  000     000     000     
+000  000 0 000  000     000     0000000    000 000   0000000   000 0 000     000     0000000 
+000  000  0000  000     000     000          000     000       000  0000     000          000
+000  000   000  000     000     00000000      0      00000000  000   000     000     0000000 
 ###
-
-document.observe 'dom:loaded', ->
-        
+    
+initEvents = () ->
     for input in $$('input')
         input.on 'focus', (e) -> 
             $(e.target.id+'-border').addClassName 'focus'
@@ -175,10 +175,22 @@ document.observe 'dom:loaded', ->
     $("sheep"  ).on 'click', toggleSettings
     $("sheep"  ).addClassName 'no-pointer'
     $("sheep"  ).on 'mouseenter', (e) -> $('sheep').focus()
+    $("delete" ).on 'click', deleteStash
+    $("list"   ).on 'click', listStash
     
-    $("delete" ).on 'click', (e) -> deleteStash()
+###
+000       0000000    0000000   0000000    00000000  0000000  
+000      000   000  000   000  000   000  000       000   000
+000      000   000  000000000  000   000  0000000   000   000
+000      000   000  000   000  000   000  000       000   000
+0000000   0000000   000   000  0000000    00000000  0000000  
+###
 
-    $("master" ).focus()
+document.observe 'dom:loaded', ->
+        
+    initEvents()
+    
+    $("master").focus()
     if domain = extractDomain clipboard.readText()
         setSite domain 
 
@@ -208,12 +220,22 @@ win.on 'focus', (event) ->
 000  000   000          000     000   000  000   000  000   000  000  0000
 000   000  00000000     000     0000000     0000000   00     00  000   000
 ###
-        
-document.on 'keydown', (event) ->
+            
+onDocumentKeyDown = (event) ->
     key  = event.which
+    e    = document.activeElement
+    # log 'key', key, e.name, e.id, e.className
+    
+    if $('stashlist')?
+        onListKey event
+        return
+    
+    if key == 76 and event.getModifierState 'Meta' # Command-l
+        listStash()
+        return
+    
     site = $('site').value
     hash = genHash(site+mstr)
-    e    = document.activeElement
     
     if e == $('password')
         switch key
@@ -266,6 +288,8 @@ document.on 'keydown', (event) ->
                 when $("site")    then siteConfirmed()
                 when $("pattern") then patternConfirmed()
 
+document.on 'keydown', onDocumentKeyDown
+
 ###
  0000000  000000000   0000000    0000000  000   000
 000          000     000   000  000       000   000
@@ -311,9 +335,75 @@ readStash = (cb) ->
         resetStash()
         cb()
 
+###
+000      000   0000000  000000000
+000      000  000          000   
+000      000  0000000      000   
+000      000       000     000   
+0000000  000  0000000      000   
+###
+
 numConfigs = () ->
     keysIn(stash.configs).length
 
+onListKey = (event) ->
+    e   = document.activeElement
+    key = event.which
+    # dbg key, e.name, e.id, e.className
+    if key == 27 or key == 76 and event.getModifierState 'Meta' # escape or Command-l
+        $('stashlist').closeList()
+    if key == 39 or key == 40 # right or down
+        if e? then e.parentElement?.nextSibling?.firstElementChild?.focus()
+    if key == 37 or key == 38 # left or up
+        if e? then e.parentElement?.previousSibling?.firstElementChild?.focus()
+    
+
+listStash = () ->
+    savedBody = document.body.innerHTML
+    document.body.innerHTML = '<div id="stashlist"></div>'
+    $('stashlist').closeList = ->
+        document.body.innerHTML = savedBody
+        initEvents()
+        setInput 'pattern', stash.pattern
+        setInput 'master', mstr[0]
+        updateFloppy()
+        $('list').focus()
+        
+    for config in values(stash.configs)
+        site = decrypt config.url, mstr
+        item = new Element 'div',
+            class: 'stash-item-border border'
+        item.insert (new Element 'input',
+            type:  'button',
+            class: 'stash-item')
+        item.insert (new Element 'span',
+            class: 'site').update site
+        lock = new Element 'span', class: 'lock'
+        item.insert lock
+        if config.pattern == stash.pattern
+            lockClosed lock
+        else
+            lockOpen lock
+            item.insert (new Element 'span', 
+                class: 'pattern').update config.pattern
+            
+        item.on 'mouseenter', (e) -> e.target.childElements[0].focus()
+    
+        $('stashlist').insert item
+
+    checkFocus = () ->
+        if document.activeElement.className.length == 0
+            $('stashlist').firstElementChild.firstElementChild.focus()
+
+    for input in $$('input')
+        input.on 'focus',      (e) -> $(e.target.parentElement).addClassName 'focus'
+        input.on 'mouseenter', (e) -> $(e.target).focus()
+        input.on 'blur',       (e) -> 
+            $(e.target.parentElement).removeClassName 'focus'
+            setTimeout checkFocus, 0
+            
+    $('stashlist').firstElementChild.firstElementChild.focus()
+    
 ###
  0000000  000  000000000  00000000
 000       000     000     000     
@@ -342,9 +432,9 @@ masterSitePassword = () ->
     if stash.configs?[hash]?
         config = stash.configs[hash]
         if config.pattern == stash.pattern
-            showLockClosed()
+            lockClosed $('lock')
         else 
-            showLockOpen()
+            lockOpen $('lock')
     else        
         config = {}
         config.url = encrypt site, mstr
@@ -404,24 +494,25 @@ setInput = (input, value) ->
     $(input).value = value
     $(input+'-ghost').setStyle opacity: (value.length == 0 and 1 or 0)
     
-showLockClosed = ->
-    $('lock').innerHTML = '<span><i class="fa fa-lock fa-lg"></i></span>'
-    $('lock').setStyle opacity: 1
-    $('lock').addClassName 'closed'
+lockClosed = (e) -> 
+    e.innerHTML = '<span><i class="fa fa-lock fa-lg"></i></span>'
+    e.removeClassName 'open'
+    e.addClassName 'closed'
 
-showLockOpen = ->
-    $('lock').innerHTML = '<span><i class="fa fa-unlock fa-lg"></i></span>'
-    $('lock').setStyle opacity: 1
+lockOpen = (e) ->        
+    e.innerHTML = '<span><i class="fa fa-unlock fa-lg"></i></span>'
+    e.removeClassName 'closed'
+    e.addClassName 'open'    
+
+hideLock = -> 
+    $('lock').removeClassName 'open'
     $('lock').removeClassName 'closed'
-    
+            
 updateFloppy = ->
     if stash?.pattern != $("pattern").value or stash?.pattern == ''
         $('floppy').removeClassName 'saved'
     else
         $('floppy').addClassName 'saved'
-
-hideLock = ->
-    $('lock').setStyle opacity: 0
 
 unsay = undefined
 

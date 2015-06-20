@@ -22,13 +22,18 @@ color.blue-medium      = #6666ff
 color.blue-bright      = #8888ff
 color.blue-very-bright = #aaaaff
 
+color.background = #222222
+
+border-transition()
+    -webkit-transition: all 0.4s ease-in-out
+
 @font-face
     font-family: UbuntuMono
     src: url('./font/UbuntuMono-R.ttf')
 
 body
     font-family:      Verdana
-    background-color: #222222
+    background-color: color.background
     margin:           0px
     height:           100%
     overflow: hidden
@@ -45,6 +50,9 @@ body
 *  000  000  0000  000        000   000     000   
 *  000  000   000  000         0000000      000   
 */
+
+input 
+    outline: none
      
 .no-pointer
     pointer-events: none
@@ -61,7 +69,6 @@ body
     border-radius:    4px
     border:           1px solid color.gray-very-dark
     text-align:       center
-    outline:          none
     &:focus
         background-color: color.gray-very-dark
         border:           1px solid color.gray-most-dark
@@ -115,12 +122,17 @@ color.password-bright = color.blue-very-bright
 #lock
 #password-ghost
     -webkit-transition: all 0.2s ease-in-out
-    
+
+.lock    
 #lock
     top:            14px
-    color:          color.orange
+    opacity:        0    
     &.closed
+        opacity:    1
         color:      color.blue-medium
+    &.open
+        opacity:    1
+        color:      color.orange
 
 #floppy
     font-size:      19px
@@ -140,7 +152,7 @@ color.password-bright = color.blue-very-bright
 */
     
 .border
-    -webkit-transition:  all 0.4s ease-in-out
+    border-transition()
     box-shadow:    inset 2px 2px 17px rgba(0, 0, 0, 0.25)
     border:        1px solid color.gray-very-dark
     position:      relative
@@ -187,7 +199,6 @@ color.password-bright = color.blue-very-bright
     margin:        12px
     border-radius: 12px
     box-shadow:    inset 2px 2px 15px rgba(0, 0, 0, 1.0)
-    outline:       none
     &:focus
         box-shadow:      2px 2px 15px rgba(0, 0, 0, 0.5)
     &:active
@@ -319,7 +330,6 @@ color.bubble-ask = rgba(0,0,0,0.8)
     border-radius:    4px
     border:           1px solid color.gray-very-dark
     background-color: color.gray-very-dark
-    outline:          none    
     &:focus
         box-shadow:       0 0 10px color.yellow
         border:           1px solid color.black
@@ -387,4 +397,53 @@ color.bubble-ask = rgba(0,0,0,0.8)
     position:       absolute
     left:           21px
     top:            19px
+
+/*
+*   0000000  000000000   0000000    0000000  000   000  000      000   0000000  000000000
+*  000          000     000   000  000       000   000  000      000  000          000   
+*  0000000      000     000000000  0000000   000000000  000      000  0000000      000   
+*       000     000     000   000       000  000   000  000      000       000     000   
+*  0000000      000     000   000  0000000   000   000  0000000  000  0000000      000   
+*/
+
+#stashlist
+    position:       absolute
+    padding-top:    10px
+    padding-bottom: 10px
+    padding-left:   0
+    padding-right:  0
+    top:            0
+    left:           0
+    right:          0
+    bottom:         0
+    overflow:       auto
+
+.stash-item-border
+    padding:  5px
+        
+    & .site
+    & .lock    
+    & .pattern
+        position:       absolute
+        pointer-events: none
+        top:            7px
+        
+    & .site
+        left:      10px
+        color:     color.site-bright
+    & .lock
+        left:      0
+        right:     0
+        text-align: center
+    & .pattern
+        left:      60%
+        color:     color.pattern-bright
+
+.stash-item
+    width:   100%
+    height:  24px
+    border: none
+    border-radius: 6px    
+    background-color: color.gray-dark
+        
     
