@@ -41,6 +41,8 @@ error = () -> ipc.send 'knixerror', [].slice.call arguments, 0
 
 resetStash = ->
     stashLoaded = false
+    clearInput 'site'
+    clearInput 'password'
     clearInput 'pattern'
     showDirty()
     stash =     
@@ -63,8 +65,13 @@ masterAnim = ->
             masterAnim()
         else
             masterAnimDir = 0
-            showSitePassword()
-            masterSitePassword()
+            if stashExists
+                showSitePassword()
+                masterSitePassword()
+            else
+                showSettings()
+                $('button-list').hide()
+                $("sheep").removeClassName 'no-pointer'
             
 masterFade = ->
     if win.getSize()[1] > 355
@@ -82,18 +89,19 @@ masterConfirmed = ->
                     masterAnim()
                 else
                     log 'can\'t open stash file:', stashFile 
-                    whisper ['oops?', 'what?', 'again?', '...?', 'nope!'][random 4]
+                    whisper ['oops?', 'what?', 'again?', '...?', 'nope!'][random 4], 2000
         else
-            say ['Well chosen!', 'Nice one!', 'Good choice!', 'I didn\'t expect that :)', 'I never would have guessed that!'][random 4], 
+            say ['Well chosen!', 'Nice one!', 'Good choice!', 'I didn\'t expect that :)', 'Amazing!'][random 4], 
                 'And your <span class="open" onclick="openUrl(\'http://github.com\');">password pattern?</span>'
-            showSettings()
-            $("sheep"  ).removeClassName 'no-pointer'
+            masterAnimDir = 1
+            masterAnim()                
 
 patternConfirmed = ->
     if $("pattern").value.length and stash.pattern != $("pattern").value
         if stash.pattern == ''
             say ['Also nice!', 'What a beautiful pattern!', 'Not bad either!', 'Congratulations!', 'The setup is done!'][random 4], 
-                'Have fun generating passwords!', 3000
+                'Have fun generating passwords!', 5000
+            $('button-list').show()
         else
             if not ask 'change the default <i>pattern</i>?', 'if yes, press return again.'
                 return
@@ -110,8 +118,7 @@ masterChanged = ->
     hideSitePassword()
     hideSettings()
     stashLoaded = false
-    greet()
-    masterSitePassword()
+    # masterSitePassword()
     masterFade()
     
 patternChanged = ->
@@ -129,7 +136,7 @@ siteConfirmed = ->
     if pw.length
         clipboard.writeText pw
         $("password").focus()
-        say '<u>' + pw + '</u>', 'on the clipboard', 5000
+        whisper '<u>password</u> copied', 2000
     
 setSite = (site) ->
     setInput 'site',  site
@@ -154,7 +161,7 @@ document.observe 'dom:loaded', ->
         input.on 'focus', (e) -> 
             $(e.target.id+'-border').addClassName 'focus'
         input.on 'blur',  (e) -> 
-            say()
+            # say()
             $(e.target.id+'-border').removeClassName 'focus'
         input.on 'input', (e) ->
             $(e.target.id+'-ghost').setStyle opacity: if e.target.value.length then 0 else 1
@@ -176,6 +183,8 @@ document.observe 'dom:loaded', ->
     $("sheep"  ).on 'click', toggleSettings
     $("sheep"  ).addClassName 'no-pointer'
     $("sheep"  ).on 'mouseenter', (e) -> $('sheep').focus()
+    
+    $("delete" ).on 'click', (e) -> deleteStash()
 
     $("master" ).focus()
     if domain = extractDomain clipboard.readText()
@@ -187,9 +196,10 @@ document.observe 'dom:loaded', ->
     stashExists = fs.existsSync stashFile
     if stashExists
         log 'found stash file', stashFile
+        say()
     else
-        log 'no stash file!'
-    greet()
+        say 'Welcome to <b>sheepword</b>.', 
+            'What will be your <span class="open" onclick="openUrl(\'http://github.com\');">master key?</span>'
 
 win.on 'focus', (event) -> 
     if stashLoaded
@@ -277,23 +287,30 @@ document.on 'keydown', (event) ->
      000     000     000   000       000  000   000
 0000000      000     000   000  0000000   000   000
 ###
+
+deleteStash = () ->
+    if ask 'delete all remembered <i>patterns</i>?', 'if yes, press return again.'
+        fs.unlink stashFile, (err) ->
+            resetStash()
+            stashExists = false
+            $('master').value = ''
+            $('master').focus()
+            masterChanged()
+            whisper 'I remember nothing!', 3000
     
 writeStash = () ->
     stashString = JSON.stringify(stash)
     buf = new Buffer(stashString, "utf8")
-    log 'write stash', buf.length, stashFile, mstr, JSON.stringify(stash)
+    # log 'write stash', buf.length, stashFile, mstr, JSON.stringify(stash)
     cryptools.encryptFile stashFile, buf, mstr
     if $('pattern').value == stash.pattern then showSaved()
     if not stashLoaded
         readStash () -> 
-            # log 'stash loaded', stashLoaded
             if stashLoaded and JSON.stringify(stash) == stashString
-                # log 'stash confirmed'
                 toggleSettings()
 
 readStash = (cb) ->
     if fs.existsSync stashFile
-        log 'stash exists' + stashFile + ' ' + mstr
         decryptFile stashFile, mstr, (err, json) -> 
             if err?
                 error err
@@ -327,7 +344,6 @@ makePassword = (hash, config) ->
 showPassword = (config) ->
     url    = decrypt config.url, mstr
     pass   = makePassword genHash(url+mstr), config
-    # dbg pass
     setInput 'password', pass
     pass
     
@@ -380,7 +396,7 @@ showSettings = ->
     
 hideSettings = ->
     $('settings').hide()
-    say()
+    #say()
     if $('pattern').value.length == 0 and stash?.pattern
         setInput 'pattern', stash.pattern
         patternChanged()
@@ -423,20 +439,19 @@ updateFloppy = ->
     if stash.pattern != $("pattern").value
         showDirty()
     else
-        say()
+        # say()
         showSaved()
 
 hideLock = ->
     $('lock').setStyle opacity: 0
 
-greet = ->
-    if stashExists
-        say()
-    else
-        say 'Welcome to <b>sheepword</b>.', 
-            'What will be your <span class="open" onclick="openUrl(\'http://github.com\');">master key?</span>'
-
 whisper = (boo) -> 
+    clearTimeout(unsay) if unsay?
+    unsay = undefined
+    $('say').removeClassName 'ask'
+    $('say-tri').removeClassName 'ask'    
+    if arguments.length > 1
+        unsay = setTimeout say, arguments[1]
     $('bubble').setStyle opacity: 1
     $('bubble').removeClassName 'deflated'
     $('bubble').addClassName 'whisper'

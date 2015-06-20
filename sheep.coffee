@@ -14,7 +14,7 @@ events        = require 'events'
 Tray          = require 'tray'
 BrowserWindow = require 'browser-window'
 
-debug = true
+debug = false
 win   = undefined
 knx   = undefined
 
@@ -41,8 +41,7 @@ ipc.on 'knixwarning', (event, args) -> knx?.webContents.send 'knix_warning', arg
 showWindow = () ->
     screenSize = (require 'screen').getPrimaryDisplay().workAreaSize
     win.show() unless win.isVisible()
-    win.setMinimumSize 364, 466
-    win.setMaximumSize 364, screenSize.height
+    win.setResizable debug
     windowWidth = win.getSize()[0]
     screenWidth = screenSize.width
     winPosX = Number(((screenWidth-windowWidth)/2).toFixed())
@@ -113,12 +112,13 @@ createWindow = () ->
             dir:           cwd
             preloadWindow: true
             width:         364
-            height:        330
+            height:        310
             frame:         false
 
         win.loadUrl 'file://' + cwd + '/sheep.html'
         
-        # win.on 'blur', win.hide
+        if not debug
+            win.on 'blur', win.hide
         
         shortcut.register 'ctrl+`', toggleWindow
         
@@ -144,6 +144,5 @@ createWindow()
     - global shortcut
     - timeout delay
     - bright/dark style
-- fix tab focus when pattern
-- add list, settings, about, delete, help buttons to pattern without site
+- fix blind tab focus
 ###
