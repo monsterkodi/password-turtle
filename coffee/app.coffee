@@ -44,7 +44,7 @@ resetStash = ->
     clearInput 'site'
     clearInput 'password'
     clearInput 'pattern'
-    showDirty()
+    updateFloppy()
     stash =     
         pattern: ''
         configs: {}                
@@ -118,20 +118,17 @@ masterChanged = ->
     hideSitePassword()
     hideSettings()
     stashLoaded = false
-    say()
-    # masterSitePassword()
+    if stashExists
+        say()
+    else
+        say 'Welcome to <b>sheepword</b>.', 
+            'What will be your <span class="open" onclick="openUrl(\'http://github.com\');">master key?</span>'
     masterFade()
     
 patternChanged = ->
     updateFloppy()
     masterSitePassword()
-        
-masterBlurred = ->
-    if 0 #stashLoaded or not stashExists
-        if $("master").value.length > 1 and masterAnimDir == 0
-            masterAnimDir = 1
-            masterAnim()
-            
+                    
 siteConfirmed = -> 
     pw = $("password").value
     if pw.length
@@ -162,7 +159,6 @@ document.observe 'dom:loaded', ->
         input.on 'focus', (e) -> 
             $(e.target.id+'-border').addClassName 'focus'
         input.on 'blur',  (e) -> 
-            # say()
             $(e.target.id+'-border').removeClassName 'focus'
         input.on 'input', (e) ->
             $(e.target.id+'-ghost').setStyle opacity: if e.target.value.length then 0 else 1
@@ -175,9 +171,8 @@ document.observe 'dom:loaded', ->
             border.on 'mouseenter', (e) ->
                 $(e.target.id.substr(0,e.target.id.length-7)).focus()
         
-    $('bubble').opacity = 0
+    # $('bubble').opacity = 0
         
-    $("master" ).on 'blur' , masterBlurred
     $("master" ).on 'input', masterChanged
     $("site"   ).on 'input', siteChanged
     $("pattern").on 'input', patternChanged
@@ -196,11 +191,10 @@ document.observe 'dom:loaded', ->
     resetStash()
     stashExists = fs.existsSync stashFile
     if stashExists
-        log 'found stash file', stashFile
+        # log 'found stash file', stashFile
         say()
     else
-        say 'Welcome to <b>sheepword</b>.', 
-            'What will be your <span class="open" onclick="openUrl(\'http://github.com\');">master key?</span>'
+        masterChanged()
 
 win.on 'focus', (event) -> 
     if stashLoaded
@@ -297,14 +291,14 @@ deleteStash = () ->
             $('master').value = ''
             $('master').focus()
             masterChanged()
-            whisper 'I remember nothing!', 3000
+            # whisper 'I remember nothing!', 3000
     
 writeStash = () ->
     stashString = JSON.stringify(stash)
     buf = new Buffer(stashString, "utf8")
     # log 'write stash', buf.length, stashFile, mstr, JSON.stringify(stash)
     cryptools.encryptFile stashFile, buf, mstr
-    if $('pattern').value == stash.pattern then showSaved()
+    updateFloppy()
     if not stashLoaded
         readStash () -> 
             if stashLoaded and JSON.stringify(stash) == stashString
@@ -320,7 +314,7 @@ readStash = (cb) ->
                 stashLoaded = true
                 stash = JSON.parse(json)
                 setInput 'pattern', stash.pattern
-                showSaved()
+                updateFloppy()
             cb()
     else
         log 'stash doesn\'t exists' + stashFile
@@ -418,8 +412,7 @@ showSitePassword = ->
     $('password-border').removeClassName 'no-pointer'
     $('site').focus()
 
-clearInput = (input) ->
-    setInput input, ''
+clearInput = (input) -> setInput input, ''
     
 setInput = (input, value) ->
     $(input).value = value
@@ -435,14 +428,11 @@ showLockOpen = ->
     $('lock').setStyle opacity: 1
     $('lock').removeClassName 'closed'
     
-showDirty = -> $('floppy').removeClassName 'saved'
-showSaved = -> $('floppy').addClassName 'saved'
 updateFloppy = ->
-    if stash.pattern != $("pattern").value
-        showDirty()
+    if stash?.pattern != $("pattern").value or stash?.pattern == ''
+        $('floppy').removeClassName 'saved'
     else
-        # say()
-        showSaved()
+        $('floppy').addClassName 'saved'
 
 hideLock = ->
     $('lock').setStyle opacity: 0
