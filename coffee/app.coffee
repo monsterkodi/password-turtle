@@ -7,7 +7,7 @@
 ###
 
 clipboard = require 'clipboard'
-isempty   = require 'lodash.isempty'
+isEmpty   = require 'lodash.isempty'
 values    = require 'lodash.values'
 random    = require 'lodash.random'
 trim      = require 'lodash.trim'
@@ -165,10 +165,8 @@ siteChanged = ->
     
 initEvents = () ->
     for input in $$('input')
-        input.on 'focus', (e) -> 
-            $(e.target.id+'-border').addClassName 'focus'
-        input.on 'blur',  (e) -> 
-            $(e.target.id+'-border').removeClassName 'focus'
+        input.on 'focus', (e) -> $(e.target.id+'-border').addClassName 'focus'
+        input.on 'blur',  (e) -> $(e.target.id+'-border').removeClassName 'focus'
         input.on 'input', (e) ->
             $(e.target.id+'-ghost').setStyle opacity: if e.target.value.length then 0 else 1
         if input.id != 'master'
@@ -185,11 +183,13 @@ initEvents = () ->
     $('password').on 'click', copyPassword
     $('pattern' ).on 'input', patternChanged
     $('sheep'   ).on 'click', toggleSettings
-    $('delete'  ).on 'click', deleteStash
     $('list'    ).on 'click', listStash
+    $('prefs'   ).on 'click', showPrefs
+    $('about'   ).on 'click', showAbout
+    $('help'    ).on 'click', showHelp
+    $('delete'  ).on 'click', deleteStash
     $('sheep'   ).on 'mouseenter', (e) -> $('sheep').focus()
-    # $('sheep'   ).disabled = true
-    
+        
 ###
 000       0000000    0000000   0000000    00000000  0000000  
 000      000   000  000   000  000   000  000       000   000
@@ -245,13 +245,23 @@ onKeyDown = (event) ->
     if key == 'command-l' or key == 'ctrl-l'
         listStash()
         return
+        
+    if not $('site')?
+        switch key 
+            when 'esc', 'command-l', 'ctrl-l'
+                restoreBody()
+            when 'command-,', 'ctrl-,' # comma
+                restoreBody()
+                hideSitePassword()
+                showSettings()
+        return
     
     site = $('site').value
     hash = genHash(site+mstr)
     
     if e == $('password')
         switch key
-            when 'delete'
+            when 'backspace', 'command-x', 'ctrl-x'
                 if stash.configs[hash]?
                     if ask 'Forget <i>'+stash.configs[hash].pattern+'</i>', 'for <b>'+site+'</b>?'
                         delete stash.configs[hash]
@@ -346,52 +356,20 @@ readStash = (cb) ->
         cb()
 
 ###
-000      000   0000000  000000000
-000      000  000          000   
-000      000  0000000      000   
-000      000       000     000   
-0000000  000  0000000      000   
+0000000     0000000   0000000    000   000
+000   000  000   000  000   000   000 000 
+0000000    000   000  000   000    00000  
+000   000  000   000  000   000     000   
+0000000     0000000   0000000       000   
 ###
 
-numConfigs = () -> Object.keys(stash.configs).length
-
-onListKey = (event) ->
-    key = keyname event
-    e   = document.activeElement
-    dbg key
-    switch key 
-        when 'esc', 'command-l', 'ctrl-l'
-            $('stashlist').closeList()
-        when 'right', 'down'
-            if e? then e.parentElement?.nextSibling?.firstElementChild?.focus()
-        when 'left', 'up'
-            if e? then e.parentElement?.previousSibling?.firstElementChild?.focus()
-        when 'delete'
-            if e.parentElement.nextSibling?
-                e.parentElement.nextSibling.firstElementChild.focus()
-            else
-                e.parentElement.previousSibling?.firstElementChild?.focus()
-            delete stash.configs[e.id]
-            e.parentElement.remove()
-            writeStash()
-        when 'enter'
-            $('stashlist').closeList e.nextSibling.innerHTML
-        when 'command-,', 'ctrl-,' # comma
-            $('stashlist').closeList()
-            hideSitePassword()
-            showSettings()
-        else
-            log key
-
-listStash = () ->
-    
-    if isempty stash.configs then return
+saveBody = () ->
+    if not $('bubble')? then return
     savedFocus = document.activeElement.id
-    savedSite  = $('site').value
+    savedSite  = $('site')?.value
     savedBody  = document.body.innerHTML
-    document.body.innerHTML = '<div id="stashlist"></div>'    
     
-    $('stashlist').closeList = (site) ->
+    window.restoreBody = (site) ->
         document.body.innerHTML = savedBody
         initEvents()
         setInput 'pattern', stash.pattern
@@ -404,9 +382,58 @@ listStash = () ->
             copyPassword()
         else
             setInput 'site', savedSite
-            $(savedFocus)?.focus()
+            $(savedFocus)?.focus()                
             masterSitePassword()
-            updateFloppy()
+            updateFloppy()    
+            updateListButton()
+            if isEmpty(stash.configs) and savedFocus == 'list'
+                $('prefs').focus()
+
+###
+000      000   0000000  000000000
+000      000  000          000   
+000      000  0000000      000   
+000      000       000     000   
+0000000  000  0000000      000   
+###
+
+onListKey = (event) ->
+    key = keyname event
+    e   = document.activeElement
+    switch key 
+        when 'esc', 'command-l', 'ctrl-l'
+            restoreBody()
+        when 'command-,', 'ctrl-,' # comma
+            restoreBody()
+            hideSitePassword()
+            showSettings()
+        when 'right', 'down'
+            if e? then e.parentElement?.nextSibling?.firstElementChild?.focus()
+        when 'left', 'up'
+            if e? then e.parentElement?.previousSibling?.firstElementChild?.focus()
+        when 'backspace', 'command-x', 'ctrl-x'
+            if e.id.length
+                if e.parentElement.nextSibling?
+                    e.parentElement.nextSibling.firstElementChild.focus()
+                else
+                    e.parentElement.previousSibling?.firstElementChild?.focus()
+                delete stash.configs[e.id]
+                e.parentElement.remove()
+                writeStash()
+                if isEmpty stash.configs
+                    restoreBody()
+        when 'enter'
+            restoreBody e.nextSibling.innerHTML
+        else
+            dbg key
+
+listStash = () ->
+    
+    if isEmpty stash.configs then return
+    
+    saveBody()
+        
+    document.body.innerHTML = '<div id="stashlist"></div>'    
         
     for hash in Object.keys stash.configs
         config = stash.configs[hash]
@@ -425,8 +452,8 @@ listStash = () ->
             
         $('stashlist').insert item
             
-        item.on 'mouseenter', (e) -> e.target.childElements[0].focus()    
-        $(hash).on 'click',   (e) -> $('stashlist').closeList e.target.nextSibling.innerHTML
+        item.on 'mouseenter', (e) -> e.target.childElements[0]?.focus()
+        $(hash).on 'click',   (e) -> restoreBody e.target.nextSibling.innerHTML
 
     for input in $$('input')
         input.on 'focus',      (e) -> $(e.target.parentElement).addClassName 'focus'
@@ -434,6 +461,75 @@ listStash = () ->
         input.on 'mouseenter', (e) -> $(e.target).focus()
             
     $('stashlist').firstElementChild.firstElementChild.focus()
+    
+###
+00000000   00000000   00000000  00000000   0000000
+000   000  000   000  000       000       000     
+00000000   0000000    0000000   000000    0000000 
+000        000   000  000       000            000
+000        000   000  00000000  000       0000000 
+###
+showPrefs = () ->
+    log 'prefs'
+    saveBody()
+    document.body.innerHTML = '<div id="preferences"></div>'
+    
+    prefs = 
+        shortcut: { default: 'ctrl+`', type: 'shortcut', text: 'global shortcut' }
+        timeout:  { default: 60,       type: 'int',      text: 'autoclose delay' }
+        style:    { default: false,    type: 'bool',     text: 'bright theme' }
+        mask:     { default: false,    type: 'bool',     text: 'mask saved passwords' }
+        confirm:  { default: true,     type: 'bool' ,    text: 'confirm forgetting' }
+        quiet:    { default: false,    type: 'bool',     text: 'no talking sheep' }
+    
+    for key in Object.keys prefs
+        pref = prefs[key]
+        item =       new Element 'div', class: 'pref-item-border border'
+        item.insert  new Element 'input', id: key, type: 'button', class: 'pref-item'
+        item.insert (new Element 'span', class: 'pref').update pref.text
+        switch pref.type
+            when 'bool'
+                bool = new Element 'span', class: 'lock'
+                item.insert bool
+                if pref.default
+                    lockClosed bool
+                else
+                    lockOpen bool
+            when 'int', 'shortcut'
+                item.insert (new Element 'span', class: 'pattern').update pref.default
+            
+        $('preferences').insert item
+        
+    for input in $$('input')
+        input.on 'focus',      (e) -> $(e.target.parentElement).addClassName 'focus'
+        input.on 'blur',       (e) -> $(e.target.parentElement).removeClassName 'focus'
+        input.on 'mouseenter', (e) -> $(e.target).focus()
+            
+    $('preferences').firstElementChild.firstElementChild.focus()
+                    
+###
+ 0000000   0000000     0000000   000   000  000000000
+000   000  000   000  000   000  000   000     000   
+000000000  0000000    000   000  000   000     000   
+000   000  000   000  000   000  000   000     000   
+000   000  0000000     0000000    0000000      000   
+###
+showAbout = () ->
+    log 'about'
+    saveBody()
+    document.body.innerHTML = '<div id="about">hello</div>'
+    
+###
+000   000  00000000  000      00000000 
+000   000  000       000      000   000
+000000000  0000000   000      00000000 
+000   000  000       000      000      
+000   000  00000000  0000000  000      
+###
+
+showHelp = () ->
+    log 'help'
+    (require 'opener') "https://github.com/monsterkodi/sheepword"
     
 ###
  0000000  000  000000000  00000000
@@ -493,14 +589,9 @@ toggleSettings = ->
 
 showSettings = ->
     updateFloppy()
+    updateListButton()
     $('settings').show()
     $('pattern').focus()
-    if isEmpty stash.configs
-        $('list').disabled = true
-        $('list-border').addClassName 'disabled'
-    else 
-        $('list').disabled = false
-        $('list-border').removeClassName 'disabled'
     
 hideSettings = ->
     $('settings').hide()
@@ -548,10 +639,19 @@ hideLock = ->
     $('lock').removeClassName 'closed'
             
 updateFloppy = ->
-    if stash?.pattern != $("pattern").value or stash?.pattern == ''
-        $('floppy').removeClassName 'saved'
-    else
-        $('floppy').addClassName 'saved'
+    if floppy = $('floppy')
+        if stash?.pattern != $("pattern").value or stash?.pattern == ''
+            floppy.removeClassName 'saved'
+        else
+            floppy.addClassName 'saved'
+
+updateListButton = ->        
+    if isEmpty stash.configs
+        $('list').disabled = true
+        $('list-border').addClassName 'disabled'
+    else 
+        $('list').disabled = false
+        $('list-border').removeClassName 'disabled'
         
 ###
 000000000   0000000   000      000   000

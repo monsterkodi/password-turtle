@@ -14,9 +14,10 @@ events        = require 'events'
 Tray          = require 'tray'
 BrowserWindow = require 'browser-window'
 
-debug = false
+debug = true
 win   = undefined
 knx   = undefined
+tray  = undefined
 
 ###
 000   000  000   000  000  000   000  000       0000000    0000000 
@@ -120,7 +121,8 @@ createWindow = () ->
         if not debug
             win.on 'blur', win.hide
         
-        shortcut.register 'ctrl+`', () -> if not win.isVisible() then toggleWindow()
+        #shortcut.register 'ctrl+`', () -> if not win.isVisible() then toggleWindow()
+        shortcut.register 'ctrl+`', toggleWindow
         
         setTimeout showWindow, 10
               
@@ -137,6 +139,7 @@ createWindow()
 - timeout
 - about
 - bright style
+- remember window pos
 - render clean sheep image(s)
 - snatch site from firefox
 - preferences
