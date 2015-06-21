@@ -118,10 +118,8 @@ createWindow = () ->
 
         win.loadUrl 'file://' + cwd + '/sheep.html'
         
-        if not debug
-            win.on 'blur', win.hide
+        if not debug then win.on 'blur', win.hide
         
-        #shortcut.register 'ctrl+`', () -> if not win.isVisible() then toggleWindow()
         shortcut.register 'ctrl+`', toggleWindow
         
         setTimeout showWindow, 10

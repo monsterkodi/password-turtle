@@ -237,7 +237,7 @@ win.on 'focus', (event) ->
 onKeyDown = (event) ->
     key = keyname event
     e    = document.activeElement
-    dbg key
+    # dbg key
     
     if $('stashlist')?
         onListKey event
@@ -425,8 +425,8 @@ onListKey = (event) ->
                     restoreBody()
         when 'enter'
             restoreBody e.nextSibling.innerHTML
-        else
-            dbg key
+        # else
+        #     dbg key
 
 listStash = () ->
     
@@ -526,7 +526,6 @@ showAbout = () ->
     
     $('about').insert '<h2>credits</h2>'
     addLink = (text, url) ->
-        dbg url, text
         link = new Element 'div', { class: 'link', id: text } 
         link.url = url
         link.insert text

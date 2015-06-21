@@ -176,11 +176,14 @@ color.password-bright = color.blue-very-bright
 #site-border
     margin-bottom: 12px
 
+
+.stash-item-border
 #site-border
     &.focus
         background-color: color.site-medium
         box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.75)
 
+.pref-item-border
 #pattern-border
     &.focus
         background-color: color.pattern
@@ -351,7 +354,7 @@ color.bubble-ask = rgba(0,0,0,0.8)
     &:active
         background-color: color.gray-most-dark
 
-#list
+#about
     &:focus
         box-shadow: 0 0 10px color.password-bright
         color:               color.password-medium
@@ -361,7 +364,8 @@ color.bubble-ask = rgba(0,0,0,0.8)
         box-shadow: 0 0 10px color.pattern-bright
         color:               color.pattern-medium
 
-#about
+#list
+#help
     &:focus
         box-shadow: 0 0 10px color.site-bright
         color:               color.site-medium
@@ -376,7 +380,7 @@ color.bubble-ask = rgba(0,0,0,0.8)
     position:             relative
     padding:              10px
     margin:               0px
-    margin-right:         7px
+    margin-right:         8px
     border-radius:        10px
     background-color:     color.gray-dark
     color:                gray
@@ -388,10 +392,10 @@ color.bubble-ask = rgba(0,0,0,0.8)
         opacity: 0.5
         color: color.gray-dark
     
-#help-border
+#delete-border
     margin-right:  0px
     
-#list-border
+#about-border
     &.focus
         color:            color.password-bright
         background-color: color.password
@@ -403,7 +407,8 @@ color.bubble-ask = rgba(0,0,0,0.8)
         background-color: color.pattern
         box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.75)
     
-#about-border
+#list-border
+#help-border
     &.focus
         color:            color.site-bright
         background-color: color.site-medium
@@ -438,6 +443,7 @@ color.bubble-ask = rgba(0,0,0,0.8)
 
 .pref-item-border
 .stash-item-border
+    -webkit-transition: none 0.0s ease-in-out
     padding:  5px
     
     & .pref    
@@ -449,9 +455,13 @@ color.bubble-ask = rgba(0,0,0,0.8)
         top:            7px
         
     & .pref        
+        left:      10px
+        color:     color.pattern
     & .site
         left:      10px
-        color:     color.site-bright
+        color:     color.site
+        &:focus
+            color: color.site-bright
     & .lock
         left:      0
         right:     0
@@ -459,6 +469,11 @@ color.bubble-ask = rgba(0,0,0,0.8)
     & .pattern
         left:      60%
         color:     color.pattern-bright
+        
+    &.focus .pref   
+        color: color.pattern-bright
+    &.focus .site   
+        color: color.site-bright
 
 .pref-item
 .stash-item
@@ -467,10 +482,23 @@ color.bubble-ask = rgba(0,0,0,0.8)
     border:        none
     border-radius: 6px    
     background-color: color.gray-dark
+    
+    &:focus .pref
+        color: color.pattern-bright
+    &:focus .site
+        color: color.site-bright
         
 #about
     color:         color.blue
     text-align:    center
+
+/*
+*   0000000   0000000     0000000   000   000  000000000
+*  000   000  000   000  000   000  000   000     000   
+*  000000000  0000000    000   000  000   000     000   
+*  000   000  000   000  000   000  000   000     000   
+*  000   000  0000000     0000000    0000000      000   
+*/
 
 #about
     & h1
