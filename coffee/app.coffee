@@ -16,6 +16,7 @@ fs        = require 'fs'
 _url      = require './js/tools/urltools'
 password  = require './js/tools/password' 
 cryptools = require './js/tools/cryptools'
+keyname   = require './js/tools/keyname'
 remote    = require 'remote'
 sleep     = require 'sleep'
 ipc       = require 'ipc'
@@ -98,17 +99,17 @@ masterConfirmed = ->
                     masterAnimDir = 1
                     masterAnim()
                 else
-                    whisper ['oops?', 'what?', 'again?', '...?', 'nope!'][random 4], 2000
+                    whisper ['oops?', 'what?', '...?', 'nope!'][random 3], 2000
         else
-            say ['Well chosen!', 'Nice one!', 'Good choice!', 'I didn\'t expect that :)', 'Amazing!'][random 4], 
+            say ['Well chosen!', 'Nice one!', 'Good choice!'][random 2], 
                 'And your <span class="open" onclick="openUrl(\'http://github.com\');">password pattern?</span>'
             masterAnimDir = 1
-            masterAnim()                
+            masterAnim()
 
 patternConfirmed = ->
     if $("pattern").value.length and stash.pattern != $("pattern").value
         if stash.pattern == ''
-            say ['Also nice!', 'What a beautiful pattern!', 'Not bad either!', 'Congratulations!', 'The setup is done!'][random 4], 
+            say ['Also nice!', 'What a beautiful pattern!', 'The setup is done!'][random 2], 
                 'Have fun generating passwords!', 5000
             $('button-list').show()
         else
@@ -232,16 +233,16 @@ win.on 'focus', (event) ->
 000   000  00000000     000     0000000     0000000   00     00  000   000
 ###
             
-onDocumentKeyDown = (event) ->
-    key  = event.which
+onKeyDown = (event) ->
+    key = keyname event
     e    = document.activeElement
-    # log 'key', key, e.name, e.id, e.className
+    dbg key
     
     if $('stashlist')?
         onListKey event
         return
     
-    if key == 76 and event.getModifierState 'Meta' # Command-l
+    if key == 'command-l' or key == 'ctrl-l'
         listStash()
         return
     
@@ -250,7 +251,7 @@ onDocumentKeyDown = (event) ->
     
     if e == $('password')
         switch key
-            when 8 # delete / backspace?
+            when 'delete'
                 if stash.configs[hash]?
                     if ask 'Forget <i>'+stash.configs[hash].pattern+'</i>', 'for <b>'+site+'</b>?'
                         delete stash.configs[hash]
@@ -258,12 +259,12 @@ onDocumentKeyDown = (event) ->
                         writeStash()
                         masterSitePassword()
                 return
-            when 37, 38, 39, 40 # cursor keys
+            when 'left', 'right', 'up', 'down'
                 $('site').focus()
                 $('site').setSelectionRange 0, $('site').value.length
                 event.preventDefault()
                 return
-            when 13 # enter
+            when 'enter'
                 if not stash.configs[hash]?
                     stash.configs[hash] = 
                         url: encrypt site, mstr
@@ -278,10 +279,8 @@ onDocumentKeyDown = (event) ->
                 return
     
     switch key
-        when 188 # comma
-            if event.getModifierState 'Meta'
-                toggleSettings()
-        when 27 # escape
+        when 'command-,', 'ctrl-,' then toggleSettings()
+        when 'esc'
             if e == $('pattern') or $('settings').visible()
                 if $('pattern').value != stash.pattern
                     setInput 'pattern', stash.pattern
@@ -293,13 +292,13 @@ onDocumentKeyDown = (event) ->
                 $('pattern').value = stash.pattern
                 patternChanged()
                 win.hide() 
-        when 13 # enter
+        when 'enter'
             switch e
                 when $("master")  then masterConfirmed()
                 when $("site")    then copyPassword()
                 when $("pattern") then patternConfirmed()
 
-document.on 'keydown', onDocumentKeyDown
+document.on 'keydown', onKeyDown
 
 ###
  0000000  000000000   0000000    0000000  000   000
@@ -357,17 +356,17 @@ readStash = (cb) ->
 numConfigs = () -> Object.keys(stash.configs).length
 
 onListKey = (event) ->
+    key = keyname event
     e   = document.activeElement
-    key = event.which
+    dbg key
     switch key 
-        when 27, 76 
-            if key == 27 or event.getModifierState 'Meta' # escape or Command-l
-                $('stashlist').closeList()
-        when 39, 40 # right or down
+        when 'esc', 'command-l', 'ctrl-l'
+            $('stashlist').closeList()
+        when 'right', 'down'
             if e? then e.parentElement?.nextSibling?.firstElementChild?.focus()
-        when 37, 38 # left or up
+        when 'left', 'up'
             if e? then e.parentElement?.previousSibling?.firstElementChild?.focus()
-        when 8 # delete
+        when 'delete'
             if e.parentElement.nextSibling?
                 e.parentElement.nextSibling.firstElementChild.focus()
             else
@@ -375,13 +374,12 @@ onListKey = (event) ->
             delete stash.configs[e.id]
             e.parentElement.remove()
             writeStash()
-        when 13 # enter
+        when 'enter'
             $('stashlist').closeList e.nextSibling.innerHTML
-        when 188 # comma
-            if event.getModifierState 'Meta'
-                $('stashlist').closeList()
-                hideSitePassword()
-                showSettings()
+        when 'command-,', 'ctrl-,' # comma
+            $('stashlist').closeList()
+            hideSitePassword()
+            showSettings()
         else
             log key
 
