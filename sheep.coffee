@@ -14,7 +14,7 @@ events        = require 'events'
 Tray          = require 'tray'
 BrowserWindow = require 'browser-window'
 
-debug = true
+debug = false
 win   = undefined
 knx   = undefined
 tray  = undefined
@@ -30,7 +30,11 @@ tray  = undefined
 ipc.on 'knixlog', (event, args) -> knx?.webContents.send 'knix_log', args
 ipc.on 'knixerror', (event, args) -> knx?.webContents.send 'knix_error', args
 ipc.on 'knixwarning', (event, args) -> knx?.webContents.send 'knix_warning', args
-
+    
+ipc.on 'console.log',   (event, args) -> console.log.apply console, args
+ipc.on 'console.error', (event, args) -> console.log.apply console, args
+ipc.on 'process.exit',  (event, code) -> console.log 'exit via ipc';  process.exit code
+     
 ###
  0000000  000   000   0000000   000   000
 000       000   000  000   000  000 0 000

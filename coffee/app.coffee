@@ -42,6 +42,9 @@ stashLoaded = false
 log   = () -> ipc.send 'knixlog',   [].slice.call arguments, 0
 dbg   = () -> ipc.send 'knixlog',   [].slice.call arguments, 0
 
+console.log   = () -> ipc.send 'console.log', [].slice.call arguments, 0
+console.error = () -> ipc.send 'console.error', [].slice.call arguments, 0
+
 resetStash = ->
     stashLoaded = false
     clearInput 'site'
@@ -166,8 +169,8 @@ siteChanged = ->
     
 initEvents = () ->
     for input in $$('input')
-        input.on 'focus', (e) -> $(e.target.id+'-border').addClassName 'focus'
-        input.on 'blur',  (e) -> $(e.target.id+'-border').removeClassName 'focus'
+        input.on 'focus', (e) -> $(e.target.id+'-border')?.addClassName 'focus'
+        input.on 'blur',  (e) -> $(e.target.id+'-border')?.removeClassName 'focus'
         input.on 'input', (e) ->
             $(e.target.id+'-ghost').setStyle opacity: if e.target.value.length then 0 else 1
         if input.id != 'master'
