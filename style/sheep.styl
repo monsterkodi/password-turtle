@@ -4,6 +4,7 @@ color.black            = #000000
 color.gray-most-dark   = #181818
 color.gray-very-dark   = #282828
 color.gray-dark        = #333333
+color.gray-medium      = #555555
 color.gray             = #888888
 color.gray-bright      = #cccccc
 color.gray-very-bright = #dddddd
@@ -55,6 +56,9 @@ input
     outline: none
     &:enabled
         cursor: pointer
+        
+a
+    text-decoration: none
      
 .no-pointer
     pointer-events: none
@@ -464,4 +468,47 @@ color.bubble-ask = rgba(0,0,0,0.8)
     border-radius: 6px    
     background-color: color.gray-dark
         
-    
+#about
+    color:         color.blue
+    text-align:    center
+
+#about
+    & h1
+        color:     color.orange
+        margin-bottom: 9px
+        -webkit-app-region: no-drag
+        &:hover 
+            cursor: pointer
+            color:  color.yellow
+        &:active 
+            color: color.yellow-bright
+        
+    & h2
+        color:     color.blue-bright
+    & sub
+        color:     color.gray-medium
+    & a
+    & .link
+        -webkit-app-region: no-drag
+        color:     color.blue
+        &:hover 
+            cursor: pointer
+            color: color.orange
+        &:active 
+            color: color.blue-very-bright
+
+#about-github
+    -webkit-app-region: no-drag
+    margin-top:     30px
+    margin-bottom:  40px
+    pointer-events: all
+    &:hover
+        cursor:     pointer
+    &:hover .github-svg
+        fill:       color.orange
+    &:active .github-svg
+        fill:       color.blue-very-bright
+
+.github-svg
+    -webkit-app-region: no-drag
+    fill:           color.blue

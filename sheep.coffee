@@ -137,7 +137,7 @@ createWindow()
 ###
 ###
 - timeout
-- about
+- autocompletion
 - bright style
 - remember window pos
 - render clean sheep image(s)
