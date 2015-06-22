@@ -242,9 +242,23 @@ onKeyDown = (event) ->
     e    = document.activeElement
     # dbg key
     
-    if $('stashlist')?
-        onListKey event
-        return
+    if not $('bubble')?
+        switch key 
+            when 'esc', 'command-l', 'ctrl-l'
+                restoreBody()
+                return
+            when 'command-,', 'ctrl-,' # comma
+                restoreBody()
+                hideSitePassword()
+                showSettings()
+                return
+
+        if $('stashlist')?
+            onListKey event
+            return
+        if $('preferences')?
+            onPrefsKey event
+            return
     
     if key == 'command-l' or key == 'ctrl-l'
         listStash()
@@ -405,12 +419,6 @@ onListKey = (event) ->
     key = keyname event
     e   = document.activeElement
     switch key 
-        when 'esc', 'command-l', 'ctrl-l'
-            restoreBody()
-        when 'command-,', 'ctrl-,' # comma
-            restoreBody()
-            hideSitePassword()
-            showSettings()
         when 'right', 'down'
             if e? then e.parentElement?.nextSibling?.firstElementChild?.focus()
         when 'left', 'up'
@@ -547,10 +555,19 @@ showPrefs = () ->
                         id:   'style-link'
 
                     link.parentNode.replaceChild newlink, link
-        
-                    
             
     $('preferences').firstElementChild.firstElementChild.focus()
+    
+onPrefsKey = (event) ->
+    key = keyname event
+    e   = document.activeElement
+    switch key 
+        when 'right', 'down'
+            if e? then e.parentElement?.nextSibling?.firstElementChild?.focus()
+        when 'left', 'up'
+            if e? then e.parentElement?.previousSibling?.firstElementChild?.focus()
+        else
+            dbg key
                     
 ###
  0000000   0000000     0000000   000   000  000000000

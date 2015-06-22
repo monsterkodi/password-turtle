@@ -1,0 +1,252 @@
+/*
+*  00000000  000  000   000  00000000  0000000  
+*  000       000   000 000   000       000   000
+*  000000    000    00000    0000000   000   000
+*  000       000   000 000   000       000   000
+*  000       000  000   000  00000000  0000000  
+*/
+
+body
+    margin              0px
+    height              100%
+    overflow            hidden
+    -webkit-app-region  drag
+    -webkit-user-select none
+
+input 
+    outline             none
+    &:enabled
+        cursor          pointer
+        
+a
+    text-decoration     none
+
+.no-pointer
+    pointer-events      none
+
+.main-input
+    -webkit-transition  all 0.4s ease-in-out
+    -webkit-app-region  no-drag
+    width               100%
+    box-sizing          border-box
+    text-align          center
+
+.ghost
+    -webkit-transition: all 0.8s ease-in-out
+    pointer-events: none
+    position:       absolute
+    left:           0
+    right:          0
+    text-align:     left
+    font-size:      24px
+    top:            12px
+    padding-left:   20px
+    
+#lock
+#password-ghost
+    -webkit-transition: all 0.2s ease-in-out
+    
+.lock    
+#lock
+    top:            14px
+    opacity:        0    
+    &.closed
+    &.open
+        opacity:    1
+
+.bool    
+    top:            14px
+    opacity:        0    
+    &.bool-true
+    &.bool-false
+        opacity:    1
+        opacity:    1
+
+#floppy
+    font-size:      19px
+    top:            15px
+    text-align:     right
+    padding-right:  20px
+    
+.border
+    border-transition()
+    position:      relative
+    padding:       10px
+    border-radius: 10px
+    margin-left:   12px
+    margin-right:  12px
+
+#password-border
+#master-border
+#site-border
+    margin-bottom: 12px
+
+#sheep
+    -webkit-app-region: no-drag
+    -webkit-transition: box-shadow 0.3s ease-in-out
+    margin:        12px
+    border-radius: 12px
+
+#bubble
+    -webkit-transition:  all 0.5s ease-in-out
+    -webkit-app-region: no-drag
+    position:       absolute
+    top:            170px    
+    right:          27px
+    &.ask
+    &.say
+        pointer-events: all
+        left:           27px
+        opacity:        1
+    &.whisper
+        pointer-events: all
+        left:           157px
+        opacity:        1 
+    &.silent
+        pointer-events: none
+        left:           217px
+        opacity:        0
+
+#say-tri
+    -webkit-transition:  all 0.5s ease-in-out
+    position:      absolute
+    width:         0
+    height:        0
+    right:         33px
+
+#say
+    -webkit-transition:  all 0.5s ease-in-out
+    position:         absolute
+    top:              20px
+    left:             0
+    right:            0
+    height:           45px
+    border-radius:    20px
+    padding:          6px
+    padding-top:      12px
+    padding-left:     18px
+    padding-right:    18px
+    
+#bubble.whisper #say    
+    font-size:        16px
+    height:           21px
+    padding-left:     8px
+    padding-right:    8px
+    
+#bubble.silent #say    
+    font-size:        1px
+    height:           8px
+    padding-left:     0px
+    padding-right:    0px
+    
+.open:hover
+    cursor: pointer
+
+#settings
+    position: absolute
+    left: 0
+    right: 0
+
+#button-list
+    margin-top    12px
+    margin-left   12px
+    margin-right  12px
+    margin-right  12px
+
+.button
+    -webkit-app-region: no-drag
+    -webkit-transition-property: box-shadow, border  
+    -webkit-transition-duration: 0.4s
+    -webkit-transition-timing-function: ease-in-out
+    box-sizing:       border-box
+    position:         static
+    height:           35px
+    width:            35px
+
+.button-border
+    -webkit-app-region:   drag
+    -webkit-transition:   all 0.4s ease-in-out
+    pointer-events:       all
+    display:              inline-block
+    position:             relative
+    padding:              10px
+    margin:               0px
+    margin-right:         8px
+
+#delete-border
+    margin-right:  0px
+
+.button-icon
+    pointer-events: none
+    position:       absolute
+    left:           21px
+    top:            19px
+
+#preferences
+#stashlist
+    position:       absolute
+    padding-top:    10px
+    padding-bottom: 10px
+    padding-left:   0
+    padding-right:  0
+    top:            0
+    left:           0
+    right:          0
+    bottom:         0
+    overflow:       auto
+
+.pref-item-border
+.stash-item-border
+    -webkit-transition: none 0.0s ease-in-out
+    padding:  5px
+    
+    & .pref    
+    & .site
+    & .lock    
+    & .pattern
+        position:       absolute
+        pointer-events: none
+        top:            7px
+        
+    & .pref        
+        left:      10px
+    & .site
+        left:      10px
+    & .lock
+        left:      0
+        right:     0
+        text-align: center
+        
+    & .bool
+        position:       absolute
+        pointer-events: none
+        top:            7px
+        left:           90%
+        
+    & .pattern
+        left:      60%
+        
+.pref-item
+.stash-item
+    width:         100%
+    height:        24px
+            
+#about
+    & h1
+        -webkit-app-region: no-drag
+        &:hover 
+            cursor: pointer
+    & .link
+        -webkit-app-region: no-drag
+        &:hover 
+            cursor: pointer
+
+#about-github
+    -webkit-app-region: no-drag
+    pointer-events: all
+    &:hover
+        cursor:     pointer
+
+.github-svg
+    -webkit-app-region: no-drag
+        

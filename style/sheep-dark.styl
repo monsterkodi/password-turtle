@@ -1,0 +1,366 @@
+
+clr                  = {} 
+clr.black            = #000000
+clr.gray-most-dark   = #181818
+clr.gray-very-dark   = #282828
+clr.gray-dark        = #333333
+clr.gray-medium      = #555555
+clr.gray             = #888888
+clr.gray-bright      = #cccccc
+clr.gray-very-bright = #dddddd
+clr.white            = #ffffff
+clr.yellow-bright    = #ffff88
+clr.yellow           = #ffff00
+clr.orange-bright    = #ffaa00
+clr.orange           = #ff8800
+clr.red              = #ff0000
+clr.green-bright     = #00ff00
+clr.green            = #00aa00
+clr.green-dark       = #006600
+clr.blue-dark        = #2222aa
+clr.blue             = #4444ff
+clr.blue-medium      = #6666ff
+clr.blue-bright      = #8888ff
+clr.blue-very-bright = #aaaaff
+
+clr.background       = #222222
+
+border-transition()
+    -webkit-transition all 0.4s ease-in-out
+
+@font-face
+    font-family UbuntuMono
+    src url('./font/UbuntuMono-R.ttf')
+
+body
+    font-family       Verdana
+    background-color: clr.background
+    
+::selection
+    color:            clr.yellow
+     
+/*
+*  000  000   000  00000000   000   000  000000000
+*  000  0000  000  000   000  000   000     000   
+*  000  000 0 000  00000000   000   000     000   
+*  000  000  0000  000        000   000     000   
+*  000  000   000  000         0000000      000   
+*/
+     
+.main-input
+    font-size         24px
+    padding-left      6px
+    border-radius     4px
+    background-color: clr.gray-very-dark
+    color:            clr.gray
+    border:           1px solid clr.gray-very-dark
+    &:focus
+        background-color: clr.gray-very-dark
+        border:           1px solid clr.gray-most-dark
+
+#master
+    color:          clr.gray-dark
+    &:focus
+        box-shadow: 0 0 10px clr.yellow
+        color:      clr.orange
+        
+clr.site        = clr.green-dark       
+clr.site-medium = clr.green 
+clr.site-bright = clr.green-bright 
+#site
+    color:                   clr.site
+    &:focus
+        box-shadow: 0 0 10px clr.site-bright
+        color:               clr.site-medium
+                
+clr.pattern        = clr.gray
+clr.pattern-medium = clr.white
+clr.pattern-bright = clr.white
+#pattern
+    color:                   clr.pattern 
+    &:focus
+        box-shadow: 0 0 10px clr.pattern-bright
+        color:               clr.pattern-medium
+
+clr.password        = clr.blue-medium
+clr.password-medium = clr.blue-very-bright
+clr.password-bright = clr.blue-very-bright
+#password
+    color:                   clr.password
+    &:focus
+        box-shadow: 0 0 10px clr.password-bright
+        color:               clr.password-medium
+    
+.ghost
+    font-family:    sans-serif
+    font-weight:    bold
+    color:          rgba(255, 255, 255, 0.1)
+    
+/*
+*  000   0000000   0000000   000   000   0000000
+*  000  000       000   000  0000  000  000     
+*  000  000       000   000  000 0 000  0000000 
+*  000  000       000   000  000  0000       000
+*  000   0000000   0000000   000   000  0000000 
+*/
+    
+.lock    
+#lock
+    &.closed
+        color:      clr.blue-medium
+    &.open
+        color:      clr.orange
+
+.bool    
+    &.bool-true
+        color:      clr.white
+    &.bool-false
+        color:      clr.gray-very-dark
+
+#floppy
+    color:          clr.white
+    &.saved
+        color:      clr.gray-dark
+        
+/*
+*  0000000     0000000   00000000   0000000    00000000  00000000 
+*  000   000  000   000  000   000  000   000  000       000   000
+*  0000000    000   000  0000000    000   000  0000000   0000000  
+*  000   000  000   000  000   000  000   000  000       000   000
+*  0000000     0000000   000   000  0000000    00000000  000   000
+*/
+    
+.border
+    box-shadow:    inset 2px 2px 17px rgba(0, 0, 0, 0.25)
+    border:        1px solid clr.gray-very-dark
+    background-color: clr.gray-dark
+    &.focus
+        background-color: clr.orange
+        box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.75)
+
+.stash-item-border
+#site-border
+    &.focus
+        background-color: clr.site-medium
+        box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.75)
+
+.pref-item-border
+#pattern-border
+    &.focus
+        background-color: clr.pattern
+        box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.75)
+
+#password-border
+    &.focus
+        background-color: clr.password
+        box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.75)
+
+/*
+*   0000000  000   000  00000000  00000000  00000000 
+*  000       000   000  000       000       000   000
+*  0000000   000000000  0000000   0000000   00000000 
+*       000  000   000  000       000       000      
+*  0000000   000   000  00000000  00000000  000      
+*/
+
+#sheep
+    box-shadow:    inset 2px 2px 15px rgba(0, 0, 0, 1.0)
+    &:focus
+        box-shadow:      2px 2px 15px rgba(0, 0, 0, 0.5)
+    &:active
+        box-shadow:      0px 0px  5px rgba(0, 0, 0, 0.5)
+        opacity:         0.8
+        
+/*
+*  0000000    000   000  0000000    0000000    000      00000000
+*  000   000  000   000  000   000  000   000  000      000     
+*  0000000    000   000  0000000    0000000    000      0000000 
+*  000   000  000   000  000   000  000   000  000      000     
+*  0000000     0000000   0000000    0000000    0000000  00000000
+*/
+
+clr.bubble = rgba(0,0,0,0.38)
+clr.bubble-ask = rgba(0,0,0,0.8)
+
+#say-tri
+    border-left:   20px solid transparent 
+    border-right:  20px solid transparent 
+    border-bottom: 20px solid clr.bubble
+
+#say
+    text-align:       center
+    font-family:      UbuntuMono
+    font-size:        16px
+    text-shadow:      2px 2px 5px black
+    color:            clr.orange
+    background-color: clr.bubble        
+    
+#say b
+        color: clr.site-medium
+#say i
+        color: clr.pattern-medium
+        font-style: normal
+#say u
+        color: clr.password-medium
+        text-decoration: none
+#say p
+        margin-top: 8px
+                
+#bubble.ask #say
+    background-color: clr.bubble-ask
+#bubble.ask #say-tri
+    border-bottom: 20px solid clr.bubble-ask
+    
+.open
+    color: clr.blue-medium
+    &:hover
+        color: clr.blue-bright
+    
+/*
+*  0000000    000   000  000000000  000000000   0000000   000   000
+*  000   000  000   000     000        000     000   000  0000  000
+*  0000000    000   000     000        000     000   000  000 0 000
+*  000   000  000   000     000        000     000   000  000  0000
+*  0000000     0000000      000        000      0000000   000   000
+*/
+    
+.button
+    border-radius:    4px
+    border:           1px solid clr.gray-very-dark
+    background-color: clr.gray-very-dark
+    &:focus
+        box-shadow:       0 0 10px clr.yellow
+        border:           1px solid clr.black
+        background-color: clr.gray-very-dark
+    &:active
+        background-color: clr.gray-most-dark
+
+#about
+    &:focus
+        box-shadow: 0 0 10px clr.password-bright
+        color:               clr.password-medium
+
+#prefs
+    &:focus
+        box-shadow: 0 0 10px clr.pattern-bright
+        color:               clr.pattern-medium
+
+#list
+#help
+    &:focus
+        box-shadow: 0 0 10px clr.site-bright
+        color:               clr.site-medium
+    
+.button-border
+    box-shadow:           inset 2px 2px 17px rgba(0, 0, 0, 0.25)
+    border:               1px solid clr.gray-very-dark
+    border-radius:        10px
+    background-color:     clr.gray-dark
+    color:                gray
+    &.focus
+        color:            clr.yellow
+        background-color: clr.orange        
+        box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.75)
+    &.disabled
+        opacity: 0.5
+        color: clr.gray-dark
+        
+#about-border
+    &.focus
+        color:            clr.password-bright
+        background-color: clr.password
+        box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.75)
+
+#prefs-border
+    &.focus
+        color:            clr.pattern-bright
+        background-color: clr.pattern
+        box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.75)
+    
+#list-border
+#help-border
+    &.focus
+        color:            clr.site-bright
+        background-color: clr.site-medium
+        box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.75)
+    
+/*
+*   0000000  000000000   0000000    0000000  000   000  000      000   0000000  000000000
+*  000          000     000   000  000       000   000  000      000  000          000   
+*  0000000      000     000000000  0000000   000000000  000      000  0000000      000   
+*       000     000     000   000       000  000   000  000      000       000     000   
+*  0000000      000     000   000  0000000   000   000  0000000  000  0000000      000   
+*/
+
+.pref-item-border
+.stash-item-border
+        
+    & .pref        
+        color:     clr.pattern
+    & .site
+        color:     clr.site
+        &:focus
+            color: clr.site-bright
+                
+    & .pattern
+        color:     clr.pattern-bright
+        
+    &.focus .pref   
+        color: clr.pattern-bright
+    &.focus .site   
+        color: clr.site-bright
+
+.pref-item
+.stash-item
+    border:        none
+    border-radius: 6px    
+    background-color: clr.gray-dark
+    
+    &:focus .pref
+        color: clr.pattern-bright
+    &:focus .site
+        color: clr.site-bright
+        
+/*
+*   0000000   0000000     0000000   000   000  000000000
+*  000   000  000   000  000   000  000   000     000   
+*  000000000  0000000    000   000  000   000     000   
+*  000   000  000   000  000   000  000   000     000   
+*  000   000  0000000     0000000    0000000      000   
+*/
+
+#about
+    color:         clr.blue
+    text-align:    center
+
+    & h1
+        color:     clr.orange
+        margin-bottom: 9px
+        
+        &:hover 
+            color:  clr.yellow
+        &:active 
+            color: clr.yellow-bright
+        
+    & h2
+        color:     clr.blue-bright
+    & sub
+        color:     clr.gray-medium
+    & a
+    & .link
+        color:     clr.blue
+        &:hover 
+            color: clr.orange
+        &:active 
+            color: clr.blue-very-bright
+
+#about-github
+    margin-top:     30px
+    margin-bottom:  40px
+    &:hover .github-svg
+        fill:       clr.orange
+    &:active .github-svg
+        fill:       clr.blue-very-bright
+
+.github-svg
+    fill:           clr.blue
