@@ -125,6 +125,14 @@ color.password-bright = color.blue-very-bright
     padding-left:   20px
     color:          rgba(255, 255, 255, 0.1)
     
+/*
+*  000   0000000   0000000   000   000   0000000
+*  000  000       000   000  0000  000  000     
+*  000  000       000   000  000 0 000  0000000 
+*  000  000       000   000  000  0000       000
+*  000   0000000   0000000   000   000  0000000 
+*/
+    
 #lock
 #password-ghost
     -webkit-transition: all 0.2s ease-in-out
@@ -139,6 +147,16 @@ color.password-bright = color.blue-very-bright
     &.open
         opacity:    1
         color:      color.orange
+
+.bool    
+    top:            14px
+    opacity:        0    
+    &.bool-true
+        opacity:    1
+        color:      color.white
+    &.bool-false
+        opacity:    1
+        color:      color.gray-very-dark
 
 #floppy
     font-size:      19px
@@ -466,6 +484,13 @@ color.bubble-ask = rgba(0,0,0,0.8)
         left:      0
         right:     0
         text-align: center
+        
+    & .bool
+        position:       absolute
+        pointer-events: none
+        top:            7px
+        left:           90%
+        
     & .pattern
         left:      60%
         color:     color.pattern-bright

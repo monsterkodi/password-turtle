@@ -473,33 +473,51 @@ listStash = () ->
 000        000   000  000       000            000
 000        000   000  00000000  000       0000000 
 ###
+
+prefsFile = process.env.HOME+'/Library/Preferences/sheepword.json'
+prefs = 
+    shortcut: { default: 'ctrl+`', type: 'shortcut', text: 'global shortcut' }
+    timeout:  { default: 60,       type: 'int',      text: 'autoclose delay' }
+    dark:     { default: true,     type: 'bool',     text: 'dark theme' }
+    mask:     { default: true,     type: 'bool',     text: 'mask saved passwords' }
+    confirm:  { default: true,     type: 'bool' ,    text: 'confirm forgetting' }
+    talking:  { default: true,     type: 'bool',     text: 'sheep is talking' }
+
+loadPrefs = () ->
+    values = {}
+    try
+        values = JSON.parse fs.readFileSync(prefsFile, encoding:'utf8')
+    catch        
+        log 'cant load prefs file', prefsFile
+    for key in Object.keys prefs
+        if not values[key]?
+            values[key] = prefs[key].default
+    log jsonStr values    
+    values
+
+savePrefs = (values) ->
+    log 'save values', jsonStr values
+    fs.writeFileSync prefsFile, jsonStr(values), encoding:'utf8'
+
 showPrefs = () ->
     saveBody()
     document.body.innerHTML = '<div id="preferences"></div>'
-    
-    prefs = 
-        shortcut: { default: 'ctrl+`', type: 'shortcut', text: 'global shortcut' }
-        timeout:  { default: 60,       type: 'int',      text: 'autoclose delay' }
-        style:    { default: false,    type: 'bool',     text: 'bright theme' }
-        mask:     { default: false,    type: 'bool',     text: 'mask saved passwords' }
-        confirm:  { default: true,     type: 'bool' ,    text: 'confirm forgetting' }
-        quiet:    { default: false,    type: 'bool',     text: 'no talking sheep' }
+
+    values = loadPrefs()
     
     for key in Object.keys prefs
         pref = prefs[key]
+        value = values[key]
         item =       new Element 'div', class: 'pref-item-border border'
         item.insert  new Element 'input', id: key, type: 'button', class: 'pref-item'
         item.insert (new Element 'span', class: 'pref').update pref.text
         switch pref.type
             when 'bool'
-                bool = new Element 'span', class: 'lock'
+                bool = new Element 'span', class: 'bool'
                 item.insert bool
-                if pref.default
-                    lockClosed bool
-                else
-                    lockOpen bool
+                setBool bool, value
             when 'int', 'shortcut'
-                item.insert (new Element 'span', class: 'pattern').update pref.default
+                item.insert (new Element 'span', class: 'pattern').update value
             
         $('preferences').insert item
         
@@ -507,6 +525,15 @@ showPrefs = () ->
         input.on 'focus',      (e) -> $(e.target.parentElement).addClassName 'focus'
         input.on 'blur',       (e) -> $(e.target.parentElement).removeClassName 'focus'
         input.on 'mouseenter', (e) -> $(e.target).focus()
+        input.on 'click',      (e) -> 
+            key = e.target.id
+            pref = prefs[key]
+            # log 'input click', key, pref
+            if pref.type == 'bool'
+                values[key] = not values[key]
+                bool = e.target.parentElement.select('.bool')[0]
+                setBool bool, values[key]
+                savePrefs values
             
     $('preferences').firstElementChild.firstElementChild.focus()
                     
@@ -656,6 +683,11 @@ lockOpen = (e) ->
     e.innerHTML = '<span><i class="fa fa-unlock fa-lg"></i></span>'
     e.removeClassName 'closed'
     e.addClassName 'open'    
+
+setBool = (e, b) -> 
+    e.innerHTML = b and '<i class="fa fa-check fa-lg"></i>' or '<i class="fa fa-times fa-lg"></i>'
+    e.removeClassName b and 'bool-false' or 'bool-true'
+    e.addClassName b and 'bool-true' or 'bool-false'
 
 hideLock = -> 
     $('lock').removeClassName 'open'
