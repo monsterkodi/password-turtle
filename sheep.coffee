@@ -144,13 +144,6 @@ createWindow()
 - remember window pos
 - render clean sheep image(s)
 - snatch site from firefox
-- preferences
-    - global shortcut
-    - timeout delay
-    - bright/dark style
-    - mask saved passwords
-    - enable site snatching
-    - less verbose mode?
 - sort stash list
 - tests?
 ###

@@ -10,6 +10,7 @@ module.exports = (grunt) ->
                 pepper:  ['log']
                 paprika: ['dbg']
                 join:    false
+                quiet:   true
             task:
                 files:
                     'sheep': [ 'sheep.coffee', 'coffee/**/*.coffee' ]
@@ -17,7 +18,7 @@ module.exports = (grunt) ->
         salt:
             options:
                 dryrun:  false
-                verbose: true
+                verbose: false
                 refresh: false
             coffee:
                 files:
@@ -37,9 +38,11 @@ module.exports = (grunt) ->
                 compress: false
             compile:
                 files:
-                    'style/sheep.css':  ['style/sheep.styl']
-                    'style/bright.css': ['style/bright-style.styl']
-                    'style/dark.css':   ['style/dark-style.styl']
+                    'style/sheep-fixed.css':   ['style/sheep-fixed.styl']
+                    'style/sheep-bright.css':  ['style/sheep-bright.styl']
+                    'style/sheep-dark.css':    ['style/sheep-dark.styl']
+                    'style/bright.css':        ['style/bright-style.styl']
+                    'style/dark.css':          ['style/dark-style.styl']
 
         bower_concat:
             all:
@@ -88,7 +91,7 @@ module.exports = (grunt) ->
         bumpup:
             file: 'package.json'
             
-        clean: ['sheepword.app']
+        clean: ['sheepword.app', 'style/*.css', 'js', 'pepper']
             
         shell:
             kill:

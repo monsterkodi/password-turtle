@@ -479,24 +479,24 @@ prefs =
     shortcut: { default: 'ctrl+`', type: 'shortcut', text: 'global shortcut' }
     timeout:  { default: 60,       type: 'int',      text: 'autoclose delay' }
     dark:     { default: true,     type: 'bool',     text: 'dark theme' }
-    mask:     { default: true,     type: 'bool',     text: 'mask saved passwords' }
-    confirm:  { default: true,     type: 'bool' ,    text: 'confirm forgetting' }
     talking:  { default: true,     type: 'bool',     text: 'sheep is talking' }
+    confirm:  { default: true,     type: 'bool' ,    text: 'confirm forgetting' }
+    mask:     { default: true,     type: 'bool',     text: 'mask saved passwords' }
 
 loadPrefs = () ->
     values = {}
     try
         values = JSON.parse fs.readFileSync(prefsFile, encoding:'utf8')
+        # log 'loaded values:', jsonStr values
     catch        
-        log 'cant load prefs file', prefsFile
+        log 'can\'t load prefs file', prefsFile
     for key in Object.keys prefs
         if not values[key]?
             values[key] = prefs[key].default
-    log jsonStr values    
+    # log jsonStr values    
     values
 
 savePrefs = (values) ->
-    log 'save values', jsonStr values
     fs.writeFileSync prefsFile, jsonStr(values), encoding:'utf8'
 
 showPrefs = () ->
@@ -534,6 +534,21 @@ showPrefs = () ->
                 bool = e.target.parentElement.select('.bool')[0]
                 setBool bool, values[key]
                 savePrefs values
+                
+                if key == 'dark'
+                    link = $('style-link')
+                    currentScheme = link.href.split('/').last()
+                    schemes = ['sheep-dark.css', 'sheep-bright.css']
+                    nextSchemeIndex = ( schemes.indexOf(currentScheme) + 1) % schemes.length
+                    newlink = new Element 'link', 
+                        rel:  'stylesheet'
+                        type: 'text/css'
+                        href: 'style/'+schemes[nextSchemeIndex]
+                        id:   'style-link'
+
+                    link.parentNode.replaceChild newlink, link
+        
+                    
             
     $('preferences').firstElementChild.firstElementChild.focus()
                     
