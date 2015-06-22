@@ -93,6 +93,14 @@ masterFade = ->
         win.setSize win.getSize()[0], win.getSize()[1]-12
         setTimeout masterFade, 0
 
+###
+000  000   000  00000000   000   000  000000000
+000  0000  000  000   000  000   000     000   
+000  000 0 000  00000000   000   000     000   
+000  000  0000  000        000   000     000   
+000  000   000  000         0000000      000   
+###
+
 masterConfirmed = ->
     if mstr?.length
         if stashExists
@@ -124,8 +132,6 @@ patternConfirmed = ->
         writeStash()
     else if stash.pattern == $("pattern").value
         toggleSettings()
-
-openUrl = (url) -> open url
 
 masterChanged = ->
     mstr = $("master").value
@@ -205,6 +211,9 @@ initEvents = () ->
 document.observe 'dom:loaded', ->
         
     initEvents()
+    prefs = loadPrefs()
+    
+    toggleStyle() if not prefs.dark
     
     $("master").focus()
     if domain = extractDomain clipboard.readText()
@@ -329,6 +338,40 @@ onKeyDown = (event) ->
 document.on 'keydown', onKeyDown
 
 ###
+0000000     0000000   0000000    000   000
+000   000  000   000  000   000   000 000 
+0000000    000   000  000   000    00000  
+000   000  000   000  000   000     000   
+0000000     0000000   0000000       000   
+###
+
+saveBody = () ->
+    if not $('bubble')? then return
+    savedFocus = document.activeElement.id
+    savedSite  = $('site')?.value
+    savedBody  = document.body.innerHTML
+    
+    window.restoreBody = (site) ->
+        document.body.innerHTML = savedBody
+        initEvents()
+        setInput 'pattern', stash.pattern
+        setInput 'master',  mstr[0]
+        if site?
+            hideSettings()
+            showSitePassword()
+            setInput 'site', site
+            masterSitePassword()            
+            copyPassword()
+        else
+            setInput 'site', savedSite
+            $(savedFocus)?.focus()                
+            masterSitePassword()
+            updateFloppy()    
+            updateListButton()
+            if isEmpty(stash.configs) and savedFocus == 'list'
+                $('prefs').focus()
+
+###
  0000000  000000000   0000000    0000000  000   000
 000          000     000   000  000       000   000
 0000000      000     000000000  0000000   000000000
@@ -372,40 +415,6 @@ readStash = (cb) ->
     else
         resetStash()
         cb()
-
-###
-0000000     0000000   0000000    000   000
-000   000  000   000  000   000   000 000 
-0000000    000   000  000   000    00000  
-000   000  000   000  000   000     000   
-0000000     0000000   0000000       000   
-###
-
-saveBody = () ->
-    if not $('bubble')? then return
-    savedFocus = document.activeElement.id
-    savedSite  = $('site')?.value
-    savedBody  = document.body.innerHTML
-    
-    window.restoreBody = (site) ->
-        document.body.innerHTML = savedBody
-        initEvents()
-        setInput 'pattern', stash.pattern
-        setInput 'master',  mstr[0]
-        if site?
-            hideSettings()
-            showSitePassword()
-            setInput 'site', site
-            masterSitePassword()            
-            copyPassword()
-        else
-            setInput 'site', savedSite
-            $(savedFocus)?.focus()                
-            masterSitePassword()
-            updateFloppy()    
-            updateListButton()
-            if isEmpty(stash.configs) and savedFocus == 'list'
-                $('prefs').focus()
 
 ###
 000      000   0000000  000000000
@@ -544,17 +553,7 @@ showPrefs = () ->
                 savePrefs values
                 
                 if key == 'dark'
-                    link = $('style-link')
-                    currentScheme = link.href.split('/').last()
-                    schemes = ['sheep-dark.css', 'sheep-bright.css']
-                    nextSchemeIndex = ( schemes.indexOf(currentScheme) + 1) % schemes.length
-                    newlink = new Element 'link', 
-                        rel:  'stylesheet'
-                        type: 'text/css'
-                        href: 'style/'+schemes[nextSchemeIndex]
-                        id:   'style-link'
-
-                    link.parentNode.replaceChild newlink, link
+                    toggleStyle()
             
     $('preferences').firstElementChild.firstElementChild.focus()
     
@@ -611,7 +610,8 @@ showAbout = () ->
 000   000  00000000  0000000  000      
 ###
 
-showHelp   = () -> open "https://github.com/monsterkodi/sheepword"
+openUrl  = (url) -> open url
+showHelp = ()    -> open "https://github.com/monsterkodi/sheepword"
     
 ###
  0000000  000  000000000  00000000
@@ -739,6 +739,27 @@ updateListButton = ->
     else 
         $('list').disabled = false
         $('list-border').removeClassName 'disabled'
+        
+###
+ 0000000  000000000  000   000  000      00000000
+000          000      000 000   000      000     
+0000000      000       00000    000      0000000 
+     000     000        000     000      000     
+0000000      000        000     0000000  00000000
+###
+
+toggleStyle = ->
+    link = $('style-link')
+    currentScheme = link.href.split('/').last()
+    schemes = ['sheep-dark.css', 'sheep-bright.css']
+    nextSchemeIndex = ( schemes.indexOf(currentScheme) + 1) % schemes.length
+    newlink = new Element 'link', 
+        rel:  'stylesheet'
+        type: 'text/css'
+        href: 'style/'+schemes[nextSchemeIndex]
+        id:   'style-link'
+
+    link.parentNode.replaceChild newlink, link
         
 ###
 000000000   0000000   000      000   000

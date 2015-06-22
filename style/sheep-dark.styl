@@ -164,12 +164,14 @@ clr.password-bright = clr.blue-very-bright
 */
 
 #sheep
-    box-shadow:    inset 2px 2px 15px rgba(0, 0, 0, 1.0)
+    box-shadow:    inset 1px 1px 15px rgba(0, 0, 0, 0.85)
     &:focus
         box-shadow:      2px 2px 15px rgba(0, 0, 0, 0.5)
     &:active
-        box-shadow:      0px 0px  5px rgba(0, 0, 0, 0.5)
-        opacity:         0.8
+        box-shadow:      0px 0px  1px rgba(0, 0, 0, 0.1)
+        border: 1px solid clr.gray-most-dark
+    border-radius: 12px        
+    background url(../img/sheep.png) no-repeat
         
 /*
 *  0000000    000   000  0000000    0000000    000      00000000
@@ -331,11 +333,9 @@ clr.bubble-ask = rgba(0,0,0,0.8)
 
 #about
     color:         clr.blue
-    text-align:    center
 
     & h1
         color:     clr.orange
-        margin-bottom: 9px
         
         &:hover 
             color:  clr.yellow
@@ -355,8 +355,6 @@ clr.bubble-ask = rgba(0,0,0,0.8)
             color: clr.blue-very-bright
 
 #about-github
-    margin-top:     30px
-    margin-bottom:  40px
     &:hover .github-svg
         fill:       clr.orange
     &:active .github-svg

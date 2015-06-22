@@ -14,7 +14,7 @@ events        = require 'events'
 Tray          = require 'tray'
 BrowserWindow = require 'browser-window'
 
-debug = true
+debug = false
 win   = undefined
 knx   = undefined
 tray  = undefined
@@ -117,7 +117,7 @@ createWindow = () ->
             dir:           cwd
             preloadWindow: true
             width:         364
-            height:        310
+            height:        330
             frame:         false
 
         win.loadUrl 'file://' + cwd + '/sheep.html'
@@ -126,7 +126,7 @@ createWindow = () ->
         
         shortcut.register 'ctrl+`', toggleWindow
         
-        setTimeout showWindow, 10
+        setTimeout showWindow, 100
               
 createWindow()            
 
@@ -145,5 +145,4 @@ createWindow()
 - render clean sheep image(s)
 - snatch site from firefox
 - sort stash list
-- tests?
 ###

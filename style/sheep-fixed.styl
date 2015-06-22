@@ -6,11 +6,16 @@
 *  000       000  000   000  00000000  0000000  
 */
 
+drag()
+    -webkit-app-region  drag
+nodrag()
+    -webkit-app-region  no-drag
+
 body
     margin              0px
     height              100%
     overflow            hidden
-    -webkit-app-region  drag
+    drag()
     -webkit-user-select none
 
 input 
@@ -26,7 +31,7 @@ a
 
 .main-input
     -webkit-transition  all 0.4s ease-in-out
-    -webkit-app-region  no-drag
+    nodrag()
     width               100%
     box-sizing          border-box
     text-align          center
@@ -82,14 +87,17 @@ a
     margin-bottom: 12px
 
 #sheep
-    -webkit-app-region: no-drag
-    -webkit-transition: box-shadow 0.3s ease-in-out
-    margin:        12px
-    border-radius: 12px
+    nodrag()
+    -webkit-transition box-shadow 0.1s ease-in-out
+    margin          12px
+    width           340px
+    height          260px
+    background-size cover
+    border          none
 
 #bubble
     -webkit-transition:  all 0.5s ease-in-out
-    -webkit-app-region: no-drag
+    nodrag()
     position:       absolute
     top:            170px    
     right:          27px
@@ -154,7 +162,7 @@ a
     margin-right  12px
 
 .button
-    -webkit-app-region: no-drag
+    nodrag()
     -webkit-transition-property: box-shadow, border  
     -webkit-transition-duration: 0.4s
     -webkit-transition-timing-function: ease-in-out
@@ -164,7 +172,7 @@ a
     width:            35px
 
 .button-border
-    -webkit-app-region:   drag
+    drag()
     -webkit-transition:   all 0.4s ease-in-out
     pointer-events:       all
     display:              inline-block
@@ -232,21 +240,27 @@ a
     height:        24px
             
 #about
+
+    text-align:    center
+
     & h1
-        -webkit-app-region: no-drag
+        nodrag()
+        margin-bottom: 9px
         &:hover 
             cursor: pointer
     & .link
-        -webkit-app-region: no-drag
+        nodrag()
         &:hover 
             cursor: pointer
 
 #about-github
-    -webkit-app-region: no-drag
+    nodrag()
+    margin-top:     30px
+    margin-bottom:  40px    
     pointer-events: all
     &:hover
         cursor:     pointer
 
 .github-svg
-    -webkit-app-region: no-drag
+    nodrag()
         
