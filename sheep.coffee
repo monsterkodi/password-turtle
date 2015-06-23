@@ -122,7 +122,7 @@ createWindow = () ->
 
         win.loadUrl 'file://' + cwd + '/sheep.html'
         
-        if not debug then win.on 'blur', win.hide
+        # if not debug then win.on 'blur', win.hide
         
         shortcut.register 'ctrl+`', toggleWindow
         

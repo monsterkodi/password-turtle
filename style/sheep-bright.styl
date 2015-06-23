@@ -31,10 +31,7 @@ body
     background-color: clr.background
 
 ::selection
-    color:            clr.white
-    background:       clr.gray-bright
-    border-radius:    4px
-    margin: 4px
+    color:            clr.gray-bright
 
 /*
 *  000  000   000  00000000   000   000  000000000
@@ -57,6 +54,7 @@ body
     &:focus
         box-shadow: 0 0 10px clr.yellow
         color:      clr.red
+
         
 clr.site        = clr.green 
 clr.site-medium = clr.green-dark
@@ -98,70 +96,29 @@ clr.password-bright = clr.blue-bright
 *  0000000     0000000   000   000  0000000    00000000  000   000
 */
     
-border-focus-shadow()    
-    box-shadow:           inset 2px 2px 17px rgba(0, 0, 0, 0.25)    
-    
 .border
-    box-shadow:           inset 2px 2px 17px rgba(0, 0, 0, 0.25)
-    background-color:     clr.gray-very-bright
+    box-shadow:           inset 0px 0px 12px rgba(0, 0, 0, 0.25)
+    background-color:     clr.white
     &.focus
         background-color: clr.orange-bright
-        border-focus-shadow()
+        box-shadow:       inset 1px 1px 10px rgba(0, 0, 0, 0.25)
+
+#master-border
+    &.focus
+        background-color: clr.orange
 
 #site-border
     &.focus
         background-color: clr.site-bright
-        border-focus-shadow()
 
 #pattern-border
     &.focus
-        background-color: clr.gray
-        box-shadow:       inset 0px 0px 11px rgba(0, 0, 0, 0.05) 
+        background-color: clr.gray-very-bright
 
 #password-border
     &.focus
         background-color: clr.blue-very-bright
-        border-focus-shadow()
-
-.button-border
-    border-radius:        10px
-    background-color:     clr.gray-very-bright
-    color:                clr.gray-very-dark
-    &.focus
-        color:            clr.black
-        background-color: clr.white
-        box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.75)
-    &.disabled
-        opacity: 0.5
-        color: clr.gray
         
-#about-border
-    &.focus
-        color:            clr.password-bright
-        background-color: clr.password
-        box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.75)
-
-#prefs-border
-    &.focus
-        color:            clr.pattern-bright
-        background-color: clr.pattern
-        box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.75)
-    
-#list-border
-#help-border
-    &.focus
-        color:            clr.site-bright
-        background-color: clr.site-medium
-        box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.75)
-    
-.stash-item-border
-.pref-item-border
-    box-shadow:       inset 2px 2px 11px rgba(0, 0, 0, 0.1) 
-    background-color: clr.white
-    &.focus
-        background-color: clr.site-bright
-        border-focus-shadow()
-    
 /*
 *  000   0000000   0000000   000   000   0000000
 *  000  000       000   000  0000  000  000     
@@ -175,7 +132,7 @@ border-focus-shadow()
     &.closed
         color:      clr.blue-medium
     &.open
-        color:      clr.orange
+        color:      clr.blue-very-bright
 
 .bool    
     &.bool-true
@@ -187,9 +144,9 @@ border-focus-shadow()
     color:      clr.black
 
 #floppy
-    color:          clr.white
+    color:          clr.black
     &.saved
-        color:      clr.gray-dark
+        color:      clr.gray-super-bright
             
 /*
 *   0000000  000   000  00000000  00000000  00000000 
@@ -200,10 +157,9 @@ border-focus-shadow()
 */
 
 #sheep
-    box-shadow:    inset 1px 1px 15px rgba(0, 0, 0, 0.5)
+    box-shadow:    inset 1px 1px 15px rgba(0, 0, 0, 0.2)
     &:focus
-        box-shadow:      2px 2px 11px rgba(0, 0, 0, 0.5)
-        border: 1px solid clr.gray
+        box-shadow:      4px 4px 8px rgba(0, 0, 0, 0.4)
     &:active
         box-shadow:      0px 0px  1px rgba(0, 0, 0, 0.1)
         border: 1px solid clr.gray-most-dark
@@ -228,12 +184,13 @@ clr.bubble-ask = rgba(255,255,255,0.8)
 
 #say
     text-align:       center
-    font-family:      Verdana
-    font-size:        12px
+    font-family:      arial
+    font-size:        17px
     font-weight:      bold
     text-shadow:      1px 1px 5px clr.gray
     color:            clr.blue-dark
-    background-color: clr.bubble        
+    background-color: clr.bubble     
+    line-height:      0.9    
     
 #say b
         color: clr.site-medium
@@ -250,6 +207,9 @@ clr.bubble-ask = rgba(255,255,255,0.8)
     background-color: clr.bubble-ask
 #bubble.ask #say-tri
     border-bottom: 20px solid clr.bubble-ask
+#bubble.whisper #say
+    font-size:  14px
+    
     
 .open
     color: clr.blue-medium
@@ -263,13 +223,38 @@ clr.bubble-ask = rgba(255,255,255,0.8)
 *  000   000  000   000     000        000     000   000  000  0000
 *  0000000     0000000      000        000      0000000   000   000
 */
+
+.button-border
+    border-radius:        10px
+    background-color:     clr.white
+    color:                clr.gray-bright
+    &.focus
+        color:            clr.black
+        background-color: clr.white
+    &.disabled
+        opacity: 0.5
+        color: clr.gray
+        
+#about-border
+    &.focus
+        color:            clr.password
+        background-color: clr.password-bright
+
+#prefs-border
+    &.focus
+        color:            clr.pattern
+        background-color: clr.pattern-bright
+    
+#list-border
+#help-border
+    &.focus
+        color:            clr.site-medium
+        background-color: clr.site-bright
     
 .button
     border-radius:    4px
     border:           none
     background-color: clr.white
-    &:focus
-        box-shadow:       0 0 10px clr.yellow
     &:active
         background-color: clr.gray-very-bright
         color:            clr.black
@@ -301,7 +286,11 @@ clr.bubble-ask = rgba(255,255,255,0.8)
 .pref-item-border
 .stash-item-border
         
+    background-color: clr.white
     box-shadow:           inset 2px 2px 4px rgba(0, 0, 0, 0.1)
+
+    &.focus
+        box-shadow:       inset 1px 1px 4px rgba(0, 0, 0, 0.2)
         
     & .site
     & .pref        
@@ -314,9 +303,10 @@ clr.bubble-ask = rgba(255,255,255,0.8)
     &.focus .pattern
         color:     clr.pattern-medium       
 
+.stash-item-border.focus
+    background-color: clr.site-bright
 .pref-item-border.focus
     background-color: clr.blue-super-bright
-    box-shadow:       inset 1px 1px 4px rgba(0, 0, 0, 0.2)    
 
 .pref-item
 .stash-item

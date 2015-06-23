@@ -315,6 +315,14 @@ onKeyDown = (event) ->
                 masterSitePassword()
                 return
     
+    btnames = ['list', 'prefs', 'about', 'help', 'delete']
+    if e.id in btnames
+        switch key
+            when 'left', 'up'
+                $(btnames[btnames.indexOf(e.id)-1]).focus()
+            when 'right', 'down'
+                $(btnames[btnames.indexOf(e.id)+1]).focus()
+        
     switch key
         when 'command-,', 'ctrl-,' then toggleSettings()
         when 'esc'
