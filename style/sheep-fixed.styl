@@ -11,6 +11,17 @@ drag()
 nodrag()
     -webkit-app-region  no-drag
 
+input-transition()
+    -webkit-transition all 0.4s ease-in-out
+ghost-transition()
+    -webkit-transition: all 0.8s ease-in-out    
+fast-transition()
+    -webkit-transition: all 0.2s ease-in-out
+bubble-transition()
+    -webkit-transition:  all 0.5s ease-in-out    
+no-transition()
+    -webkit-transition: none
+
 body
     margin              0px
     height              100%
@@ -30,14 +41,16 @@ a
     pointer-events      none
 
 .main-input
-    -webkit-transition  all 0.4s ease-in-out
+    input-transition()
     nodrag()
+    font-size           24px
+    padding-left        6px
     width               100%
     box-sizing          border-box
     text-align          center
 
 .ghost
-    -webkit-transition: all 0.8s ease-in-out
+    ghost-transition()
     pointer-events: none
     position:       absolute
     left:           0
@@ -49,7 +62,7 @@ a
     
 #lock
 #password-ghost
-    -webkit-transition: all 0.2s ease-in-out
+    fast-transition()
     
 .lock    
 #lock
@@ -74,7 +87,7 @@ a
     padding-right:  20px
     
 .border
-    border-transition()
+    input-transition()
     position:      relative
     padding:       10px
     border-radius: 10px
@@ -96,7 +109,7 @@ a
     border          none
 
 #bubble
-    -webkit-transition:  all 0.5s ease-in-out
+    bubble-transition()
     nodrag()
     position:       absolute
     top:            170px    
@@ -116,14 +129,14 @@ a
         opacity:        0
 
 #say-tri
-    -webkit-transition:  all 0.5s ease-in-out
+    bubble-transition()
     position:      absolute
     width:         0
     height:        0
     right:         33px
 
 #say
-    -webkit-transition:  all 0.5s ease-in-out
+    bubble-transition()
     position:         absolute
     top:              20px
     left:             0
@@ -173,7 +186,7 @@ a
 
 .button-border
     drag()
-    -webkit-transition:   all 0.4s ease-in-out
+    input-transition()
     pointer-events:       all
     display:              inline-block
     position:             relative
@@ -205,7 +218,7 @@ a
 
 .pref-item-border
 .stash-item-border
-    -webkit-transition: none 0.0s ease-in-out
+    no-transition()
     padding:  5px
     
     & .pref    

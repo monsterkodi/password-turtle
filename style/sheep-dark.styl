@@ -25,9 +25,6 @@ clr.blue-very-bright = #aaaaff
 
 clr.background       = #222222
 
-border-transition()
-    -webkit-transition all 0.4s ease-in-out
-
 @font-face
     font-family UbuntuMono
     src url('./font/UbuntuMono-R.ttf')
@@ -48,8 +45,6 @@ body
 */
      
 .main-input
-    font-size         24px
-    padding-left      6px
     border-radius     4px
     background-color: clr.gray-very-dark
     color:            clr.gray
@@ -97,32 +92,6 @@ clr.password-bright = clr.blue-very-bright
     color:          rgba(255, 255, 255, 0.1)
     
 /*
-*  000   0000000   0000000   000   000   0000000
-*  000  000       000   000  0000  000  000     
-*  000  000       000   000  000 0 000  0000000 
-*  000  000       000   000  000  0000       000
-*  000   0000000   0000000   000   000  0000000 
-*/
-    
-.lock    
-#lock
-    &.closed
-        color:      clr.blue-medium
-    &.open
-        color:      clr.orange
-
-.bool    
-    &.bool-true
-        color:      clr.white
-    &.bool-false
-        color:      clr.gray-very-dark
-
-#floppy
-    color:          clr.white
-    &.saved
-        color:      clr.gray-dark
-        
-/*
 *  0000000     0000000   00000000   0000000    00000000  00000000 
 *  000   000  000   000  000   000  000   000  000       000   000
 *  0000000    000   000  0000000    000   000  0000000   0000000  
@@ -154,6 +123,32 @@ clr.password-bright = clr.blue-very-bright
     &.focus
         background-color: clr.password
         box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.75)
+            
+/*
+*  000   0000000   0000000   000   000   0000000
+*  000  000       000   000  0000  000  000     
+*  000  000       000   000  000 0 000  0000000 
+*  000  000       000   000  000  0000       000
+*  000   0000000   0000000   000   000  0000000 
+*/
+    
+.lock    
+#lock
+    &.closed
+        color:      clr.blue-medium
+    &.open
+        color:      clr.orange
+
+.bool    
+    &.bool-true
+        color:      clr.white
+    &.bool-false
+        color:      clr.gray-very-dark
+
+#floppy
+    color:          clr.white
+    &.saved
+        color:      clr.gray-dark
 
 /*
 *   0000000  000   000  00000000  00000000  00000000 
@@ -299,29 +294,21 @@ clr.bubble-ask = rgba(0,0,0,0.8)
         
     & .pref        
         color:     clr.pattern
+    &.focus .pref   
+        color:     clr.pattern-bright
     & .site
-        color:     clr.site
-        &:focus
-            color: clr.site-bright
-                
+        color:     clr.site                
+    &.focus .site   
+        color:     clr.site-bright
     & .pattern
         color:     clr.pattern-bright
         
-    &.focus .pref   
-        color: clr.pattern-bright
-    &.focus .site   
-        color: clr.site-bright
 
 .pref-item
 .stash-item
-    border:        none
-    border-radius: 6px    
-    background-color: clr.gray-dark
-    
-    &:focus .pref
-        color: clr.pattern-bright
-    &:focus .site
-        color: clr.site-bright
+    border:           none
+    border-radius:    6px    
+    background-color: clr.gray-dark    
         
 /*
 *   0000000   0000000     0000000   000   000  000000000
