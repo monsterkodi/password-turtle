@@ -225,7 +225,12 @@ document.observe 'dom:loaded', ->
     stashExists = fs.existsSync stashFile
     if not stashExists
         masterChanged()
-
+        
+win.on 'close', (event) ->
+    values = loadPrefs()
+    values.winpos = win.getPosition()
+    savePrefs values
+    
 win.on 'focus', (event) -> 
     if stashLoaded
         if domain = extractDomain clipboard.readText()
@@ -512,13 +517,13 @@ loadPrefs = () ->
     values = {}
     try
         values = JSON.parse fs.readFileSync(prefsFile, encoding:'utf8')
-        # log 'loaded values:', jsonStr values
+        log 'loaded values:', jsonStr values
     catch        
         log 'can\'t load prefs file', prefsFile
     for key in Object.keys prefs
         if not values[key]?
             values[key] = prefs[key].default
-    # log jsonStr values    
+    log jsonStr values    
     values
 
 savePrefs = (values) ->

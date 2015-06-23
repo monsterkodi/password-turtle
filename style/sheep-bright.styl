@@ -9,13 +9,15 @@ clr.gray              = #888888
 clr.gray-bright       = #cccccc
 clr.gray-very-bright  = #dddddd
 clr.gray-super-bright = #eeeeee
+clr.background        = #fafafa
 clr.white             = #ffffff
 clr.yellow-bright     = #ffff88
 clr.yellow            = #ffff00
+clr.orange-bright     = #ffbb00
 clr.orange            = #ff8800
 clr.red               = #ff0000
-clr.green-bright      = #44ff44
 clr.green             = #00aa00
+clr.green-bright      = #44ff44
 clr.green-dark        = #006600
 clr.blue-dark         = #2222aa
 clr.blue              = #4444ff
@@ -23,8 +25,6 @@ clr.blue-medium       = #6666ff
 clr.blue-bright       = #8888ff
 clr.blue-very-bright  = #aaaaff
 clr.blue-super-bright = #ccccff
-
-clr.background = #fafafa
 
 body
     font-family       Verdana
@@ -45,15 +45,15 @@ body
     border-radius     6px
     background-color: clr.white
     color:            clr.gray
-    border:           none
+    border:           1px solid transparent
     &:focus
         background-color: clr.white
+        box-shadow:       1px 1px 10px rgba(0, 0, 0, 0.25)
 
 #master
     color:          clr.gray-bright
     &:focus
-        box-shadow: 0 0 10px clr.yellow
-        color:      clr.red
+        color:      clr.blue-medium
 
         
 clr.site        = clr.green 
@@ -62,7 +62,6 @@ clr.site-bright = clr.green-bright
 #site
     color:                   clr.site
     &:focus
-        box-shadow: 0 0 10px clr.site-bright
         color:               clr.site-medium
                 
 clr.pattern        = clr.gray-dark
@@ -71,7 +70,6 @@ clr.pattern-bright = clr.gray-bright
 #pattern
     color:                   clr.pattern 
     &:focus
-        box-shadow: 0 0 10px clr.pattern-bright
         color:               clr.pattern-medium
 
 clr.password        = clr.blue
@@ -80,7 +78,6 @@ clr.password-bright = clr.blue-bright
 #password
     color:                   clr.password
     &:focus
-        box-shadow: 0 0 10px clr.password-bright
         color:               clr.password-medium
     
 .ghost
@@ -99,13 +96,14 @@ clr.password-bright = clr.blue-bright
 .border
     box-shadow:           inset 0px 0px 12px rgba(0, 0, 0, 0.25)
     background-color:     clr.white
+    border:               1px solid transparent
     &.focus
         background-color: clr.orange-bright
         box-shadow:       inset 1px 1px 10px rgba(0, 0, 0, 0.25)
 
 #master-border
     &.focus
-        background-color: clr.orange
+        background-color: clr.white
 
 #site-border
     &.focus
@@ -210,12 +208,6 @@ clr.bubble-ask = rgba(255,255,255,0.8)
 #bubble.whisper #say
     font-size:  14px
     
-    
-.open
-    color: clr.blue-medium
-    &:hover
-        color: clr.blue-bright
-
 /*
 *  0000000    000   000  000000000  000000000   0000000   000   000
 *  000   000  000   000     000        000     000   000  0000  000
@@ -228,12 +220,14 @@ clr.bubble-ask = rgba(255,255,255,0.8)
     border-radius:        10px
     background-color:     clr.white
     color:                clr.gray-bright
+    border:               1px solid transparent
     &.focus
         color:            clr.black
         background-color: clr.white
+        box-shadow:       inset 1px 1px 10px rgba(0, 0, 0, 0.25)
     &.disabled
-        opacity: 0.5
-        color: clr.gray
+        opacity:          0.5
+        color:            clr.gray
         
 #about-border
     &.focus
@@ -246,34 +240,31 @@ clr.bubble-ask = rgba(255,255,255,0.8)
         background-color: clr.pattern-bright
     
 #list-border
-#help-border
     &.focus
         color:            clr.site-medium
         background-color: clr.site-bright
+
+#help-border
+    &.focus
+        color:            clr.orange
+        background-color: clr.yellow
+
+#delete-border
+    &.focus
+        color:            clr.red
+        background-color: clr.orange
+
+#delete-border
+    margin-right:  0px
     
 .button
-    border-radius:    4px
-    border:           none
-    background-color: clr.white
+    border-radius:        4px
+    border:               none
+    background-color:     clr.white
+    &:focus
+        box-shadow:       1px 1px 10px rgba(0, 0, 0, 0.25)
     &:active
-        background-color: clr.gray-very-bright
-        color:            clr.black
-
-#about
-    &:focus
-        box-shadow: 0 0 10px clr.password-bright
-        color:               clr.password-medium
-
-#prefs
-    &:focus
-        box-shadow: 0 0 10px clr.pattern-bright
-        color:               clr.pattern-medium
-
-#list
-#help
-    &:focus
-        box-shadow: 0 0 10px clr.site-bright
-        color:               clr.site-medium
+        box-shadow:       0px 0px 5px rgba(0, 0, 0, 0.5)
     
 /*
 *   0000000  000000000   0000000    0000000  000   000  000      000   0000000  000000000
@@ -286,11 +277,11 @@ clr.bubble-ask = rgba(255,255,255,0.8)
 .pref-item-border
 .stash-item-border
         
-    background-color: clr.white
-    box-shadow:           inset 2px 2px 4px rgba(0, 0, 0, 0.1)
+    background:     clr.white
+    box-shadow:     inset 0px 1px 7px rgba(0, 0, 0, 0.1)
 
     &.focus
-        box-shadow:       inset 1px 1px 4px rgba(0, 0, 0, 0.2)
+        box-shadow: inset 1px 1px 4px rgba(0, 0, 0, 0.2)
         
     & .site
     & .pref        
@@ -304,15 +295,15 @@ clr.bubble-ask = rgba(255,255,255,0.8)
         color:     clr.pattern-medium       
 
 .stash-item-border.focus
-    background-color: clr.site-bright
+    background:    clr.site-bright
 .pref-item-border.focus
-    background-color: clr.blue-super-bright
+    background:    clr.blue-super-bright
 
 .pref-item
 .stash-item
-    border:           none
-    border-radius:    6px    
-    background-color: clr.white
+    border:        none
+    border-radius: 6px    
+    background:    clr.white
             
 /*
 *   0000000   0000000     0000000   000   000  000000000
@@ -323,33 +314,33 @@ clr.bubble-ask = rgba(255,255,255,0.8)
 */
 
 #about
-    color:         clr.blue
+    color:         clr.black
 
     & h1
-        color:     clr.orange
         
         &:hover 
-            color:  clr.yellow
+            background: clr.blue-bright
+            color: clr.white
         &:active 
-            color: clr.yellow-bright
+            color: clr.blue-medium
         
     & h2
-        color:     clr.blue-bright
     & sub
-        color:     clr.gray-medium
+        color:     clr.gray-very-bright
     & a
     & .link
-        color:     clr.blue
+        color: clr.blue-bright
         &:hover 
-            color: clr.orange
+            color: clr.black
+            background: clr.blue-very-bright
         &:active 
             color: clr.blue-very-bright
 
 #about-github
     &:hover .github-svg
-        fill:       clr.orange
+        fill:      clr.black
     &:active .github-svg
-        fill:       clr.blue-very-bright
+        fill:      clr.blue-bright
 
 .github-svg
-    fill:           clr.blue
+    fill:          clr.blue-very-bright

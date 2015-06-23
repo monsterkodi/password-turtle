@@ -10,6 +10,7 @@ shortcut      = require 'global-shortcut'
 path          = require 'path'
 app           = require 'app'
 ipc           = require 'ipc'
+fs            = require 'fs'
 events        = require 'events'
 Tray          = require 'tray'
 BrowserWindow = require 'browser-window'
@@ -44,13 +45,8 @@ ipc.on 'process.exit',  (event, code) -> console.log 'exit via ipc';  process.ex
 ###
 
 showWindow = () ->
-    screenSize = (require 'screen').getPrimaryDisplay().workAreaSize
     win.show() unless win.isVisible()
     win.setResizable debug
-    windowWidth = win.getSize()[0]
-    screenWidth = screenSize.width
-    winPosX = Number(((screenWidth-windowWidth)/2).toFixed())
-    win.setPosition winPosX, 0
     win
 
 ###
@@ -113,22 +109,53 @@ createWindow = () ->
         00     00  000  000   000
         ###
 
+        screenSize = (require 'screen').getPrimaryDisplay().workAreaSize
+        windowWidth = 364
+        x = Number(((screenSize.width-windowWidth)/2).toFixed())
+        y = 0
+
+        values = loadPrefs()
+        if values.winpos?
+            x = values.winpos[0]
+            y = values.winpos[1]
+
         win = new BrowserWindow
             dir:           cwd
             preloadWindow: true
-            width:         364
+            x: x
+            y: y
+            width:         windowWidth
             height:        330
             frame:         false
 
+        shortcut.register (shortcut.shortcut or 'ctrl+`'), toggleWindow
+
         win.loadUrl 'file://' + cwd + '/sheep.html'
-        
-        # if not debug then win.on 'blur', win.hide
-        
-        shortcut.register 'ctrl+`', toggleWindow
         
         setTimeout showWindow, 100
               
 createWindow()            
+
+###
+00000000   00000000   00000000  00000000   0000000
+000   000  000   000  000       000       000     
+00000000   0000000    0000000   000000    0000000 
+000        000   000  000       000            000
+000        000   000  00000000  000       0000000 
+###
+
+prefsFile = process.env.HOME+'/Library/Preferences/sheepword.json'
+
+loadPrefs = () ->
+    try
+        return JSON.parse(fs.readFileSync(prefsFile, encoding:'utf8'))
+    catch err     
+        console.log 'fark', err
+        return {}
+
+savePrefs = (values) ->
+    fs.writeFileSync prefsFile, jsonStr(values), encoding:'utf8'
+
 
 ###
 000000000   0000000   0000000     0000000 
@@ -140,9 +167,6 @@ createWindow()
 ###
 - timeout
 - autocompletion
-- bright style
-- remember window pos
-- render clean sheep image(s)
 - snatch site from firefox
 - sort stash list
 ###
