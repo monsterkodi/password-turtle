@@ -260,7 +260,6 @@ win.on 'focus', (event) ->
     if stashLoaded
         if domain = extractDomain clipboard.readText()
             setSite domain
-            # clipboard.writeText $("password").value
             $("password").focus()
         else
             $("site").focus()
@@ -471,8 +470,6 @@ onListKey = (event) ->
                     restoreBody()
         when 'enter'
             restoreBody e.nextSibling.innerHTML
-        # else
-        #     dbg key
 
 listStash = () ->
     
@@ -521,9 +518,9 @@ prefsFile = process.env.HOME+'/Library/Preferences/sheepword.json'
 prefs = 
     shortcut: { default: 'ctrl+`', type: 'shortcut', text: 'global shortcut'       }
     timeout:  { default: 60,       type: 'int',      text: 'autoclose delay'       }
-    dark:     { default: true,     type: 'bool',     text: 'dark theme'            }
-    confirm:  { default: true,     type: 'bool' ,    text: 'confirm changes'       }
     mask:     { default: true,     type: 'bool',     text: 'mask locked passwords' }
+    confirm:  { default: true,     type: 'bool' ,    text: 'confirm changes'       }
+    dark:     { default: true,     type: 'bool',     text: 'dark theme'            }
 
 getPref = (key) -> loadPrefs()[key]
 
@@ -563,6 +560,14 @@ showPrefs = () ->
                 item.insert (new Element 'span', class: 'pattern').update value
             
         $('preferences').insert item
+
+    ok =       new Element 'div', class: 'button-border border', id: 'ok-border'
+    ok.insert  new Element 'input', id: 'ok', type: 'button', class: 'button'
+    ok.insert  new Element 'i', class:"button-icon fa fa-floppy-o"
+    ok.on 'click', -> restoreBody()
+    buttons  = new Element 'div', class: 'bottom-buttons'
+    buttons.insert ok
+    $('preferences').insert buttons
         
     for input in $$('input')
         input.on 'focus',      (e) -> $(e.target.parentElement).addClassName 'focus'
@@ -571,13 +576,11 @@ showPrefs = () ->
         input.on 'click',      (e) -> 
             key = e.target.id
             pref = prefs[key]
-            # log 'input click', key, pref
             if pref.type == 'bool'
                 values[key] = not values[key]
                 bool = e.target.parentElement.select('.bool')[0]
                 setBool bool, values[key]
                 savePrefs values
-                
                 if key == 'dark'
                     toggleStyle()
             
