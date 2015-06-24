@@ -38,6 +38,7 @@ stashFile   = process.env.HOME+'/Library/Preferences/sheepword.stash'
 stash       = undefined
 stashExists = false
 stashLoaded = false
+currentPassword = undefined
 
 log   = () -> ipc.send 'knixlog',   [].slice.call arguments, 0
 dbg   = () -> ipc.send 'knixlog',   [].slice.call arguments, 0
@@ -174,8 +175,8 @@ copyAndSavePattern = ->
         savePattern()
                     
 copyPassword = -> 
-    pw = $("password").value
-    if pw.length
+    pw = currentPassword
+    if pw?.length
         clipboard.writeText pw
         $("password").focus()
         whisper '<u>password</u> copied', 2000
@@ -223,7 +224,7 @@ initEvents = () ->
     $('help'    ).on 'click', showHelp
     $('delete'  ).on 'click', deleteStash
     $('sheep'   ).on 'mouseenter', (e) -> $('sheep').focus()
-        
+            
 ###
 000       0000000    0000000   0000000    00000000  0000000  
 000      000   000  000   000  000   000  000       000   000
@@ -518,11 +519,11 @@ listStash = () ->
 
 prefsFile = process.env.HOME+'/Library/Preferences/sheepword.json'
 prefs = 
-    shortcut: { default: 'ctrl+`', type: 'shortcut', text: 'global shortcut'      }
-    timeout:  { default: 60,       type: 'int',      text: 'autoclose delay'      }
-    dark:     { default: true,     type: 'bool',     text: 'dark theme'           }
-    confirm:  { default: true,     type: 'bool' ,    text: 'confirm changes'      }
-    mask:     { default: true,     type: 'bool',     text: 'mask saved passwords' }
+    shortcut: { default: 'ctrl+`', type: 'shortcut', text: 'global shortcut'       }
+    timeout:  { default: 60,       type: 'int',      text: 'autoclose delay'       }
+    dark:     { default: true,     type: 'bool',     text: 'dark theme'            }
+    confirm:  { default: true,     type: 'bool' ,    text: 'confirm changes'       }
+    mask:     { default: true,     type: 'bool',     text: 'mask locked passwords' }
 
 getPref = (key) -> loadPrefs()[key]
 
@@ -647,12 +648,13 @@ showHelp = ()    -> open "https://github.com/monsterkodi/sheepword"
 ###
     
 makePassword = (hash, config) -> password.make hash, config.pattern
-        
+            
 showPassword = (config) ->
-    url    = decrypt config.url, mstr
-    pass   = makePassword genHash(url+mstr), config
-    setInput 'password', pass
-    pass
+    url  = decrypt config.url, mstr
+    pass = currentPassword = makePassword genHash(url+mstr), config
+    if hasLock() and getPref 'mask'
+        pass = pad '', currentPassword.length, '●'
+    setInput 'password', pass 
     
 masterSitePassword = () ->
     site = trim $("site").value
@@ -675,7 +677,7 @@ masterSitePassword = () ->
         config.pattern = $('pattern').value
         hideLock()
         
-    pass = showPassword config
+    showPassword config
     
 ###
  0000000  00000000  000000000  000000000  000  000   000   0000000    0000000
@@ -730,6 +732,13 @@ clearInput = (input) -> setInput input, ''
 setInput = (input, value) ->
     $(input).value = value
     $(input+'-ghost').setStyle opacity: (value.length == 0 and 1 or 0)
+
+hasLock = ->
+    $('lock').hasClassName('open') or $('lock').hasClassName('closed')
+
+hideLock = -> 
+    $('lock').removeClassName 'open'
+    $('lock').removeClassName 'closed'
     
 lockClosed = (e) -> 
     e.innerHTML = '<span><i class="fa fa-lock fa-lg"></i></span>'
@@ -745,10 +754,6 @@ setBool = (e, b) ->
     e.innerHTML = b and '<i class="fa fa-check fa-lg"></i>' or '<i class="fa fa-times fa-lg"></i>'
     e.removeClassName b and 'bool-false' or 'bool-true'
     e.addClassName b and 'bool-true' or 'bool-false'
-
-hideLock = -> 
-    $('lock').removeClassName 'open'
-    $('lock').removeClassName 'closed'
             
 updateFloppy = ->
     if floppy = $('floppy')
