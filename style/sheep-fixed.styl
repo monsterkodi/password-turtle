@@ -117,15 +117,12 @@ a
     &.ask
     &.say
         pointer-events: all
-        left:           27px
         opacity:        1
     &.whisper
         pointer-events: all
-        left:           157px
         opacity:        1 
     &.silent
         pointer-events: none
-        left:           217px
         opacity:        0
 
 #say-tri
@@ -135,29 +132,27 @@ a
     height:        0
     right:         33px
 
+#say-box
+    bubble-transition()
+    position:         relative
+    top:              20px
+    right:            0
+    left:             0
+
 #say
     bubble-transition()
-    position:         absolute
-    top:              20px
-    left:             0
-    right:            0
-    height:           45px
     border-radius:    20px
-    padding:          6px
-    padding-top:      12px
-    padding-left:     18px
-    padding-right:    18px
+    padding:          14px
+    max-height:       46px
+    min-width:        90px
+    overflow:         hidden
     
-#bubble.whisper #say    
-    height:           21px
-    padding-left:     8px
-    padding-right:    8px
+.whisper #say
+    padding:          10px
+    padding-right:    14px
     
-#bubble.silent #say    
+.silent #say
     font-size:        1px
-    height:           8px
-    padding-left:     0px
-    padding-right:    0px
     
 .open:hover
     cursor: pointer

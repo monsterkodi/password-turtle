@@ -148,6 +148,30 @@ masterChanged = ->
 patternChanged = ->
     updateFloppy()
     masterSitePassword()
+        
+savePattern = ->
+    site = $('site').value
+    hash = genHash(site+mstr)
+    stash.configs[hash].pattern = $('pattern').value
+    writeStash()
+    masterSitePassword()        
+                    
+copyAndSavePattern = ->
+    copyPassword()
+    
+    site = $('site').value
+    hash = genHash(site+mstr)
+
+    if not stash.configs[hash]?
+        stash.configs[hash] = 
+            url: encrypt site, mstr
+        whisper '<u>password</u> copied and<br></i>pattern</i> remembered', 2000
+        savePattern()
+    else if stash.configs[hash].pattern != $('pattern').value
+        if not ask 'Replace <i>'+stash.configs[hash].pattern+'</i>', 'with <i>'+$('pattern').value+'</i>?'
+            return
+        say 'Using <i>'+$('pattern').value+'</i>', 'for <b>'+site+'</b>', 2000
+        savePattern()
                     
 copyPassword = -> 
     pw = $("password").value
@@ -157,7 +181,7 @@ copyPassword = ->
         whisper '<u>password</u> copied', 2000
     
 setSite = (site) ->
-    setInput 'site',  site
+    setInput 'site', site
     siteChanged()
     
 siteChanged = ->
@@ -190,7 +214,7 @@ initEvents = () ->
                 
     $('master'  ).on 'input', masterChanged
     $('site'    ).on 'input', siteChanged
-    $('password').on 'click', copyPassword
+    $('password').on 'mousedown', copyPassword
     $('pattern' ).on 'input', patternChanged
     $('sheep'   ).on 'click', toggleSettings
     $('list'    ).on 'click', listStash
@@ -235,7 +259,7 @@ win.on 'focus', (event) ->
     if stashLoaded
         if domain = extractDomain clipboard.readText()
             setSite domain
-            clipboard.writeText $("password").value
+            # clipboard.writeText $("password").value
             $("password").focus()
         else
             $("site").focus()
@@ -297,7 +321,7 @@ onKeyDown = (event) ->
                 if stash.configs[hash]?
                     if ask 'Forget <i>'+stash.configs[hash].pattern+'</i>', 'for <b>'+site+'</b>?'
                         delete stash.configs[hash]
-                        say 'The <b>' + site + '</b>', '<i>pattern</i> is forgotten.', 2000
+                        say 'The <b>' + site + '</b>', '<i>pattern</i> is forgotten', 2000
                         writeStash()
                         masterSitePassword()
                 return
@@ -305,19 +329,6 @@ onKeyDown = (event) ->
                 $('site').focus()
                 $('site').setSelectionRange 0, $('site').value.length
                 event.preventDefault()
-                return
-            when 'enter'
-                if not stash.configs[hash]?
-                    stash.configs[hash] = 
-                        url: encrypt site, mstr
-                    say 'Remembering <i>' + $('pattern').value+'</i>', 'for <b>'+site+'</b>', 2000
-                else if stash.configs[hash].pattern != $('pattern').value
-                    if not ask 'Replace <i>'+stash.configs[hash].pattern+'</i>', 'with <i>'+$('pattern').value+'</i>?'
-                        return
-                    say 'Using <i>'+$('pattern').value+'</i>', 'for <b>'+site+'</b>', 2000
-                stash.configs[hash].pattern = $('pattern').value
-                writeStash()
-                masterSitePassword()
                 return
     
     btnames = ['list', 'prefs', 'about', 'help', 'delete']
@@ -344,9 +355,10 @@ onKeyDown = (event) ->
                 win.hide() 
         when 'enter'
             switch e
-                when $("master")  then masterConfirmed()
-                when $("site")    then copyPassword()
-                when $("pattern") then patternConfirmed()
+                when $("master")   then masterConfirmed()
+                when $("site")     then copyPassword()
+                when $("password") then copyAndSavePattern()
+                when $("pattern")  then patternConfirmed()
 
 document.on 'keydown', onKeyDown
 
@@ -506,12 +518,13 @@ listStash = () ->
 
 prefsFile = process.env.HOME+'/Library/Preferences/sheepword.json'
 prefs = 
-    shortcut: { default: 'ctrl+`', type: 'shortcut', text: 'global shortcut' }
-    timeout:  { default: 60,       type: 'int',      text: 'autoclose delay' }
-    dark:     { default: true,     type: 'bool',     text: 'dark theme' }
-    talking:  { default: true,     type: 'bool',     text: 'sheep is talking' }
-    confirm:  { default: true,     type: 'bool' ,    text: 'confirm forgetting' }
+    shortcut: { default: 'ctrl+`', type: 'shortcut', text: 'global shortcut'      }
+    timeout:  { default: 60,       type: 'int',      text: 'autoclose delay'      }
+    dark:     { default: true,     type: 'bool',     text: 'dark theme'           }
+    confirm:  { default: true,     type: 'bool' ,    text: 'confirm changes'      }
     mask:     { default: true,     type: 'bool',     text: 'mask saved passwords' }
+
+getPref = (key) -> loadPrefs()[key]
 
 loadPrefs = () ->
     values = {}
@@ -523,7 +536,7 @@ loadPrefs = () ->
     for key in Object.keys prefs
         if not values[key]?
             values[key] = prefs[key].default
-    log jsonStr values    
+    log jsonStr values
     values
 
 savePrefs = (values) ->
@@ -532,7 +545,6 @@ savePrefs = (values) ->
 showPrefs = () ->
     saveBody()
     document.body.innerHTML = '<div id="preferences"></div>'
-
     values = loadPrefs()
     
     for key in Object.keys prefs
@@ -792,7 +804,7 @@ whisper = (boo) ->
     $('bubble').className = 'whisper'
     $('say').innerHTML = boo
 
-say = -> 
+say = () -> 
     clearTimeout(unsay) if unsay?
     unsay = undefined
     if arguments.length == 0
@@ -804,11 +816,14 @@ say = ->
             delay = args.pop()
             unsay = setTimeout say, delay
         $('bubble').className = "say"
-        $('say').innerHTML = args.join "<p>"
+        $('say').innerHTML = args.join "<br>"
 
 ask = ->
-    if not $('say').innerHTML.endsWith(arguments[arguments.length-1]+'</p>')
-        say.apply say, arguments
-        $('bubble').className = "ask"
-        return false
+    if getPref('confirm')
+        if not $('say').innerHTML.endsWith(arguments[arguments.length-1])
+            say.apply say, arguments
+            $('bubble').className = "ask"
+            return false
     true
+
+module.exports = true

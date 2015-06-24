@@ -79,13 +79,11 @@ createWindow = () ->
         
         tray.on 'clicked', toggleWindow
 
-        ###
-        000   000  000   000  000   000
-        000  000   0000  000   000 000 
-        0000000    000 0 000    00000  
-        000  000   000  0000   000 000 
-        000   000  000   000  000   000
-        ###
+        # 000   000  000   000  000  000   000
+        # 000  000   0000  000  000   000 000 
+        # 0000000    000 0 000  000    00000  
+        # 000  000   000  0000  000   000 000 
+        # 000   000  000   000  000  000   000
 
         if debug
             knx = new BrowserWindow
@@ -101,13 +99,11 @@ createWindow = () ->
                 
             knx.loadUrl 'file://' + cwd + '/knx.html'
 
-        ###
-        000   000  000  000   000
-        000 0 000  000  0000  000
-        000000000  000  000 0 000
-        000   000  000  000  0000
-        00     00  000  000   000
-        ###
+        # 000   000  000  000   000
+        # 000 0 000  000  0000  000
+        # 000000000  000  000 0 000
+        # 000   000  000  000  0000
+        # 00     00  000  000   000
 
         screenSize = (require 'screen').getPrimaryDisplay().workAreaSize
         windowWidth = 364
@@ -150,7 +146,6 @@ loadPrefs = () ->
     try
         return JSON.parse(fs.readFileSync(prefsFile, encoding:'utf8'))
     catch err     
-        console.log 'fark', err
         return {}
 
 savePrefs = (values) ->

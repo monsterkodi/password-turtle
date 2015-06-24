@@ -180,15 +180,17 @@ clr.bubble-ask = rgba(255,255,255,0.8)
     border-right:  20px solid transparent 
     border-bottom: 20px solid clr.bubble
 
+.ask #say-tri
+    border-bottom: 20px solid clr.bubble-ask
+
 #say
     text-align:       center
     font-family:      arial
-    font-size:        17px
     font-weight:      bold
     text-shadow:      1px 1px 5px clr.gray
     color:            clr.blue-dark
     background-color: clr.bubble     
-    line-height:      0.9    
+    line-height:      1.1    
     
 #say b
         color: clr.site-medium
@@ -201,12 +203,13 @@ clr.bubble-ask = rgba(255,255,255,0.8)
 #say p
         margin-top: 8px
                 
-#bubble.ask #say
+.ask #say
     background-color: clr.bubble-ask
-#bubble.ask #say-tri
-    border-bottom: 20px solid clr.bubble-ask
-#bubble.whisper #say
+.whisper #say
     font-size:  14px
+.say #say    
+.ask #say
+    font-size:  17px
     
 /*
 *  0000000    000   000  000000000  000000000   0000000   000   000

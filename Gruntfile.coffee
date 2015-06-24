@@ -18,9 +18,19 @@ module.exports = (grunt) ->
         salt:
             options:
                 dryrun:  false
-                verbose: false
+                verbose: true
                 refresh: false
-            coffee:
+            coffeelarge:
+                options:
+                    textMarker  : '#!!'
+                files:
+                    'asciiText': [ 'sheep.coffee', 'coffee/**/*.coffee' ]
+            coffeesmall:
+                options:
+                    textMarker  : '#!'
+                    textPrefix  : null
+                    textFill    : '# '
+                    textPostfix : null
                 files:
                     'asciiText': [ 'sheep.coffee', 'coffee/**/*.coffee' ]
             style: 
