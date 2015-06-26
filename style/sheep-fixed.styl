@@ -210,34 +210,40 @@ a
     bottom:         0
     overflow:       auto
 
-.pref-item-border
 .stash-item-border
     no-transition()
     padding:  5px
-
-    & .bool
-    & .pref    
     & .site
     & .lock    
     & .pattern
         position:       absolute
         pointer-events: none
         top:            7px
-
-    & .pref        
-        top:       18px
-        left:      20px
     & .site
         left:      10px
     & .lock
         left:      0
         right:     0
         text-align: center
-    & .bool
-        top:       18px
-        right:     20px
     & .pattern
         left:      60%
+
+.pref-item-border
+    no-transition()
+    padding:  5px
+    & .int
+    & .shortcut
+    & .bool
+    & .pref    
+        position:       absolute
+        pointer-events: none
+        top:            18px
+    & .pref        
+        left:      20px
+    & .int
+    & .shortcut
+    & .bool
+        right:     20px
         
 .pref-item
     width:         100%
@@ -248,11 +254,11 @@ a
     height:        24px
     
 .bottom-buttons
-    position: absolute
-    bottom: 13px
-    left:   6px
-    right: 0px
-    text-align: center
+    position:      absolute
+    bottom:        13px
+    left:          6px
+    right:         0
+    text-align:    center
             
 #about
 

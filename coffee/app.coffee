@@ -341,6 +341,7 @@ onKeyDown = (event) ->
         
     switch key
         when 'command-,', 'ctrl-,' then toggleSettings()
+        when 'command-p' then showPrefs()            
         when 'esc'
             if e == $('pattern') or $('settings').visible()
                 if $('pattern').value != stash.pattern
@@ -556,8 +557,10 @@ showPrefs = () ->
                 bool = new Element 'span', class: 'bool'
                 item.insert bool
                 setBool bool, value
-            when 'int', 'shortcut'
-                item.insert (new Element 'span', class: 'pattern').update value
+            when 'int'
+                item.insert (new Element 'span', class: 'int').update value
+            when 'shortcut'
+                item.insert (new Element 'span', class: 'shortcut').update value
             
         $('preferences').insert item
 
@@ -576,13 +579,18 @@ showPrefs = () ->
         input.on 'click',      (e) -> 
             key = e.target.id
             pref = prefs[key]
-            if pref.type == 'bool'
-                values[key] = not values[key]
-                bool = e.target.parentElement.select('.bool')[0]
-                setBool bool, values[key]
-                savePrefs values
-                if key == 'dark'
-                    toggleStyle()
+            switch pref.type
+                when 'bool'
+                    values[key] = not values[key]
+                    bool = e.target.parentElement.select('.bool')[0]
+                    setBool bool, values[key]
+                    savePrefs values
+                    if key == 'dark'
+                        toggleStyle()
+                when 'int'
+                    log 'edit int'
+                when 'shortcut'
+                    log 'edit shortcut'
             
     $('preferences').firstElementChild.firstElementChild.focus()
     
@@ -613,7 +621,6 @@ showAbout = () ->
     $('about').insert githubIcon
     $('about-github').on 'click', () -> open "http://coffeescript.org/"
     $('title').on 'click', () -> restoreBody()
-    
     $('about').insert '<h2>credits</h2>'
     addLink = (text, url) ->
         link = new Element 'div', { class: 'link', id: text } 

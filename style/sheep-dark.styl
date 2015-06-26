@@ -141,9 +141,12 @@ clr.password-bright = clr.blue-very-bright
 
 .bool    
     &.bool-true
-        color:      clr.white
+        color:      clr.gray
     &.bool-false
         color:      clr.gray-very-dark
+        
+.focus .bool
+    color:      clr.white
 
 #floppy
     color:          clr.white
@@ -282,27 +285,38 @@ clr.bubble-ask = rgba(0,0,0,0.8)
         box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.75)
     
 /*
-*   0000000  000000000   0000000    0000000  000   000  000      000   0000000  000000000
-*  000          000     000   000  000       000   000  000      000  000          000   
-*  0000000      000     000000000  0000000   000000000  000      000  0000000      000   
-*       000     000     000   000       000  000   000  000      000       000     000   
-*  0000000      000     000   000  0000000   000   000  0000000  000  0000000      000   
+*   0000000  000000000   0000000    0000000  000   000
+*  000          000     000   000  000       000   000
+*  0000000      000     000000000  0000000   000000000
+*       000     000     000   000       000  000   000
+*  0000000      000     000   000  0000000   000   000
 */
 
-.pref-item-border
-.stash-item-border
-        
-    & .pref        
-        color:     clr.pattern
-    &.focus .pref   
-        color:     clr.pattern-bright
+.stash-item-border        
     & .site
         color:     clr.site                
     &.focus .site   
         color:     clr.site-bright
     & .pattern
         color:     clr.pattern-bright
-        
+
+/*
+*  00000000   00000000   00000000  00000000   0000000
+*  000   000  000   000  000       000       000     
+*  00000000   0000000    0000000   000000    0000000 
+*  000        000   000  000       000            000
+*  000        000   000  00000000  000       0000000 
+*/
+
+.pref-item-border
+    & .int
+    & .pref
+    & .shortcut
+        color:     clr.pattern
+    &.focus .int
+    &.focus .pref   
+    &.focus .shortcut
+        color:     clr.pattern-bright
 
 .pref-item
 .stash-item
