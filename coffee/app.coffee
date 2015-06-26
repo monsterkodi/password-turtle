@@ -12,6 +12,7 @@ values    = require 'lodash.values'
 random    = require 'lodash.random'
 trim      = require 'lodash.trim'
 pad       = require 'lodash.pad'
+isNaN     = require 'lodash.isnan'
 fs        = require 'fs'
 _url      = require './js/tools/urltools'
 password  = require './js/tools/password' 
@@ -276,9 +277,11 @@ win.on 'focus', (event) ->
 ###
             
 onKeyDown = (event) ->
-    key = keyname event
+    dbg event
+    dbg keyname.ofEvent?
+    key = keyname.ofEvent event
     e   = document.activeElement
-    # dbg key
+    dbg key
     
     if not $('bubble')?
         switch key 
@@ -451,7 +454,7 @@ readStash = (cb) ->
 ###
 
 onListKey = (event) ->
-    key = keyname event
+    key = keyname.ofEvent event
     e   = document.activeElement
     switch key 
         when 'right', 'down'
@@ -583,7 +586,6 @@ showPrefs = () ->
         input.on 'click',      (e) -> 
             key = e.target.id
             pref = prefs[key]
-            # dbg key, pref
             switch pref.type
                 when 'bool'
                     values[key] = not values[key]
@@ -593,28 +595,46 @@ showPrefs = () ->
                     if key == 'dark'
                         toggleStyle()
                 when 'int'
+                    inputChanged = (e) -> 
+                        intValue = parseInt e.target.value
+                        intValue = 0 if isNaN intValue
+                        input = e.target.parentElement.select('input.pref-item')[0]
+                        e.target.parentElement.select('.int')[0].update intValue or 'never'
+                        prefKey = input.id
+                        dbg prefKey, intValue
+                        setPref prefKey, intValue
+                        e.preventDefault()
+                        input.focus()
+
                     border = e.target.parentElement
                     inp = new Element 'input', 
                         class: 'pref-overlay int'
                         type:  'input'
                         value: e.target.parentElement.select('.int')[0].innerHTML
                     inp.on 'blur', (e) -> 
+                        log 'blur'
                         e.target.remove()
-                    inp.on 'change', (e) ->
-                        input = e.target.parentElement.select('input')[0]
-                        e.target.parentElement.select('.int')[0].update e.target.value
-                        prefKey = input.id
-                        setPref prefKey, key
-                        input.focus()
+                    inp.on 'change', inputChanged
                     inp.on 'keydown', (e) ->
-                        key = keyname e
-                        if key == 'esc'
-                            e.target.value = e.target.parentElement.select('.int')[0]
-                            e.preventDefault()
-                            e.stopPropagation()
-                            e.target.parentElement.select('input')[0].focus()                            
-                        else
-                            e.stopPropagation()
+                        key = keyname.ofEvent e
+                        e.stopPropagation()
+                        if '+' not in key
+                            switch key
+                                when 'esc'
+                                    e.target.value = e.target.parentElement.select('.int')[0]
+                                    e.preventDefault()
+                                    e.target.parentElement.select('input')[0].focus()
+                                when 'up', 'down'
+                                    e.target.value = parseInt(e.target.value) + (key == 'up' and 10 or -10)
+                                    e.preventDefault()
+                                when 'enter'
+                                    inputChanged e
+                                when '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'enter', 'backspace', 'left', 'right', 'tab'
+                                    1
+                                else
+                                    dbg key
+                                    e.preventDefault()
+                                
                     border.insert inp
                     inp.focus()
                 when 'shortcut'
@@ -624,7 +644,7 @@ showPrefs = () ->
                         type:  'button'
                         value: 'press the shortcut'
                     msg.on 'keydown', (e) ->
-                        key = keyname e
+                        key = keyname.ofEvent e
                         input = e.target.parentElement.select('input')[0]
                         if (e.metaKey or e.ctrlKey or e.altKey) and key.indexOf('+')>=0
                             e.preventDefault()
@@ -633,15 +653,22 @@ showPrefs = () ->
                             prefKey = input.id
                             setPref prefKey, key
                             input.focus()
-                        else if not keyname('isModifier?', key) and key != ''
-                            if key == 'esc'
-                                e.preventDefault()
-                                e.stopPropagation()
-                                input.focus()
-                            else
-                                e.target.value = 'no modifier'
+                        else if not keyname.isModifier(key) and key != ''
+                            switch key
+                                when 'esc', 'enter', 'tab'
+                                    e.preventDefault()
+                                    e.stopPropagation()
+                                    input.focus()
+                                when 'backspace'
+                                    e.target.parentElement.select('.shortcut')[0].update ''
+                                    setPref prefKey, ''
+                                    input.focus()                                
+                                else
+                                    e.target.value = 'no modifier'
+                                    event.stopPropagation()
                         else
-                            e.target.value = 'continue shortcut ...'
+                            # e.target.value = 'continue shortcut ...'
+                            e.target.value = keyname.modifiersOfEvent e
                     msg.on 'blur', (e) -> e.target.remove()
                     border.insert msg
                     msg.focus()
@@ -649,15 +676,21 @@ showPrefs = () ->
     $('preferences').firstElementChild.firstElementChild.focus()
     
 onPrefsKey = (e) ->
-    key = keyname e
-    e   = document.activeElement
-    switch key 
-        when 'right', 'down'
-            if e? then e.parentElement?.nextSibling?.firstElementChild?.focus()
-        when 'left', 'up'
-            if e? then e.parentElement?.previousSibling?.firstElementChild?.focus()
-        # else
-        #     dbg key
+    key  = keyname.ofEvent e
+    elem = document.activeElement
+    # dbg key, elem.id
+    if elem?
+        switch key 
+            when 'right', 'down'
+                ($(elem.parentElement?.nextSibling?.firstElementChild.id).select('input')?[0] or 
+                elem.parentElement?.nextSibling?.firstElementChild).focus()
+            when 'left', 'up'
+                if elem.id == 'ok'
+                    elem.parentElement.parentElement.previousSibling.select('input')[0].focus()
+                else
+                    elem.parentElement?.previousSibling?.firstElementChild?.focus()
+            # else
+            #     dbg key
                     
 ###
  0000000   0000000     0000000   000   000  000000000

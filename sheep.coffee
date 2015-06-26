@@ -125,7 +125,8 @@ createWindow = () ->
             frame:         false
 
         try
-            shortcut.register (values?.shortcut or 'ctrl+`'), toggleWindow
+            if values?.shortcut != ''
+                shortcut.register (values?.shortcut or 'ctrl+`'), toggleWindow
         catch err
             console.log 'shortcut installation failed', err
 
