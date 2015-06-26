@@ -524,18 +524,22 @@ prefs =
     dark:     { default: true,     type: 'bool',     text: 'dark theme'            }
 
 getPref = (key) -> loadPrefs()[key]
+setPref = (key, value) -> 
+    values = loadPrefs()
+    values[key] = value
+    savePrefs values
 
 loadPrefs = () ->
     values = {}
     try
         values = JSON.parse fs.readFileSync(prefsFile, encoding:'utf8')
-        log 'loaded values:', jsonStr values
+        # log 'loaded values:', jsonStr values
     catch        
         log 'can\'t load prefs file', prefsFile
     for key in Object.keys prefs
         if not values[key]?
             values[key] = prefs[key].default
-    log jsonStr values
+    # log jsonStr values
     values
 
 savePrefs = (values) ->
@@ -590,12 +594,32 @@ showPrefs = () ->
                 when 'int'
                     log 'edit int'
                 when 'shortcut'
-                    log 'edit shortcut'
+                    border = e.target.parentElement
+                    msg = new Element 'input', 
+                        class: 'pref-overlay'
+                        type:  'button'
+                        value: 'press the shortcut'
+                    msg.on 'keydown', (e) ->
+                        key = keyname e
+                        if (e.metaKey or e.ctrlKey or e.altKey) and key.indexOf('+')>=0
+                            e.preventDefault()
+                            e.stopPropagation()
+                            e.target.parentElement.select('.shortcut')[0].update key
+                            prefKey = e.target.parentElement.select('input')[0].id
+                            setPref prefKey, key
+                            log 'shortcut:', key, 'for pref:', prefKey
+                            e.target.blur()
+                        else if key not in ['', 'shift', 'ctrl', 'alt', 'command']
+                            log keyname('isModifier?', key), key
+                            e.target.value = 'no modifier'
+                    msg.on 'blur', (e) -> e.target.remove()
+                    border.insert msg
+                    msg.focus()
             
     $('preferences').firstElementChild.firstElementChild.focus()
     
-onPrefsKey = (event) ->
-    key = keyname event
+onPrefsKey = (e) ->
+    key = keyname e
     e   = document.activeElement
     switch key 
         when 'right', 'down'

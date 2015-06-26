@@ -15,7 +15,7 @@ events        = require 'events'
 Tray          = require 'tray'
 BrowserWindow = require 'browser-window'
 
-debug = false
+debug = true
 win   = undefined
 knx   = undefined
 tray  = undefined
@@ -118,13 +118,13 @@ createWindow = () ->
         win = new BrowserWindow
             dir:           cwd
             preloadWindow: true
-            x: x
-            y: y
+            x:             x
+            y:             y
             width:         windowWidth
             height:        330
             frame:         false
 
-        shortcut.register (shortcut.shortcut or 'ctrl+`'), toggleWindow
+        shortcut.register (values?.shortcut or 'ctrl+`'), toggleWindow
 
         win.loadUrl 'file://' + cwd + '/sheep.html'
         
