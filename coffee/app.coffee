@@ -277,44 +277,32 @@ win.on 'focus', (event) ->
 ###
             
 onKeyDown = (event) ->
-    dbg event
-    dbg keyname.ofEvent?
     key = keyname.ofEvent event
     e   = document.activeElement
-    dbg key
+    # dbg key
     
-    if not $('bubble')?
-        switch key 
-            when 'esc', 'command+l', 'ctrl+l'
-                restoreBody()
-                return
-            when 'command+,', 'ctrl+,' # comma
-                restoreBody()
-                hideSitePassword()
-                showSettings()
-                return
+    switch key
+        when 'command+l', 'ctrl+l'  
+            toggleStash()    
+            return
+        when 'command+,', 'ctrl+,' 
+            toggleSettings() 
+            return
+        when 'command+p', 'ctrl+p' 
+            togglePrefs()    
+            return
 
-        if $('stashlist')?
-            onListKey event
-            return
-        if $('preferences')?
-            onPrefsKey event
-            return
+    if $('stashlist')?
+        onListKey event
+        return
+    if $('preferences')?
+        onPrefsKey event
+        return
     
-    if key == 'command+l' or key == 'ctrl+l'
-        listStash()
+    if key == 'esc' and not $('bubble')?
+        restoreBody()
         return
         
-    if not $('site')?
-        switch key 
-            when 'esc', 'command+l', 'ctrl+l'
-                restoreBody()
-            when 'command+,', 'ctrl+,' # comma
-                restoreBody()
-                hideSitePassword()
-                showSettings()
-        return
-    
     site = $('site').value
     hash = genHash(site+mstr)
     
@@ -334,7 +322,7 @@ onKeyDown = (event) ->
                 event.preventDefault()
                 return
     
-    btnames = ['list', 'prefs', 'about', 'help', 'delete']
+    btnames = ['list', 'delete', 'prefs', 'about', 'help']
     if e.id in btnames
         switch key
             when 'left', 'up'
@@ -343,16 +331,14 @@ onKeyDown = (event) ->
                 $(btnames[btnames.indexOf(e.id)+1]).focus()
         
     switch key
-        when 'command+,', 'ctrl+,' then toggleSettings()
-        when 'command+p' then showPrefs()            
         when 'esc'
             if e == $('pattern') or $('settings').visible()
                 if $('pattern').value != stash.pattern
                     setInput 'pattern', stash.pattern
                     patternChanged()
                     say()
-                else
-                    toggleSettings()
+                # else
+                #     toggleSettings()
             else
                 $('pattern').value = stash.pattern
                 patternChanged()
@@ -475,9 +461,15 @@ onListKey = (event) ->
         when 'enter'
             restoreBody e.nextSibling.innerHTML
 
+toggleStash = ->
+    if $('stashlist')?
+        restoreBody()
+    else
+        listStash()
+
 listStash = () ->
-    
-    if isEmpty stash.configs then return
+    return if not stashLoaded
+    return if isEmpty stash.configs
     
     saveBody()
         
@@ -548,7 +540,14 @@ loadPrefs = () ->
 savePrefs = (values) ->
     fs.writeFileSync prefsFile, jsonStr(values), encoding:'utf8'
 
+togglePrefs = ->
+    if $('preferences')?
+        restoreBody()
+    else
+        showPrefs()
+
 showPrefs = () ->
+    return if not stashLoaded
     saveBody()
     document.body.innerHTML = '<div id="preferences"></div>'
     values = loadPrefs()
@@ -785,8 +784,13 @@ masterSitePassword = () ->
 ###
 
 toggleSettings = ->
-    if stashLoaded
-        if  $("settings").visible()
+    if not $('bubble')?
+        restoreBody()
+        if not $('settings').visible()
+            hideSitePassword()
+            showSettings()
+    else if stashLoaded
+        if  $('settings').visible()
             hideSettings()
             showSitePassword()
         else
