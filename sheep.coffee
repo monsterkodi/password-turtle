@@ -124,7 +124,10 @@ createWindow = () ->
             height:        330
             frame:         false
 
-        shortcut.register (values?.shortcut or 'ctrl+`'), toggleWindow
+        try
+            shortcut.register (values?.shortcut or 'ctrl+`'), toggleWindow
+        catch err
+            console.log 'shortcut installation failed', err
 
         win.loadUrl 'file://' + cwd + '/sheep.html'
         

@@ -277,15 +277,15 @@ win.on 'focus', (event) ->
             
 onKeyDown = (event) ->
     key = keyname event
-    e    = document.activeElement
-    # dbg key
+    e   = document.activeElement
+    dbg key
     
     if not $('bubble')?
         switch key 
-            when 'esc', 'command-l', 'ctrl-l'
+            when 'esc', 'command+l', 'ctrl+l'
                 restoreBody()
                 return
-            when 'command-,', 'ctrl-,' # comma
+            when 'command+,', 'ctrl+,' # comma
                 restoreBody()
                 hideSitePassword()
                 showSettings()
@@ -298,15 +298,15 @@ onKeyDown = (event) ->
             onPrefsKey event
             return
     
-    if key == 'command-l' or key == 'ctrl-l'
+    if key == 'command+l' or key == 'ctrl+l'
         listStash()
         return
         
     if not $('site')?
         switch key 
-            when 'esc', 'command-l', 'ctrl-l'
+            when 'esc', 'command+l', 'ctrl+l'
                 restoreBody()
-            when 'command-,', 'ctrl-,' # comma
+            when 'command+,', 'ctrl+,' # comma
                 restoreBody()
                 hideSitePassword()
                 showSettings()
@@ -317,7 +317,7 @@ onKeyDown = (event) ->
     
     if e == $('password')
         switch key
-            when 'backspace', 'command-x', 'ctrl-x'
+            when 'backspace', 'command+x', 'ctrl+x'
                 if stash.configs[hash]?
                     if ask 'Forget <i>'+stash.configs[hash].pattern+'</i>', 'for <b>'+site+'</b>?'
                         delete stash.configs[hash]
@@ -340,8 +340,8 @@ onKeyDown = (event) ->
                 $(btnames[btnames.indexOf(e.id)+1]).focus()
         
     switch key
-        when 'command-,', 'ctrl-,' then toggleSettings()
-        when 'command-p' then showPrefs()            
+        when 'command+,', 'ctrl+,' then toggleSettings()
+        when 'command+p' then showPrefs()            
         when 'esc'
             if e == $('pattern') or $('settings').visible()
                 if $('pattern').value != stash.pattern
@@ -458,7 +458,7 @@ onListKey = (event) ->
             if e? then e.parentElement?.nextSibling?.firstElementChild?.focus()
         when 'left', 'up'
             if e? then e.parentElement?.previousSibling?.firstElementChild?.focus()
-        when 'backspace', 'command-x', 'ctrl-x'
+        when 'backspace', 'command+x', 'ctrl+x'
             if e.id.length
                 if e.parentElement.nextSibling?
                     e.parentElement.nextSibling.firstElementChild.focus()
@@ -592,7 +592,12 @@ showPrefs = () ->
                     if key == 'dark'
                         toggleStyle()
                 when 'int'
-                    log 'edit int'
+                    border = e.target.parentElement
+                    msg = new Element 'input', 
+                        class: 'pref-overlay'
+                        type:  'input'
+                        value: e.target.parentElement.select('.int')[0].innerHTML
+
                 when 'shortcut'
                     border = e.target.parentElement
                     msg = new Element 'input', 
@@ -601,17 +606,24 @@ showPrefs = () ->
                         value: 'press the shortcut'
                     msg.on 'keydown', (e) ->
                         key = keyname e
+                        input = e.target.parentElement.select('input')[0]
                         if (e.metaKey or e.ctrlKey or e.altKey) and key.indexOf('+')>=0
                             e.preventDefault()
                             e.stopPropagation()
                             e.target.parentElement.select('.shortcut')[0].update key
-                            prefKey = e.target.parentElement.select('input')[0].id
+                            prefKey = input.id
                             setPref prefKey, key
-                            log 'shortcut:', key, 'for pref:', prefKey
-                            e.target.blur()
-                        else if key not in ['', 'shift', 'ctrl', 'alt', 'command']
-                            log keyname('isModifier?', key), key
-                            e.target.value = 'no modifier'
+                            # log 'shortcut:', key, 'for pref:', prefKey
+                            input.focus()
+                        else if not keyname('isModifier?', key) and key != ''
+                            if key == 'esc'
+                                e.preventDefault()
+                                e.stopPropagation()
+                                input.focus()
+                            else
+                                e.target.value = 'no modifier'
+                        else
+                            e.target.value = 'continue shortcut ...'
                     msg.on 'blur', (e) -> e.target.remove()
                     border.insert msg
                     msg.focus()
