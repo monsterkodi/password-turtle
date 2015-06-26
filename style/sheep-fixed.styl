@@ -249,13 +249,27 @@ a
     width:         100%
     height:        48px
     
-.pref-overlay
-    position: absolute
-    right:    0
-    top: 0
-    bottom: 0
-    border: 1px solid red
-    width:    50%
+.pref-overlay.shortcut
+.pref-overlay.int
+.pref-overlay 
+    nodrag()
+    box-sizing      border-box
+    pointer-events  all
+    position        absolute
+    right           0
+    top             0
+    bottom          0
+    width           40%
+    margin          6px
+
+.pref-overlay.shortcut
+    cursor          cell    
+    font-size       10px        
+
+.pref-overlay.int
+    cursor          text    
+    text-align      right
+    font-size       17px        
     
 .stash-item
     width:         100%

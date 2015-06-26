@@ -278,7 +278,7 @@ win.on 'focus', (event) ->
 onKeyDown = (event) ->
     key = keyname event
     e   = document.activeElement
-    dbg key
+    # dbg key
     
     if not $('bubble')?
         switch key 
@@ -583,6 +583,7 @@ showPrefs = () ->
         input.on 'click',      (e) -> 
             key = e.target.id
             pref = prefs[key]
+            # dbg key, pref
             switch pref.type
                 when 'bool'
                     values[key] = not values[key]
@@ -593,15 +594,33 @@ showPrefs = () ->
                         toggleStyle()
                 when 'int'
                     border = e.target.parentElement
-                    msg = new Element 'input', 
-                        class: 'pref-overlay'
+                    inp = new Element 'input', 
+                        class: 'pref-overlay int'
                         type:  'input'
                         value: e.target.parentElement.select('.int')[0].innerHTML
-
+                    inp.on 'blur', (e) -> 
+                        e.target.remove()
+                    inp.on 'change', (e) ->
+                        input = e.target.parentElement.select('input')[0]
+                        e.target.parentElement.select('.int')[0].update e.target.value
+                        prefKey = input.id
+                        setPref prefKey, key
+                        input.focus()
+                    inp.on 'keydown', (e) ->
+                        key = keyname e
+                        if key == 'esc'
+                            e.target.value = e.target.parentElement.select('.int')[0]
+                            e.preventDefault()
+                            e.stopPropagation()
+                            e.target.parentElement.select('input')[0].focus()                            
+                        else
+                            e.stopPropagation()
+                    border.insert inp
+                    inp.focus()
                 when 'shortcut'
                     border = e.target.parentElement
                     msg = new Element 'input', 
-                        class: 'pref-overlay'
+                        class: 'pref-overlay shortcut'
                         type:  'button'
                         value: 'press the shortcut'
                     msg.on 'keydown', (e) ->
@@ -613,7 +632,6 @@ showPrefs = () ->
                             e.target.parentElement.select('.shortcut')[0].update key
                             prefKey = input.id
                             setPref prefKey, key
-                            # log 'shortcut:', key, 'for pref:', prefKey
                             input.focus()
                         else if not keyname('isModifier?', key) and key != ''
                             if key == 'esc'
@@ -638,8 +656,8 @@ onPrefsKey = (e) ->
             if e? then e.parentElement?.nextSibling?.firstElementChild?.focus()
         when 'left', 'up'
             if e? then e.parentElement?.previousSibling?.firstElementChild?.focus()
-        else
-            dbg key
+        # else
+        #     dbg key
                     
 ###
  0000000   0000000     0000000   000   000  000000000

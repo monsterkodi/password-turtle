@@ -268,44 +268,59 @@ clr.bubble-ask = rgba(255,255,255,0.8)
         background-color: clr.gray-bright
     
 /*
-*   0000000  000000000   0000000    0000000  000   000  000      000   0000000  000000000
-*  000          000     000   000  000       000   000  000      000  000          000   
-*  0000000      000     000000000  0000000   000000000  000      000  0000000      000   
-*       000     000     000   000       000  000   000  000      000       000     000   
-*  0000000      000     000   000  0000000   000   000  0000000  000  0000000      000   
+*   0000000  000000000   0000000    0000000  000   000
+*  000          000     000   000  000       000   000
+*  0000000      000     000000000  0000000   000000000
+*       000     000     000   000       000  000   000
+*  0000000      000     000   000  0000000   000   000
+*/
+
+.stash-item-border        
+    & .site
+        color:     clr.gray            
+    &.focus .site   
+        color:     clr.site-medium
+    & .pattern
+        color:     clr.gray
+    &.focus
+        background: clr.site-bright
+
+/*
+*  00000000   00000000   00000000  00000000   0000000
+*  000   000  000   000  000       000       000     
+*  00000000   0000000    0000000   000000    0000000 
+*  000        000   000  000       000            000
+*  000        000   000  00000000  000       0000000 
 */
 
 .pref-item-border
-.stash-item-border
-        
-    background:     clr.white
-    box-shadow:     inset 0px 1px 7px rgba(0, 0, 0, 0.1)
-
-    &.focus
-        box-shadow: inset 1px 1px 4px rgba(0, 0, 0, 0.2)
-        
-    & .site
-    & .pref        
-    & .pattern    
-        color:     clr.gray
+    & .int
+    & .pref
+    & .shortcut
+        color:        clr.gray
+    &.focus .int
     &.focus .pref   
-        color:     clr.black
-    &.focus .site   
-        color:     clr.site-medium
-    &.focus .pattern
-        color:     clr.pattern-medium       
-
-.stash-item-border.focus
-    background:    clr.site-bright
-.pref-item-border.focus
-    background:    clr.blue-super-bright
+    &.focus .shortcut
+        color:        clr.black
+    &.focus
+        background:   clr.blue-super-bright
 
 .pref-item
 .stash-item
-    border:        none
-    border-radius: 6px    
-    background:    clr.white
-            
+.pref-overlay 
+    border            none
+    border-radius     6px    
+    background-color: clr.white   
+        
+.pref-overlay.int
+.pref-overlay.shortcut
+    padding-right     14px    
+    padding-left      14px    
+    font-family       Verdana
+    color:            clr.black
+    background-color: clr.blue-super-bright
+    box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.25)
+                
 /*
 *   0000000   0000000     0000000   000   000  000000000
 *  000   000  000   000  000   000  000   000     000   
