@@ -622,7 +622,6 @@ showPrefs = () ->
                                 when '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'enter', 'backspace', 'left', 'right', 'tab'
                                     1
                                 else
-                                    dbg key
                                     e.preventDefault()
                                 
                     border.insert inp

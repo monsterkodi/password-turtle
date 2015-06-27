@@ -163,7 +163,6 @@ loadPrefs = () ->
 savePrefs = (values) ->
     fs.writeFileSync prefsFile, jsonStr(values), encoding:'utf8'
 
-
 ###
 000000000   0000000   0000000     0000000 
    000     000   000  000   000  000   000
@@ -172,7 +171,6 @@ savePrefs = (values) ->
    000      0000000   0000000     0000000 
 ###
 ###
-
 - timeout
 - autocompletion
 - snatch site from firefox
