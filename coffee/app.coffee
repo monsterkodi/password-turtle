@@ -113,6 +113,9 @@ masterConfirmed = ->
                     say()
                     masterAnimDir = 1
                     masterAnim()
+                    $('master-timeout')?.setStyle
+                        width: '100%'
+                        left: '0%'            
                 else
                     whisper ['oops?', 'what?', '...?', 'nope!'][random 3], 2000
         else
@@ -237,7 +240,6 @@ document.observe 'dom:loaded', ->
     prefs = loadPrefs()
     
     toggleStyle() if not prefs.dark
-    # startTimeout prefs.timeout
     
     $("master").focus()
     if domain = extractDomain clipboard.readText()
@@ -280,33 +282,47 @@ timeoutDelay = 0
 
 timeoutTick = () ->
     timeoutInSeconds -= 1
-    log timeoutInSeconds
+    pct = 100 * timeoutInSeconds / timeoutDelay
+    # log timeoutInSeconds, pct, (50-pct/2)
+    $('master-timeout')?.setStyle
+        width: pct+'%'
+        left:  (50-pct/2)+'%'    
     if timeoutInSeconds == 0
         logOut()
 
 startTimeout = (secs) ->
-    timeoutDelay = secs
+    timeoutDelay = Math.max secs, 10
     log "start timeout", timeoutDelay
+    stopTimeout()
     resetTimeout()
-    if timeoutInterval
-        clearInterval timeoutInterval
-    timeoutInterval = setInterval timeoutTick, 1000
+    if secs
+        timeoutInterval = setInterval timeoutTick, 1000
+    $('master-timeout')?.setStyle
+        width: secs and '100%' or '0%'
+        left:  secs and '0%' or '50%'
     
 stopTimeout = () ->
     if timeoutInterval
         log "stop timeout"
         clearInterval timeoutInterval
         timeoutInterval = undefined        
+    $('master-timeout')?.setStyle
+        width: '0%'
+        left: '50%'
     
 resetTimeout = () ->
     timeoutInSeconds = timeoutDelay
-    if timeoutInterval
-        log 'reset timeout', timeoutInSeconds
+    if timeoutInterval 
+        # log 'reset timeout', timeoutInSeconds
+        $('master-timeout')?.setStyle
+            width: '100%'
+            left: '0%'
     
 logOut = ->
     stopTimeout()
     if not $('bubble')? then restoreBody()
     mstr = $('master').value
+    $('master').focus()
     hideSitePassword()
     hideSettings()
     stashLoaded = false
@@ -373,8 +389,6 @@ onKeyDown = (event) ->
                     setInput 'pattern', stash.pattern
                     patternChanged()
                     say()
-                # else
-                #     toggleSettings()
             else
                 $('pattern').value = stash.pattern
                 patternChanged()
@@ -397,12 +411,14 @@ document.on 'keydown', onKeyDown
 ###
 
 saveBody = () ->
+    resetTimeout()
     if not $('bubble')? then return
     savedFocus = document.activeElement.id
     savedSite  = $('site')?.value
     savedBody  = document.body.innerHTML
     
     window.restoreBody = (site) ->
+        resetTimeout()
         document.body.innerHTML = savedBody
         initEvents()
         setInput 'pattern', stash.pattern
@@ -549,7 +565,7 @@ listStash = () ->
 prefsFile = process.env.HOME+'/Library/Preferences/sheepword.json'
 prefs = 
     shortcut: { default: 'ctrl+`', type: 'shortcut', text: 'global shortcut'       }
-    timeout:  { default: 60,       type: 'int',      text: 'autoclose delay'       }
+    timeout:  { default: 60,       type: 'int',      text: 'autoclose delay',      min: 10 }
     mask:     { default: true,     type: 'bool',     text: 'mask locked passwords' }
     confirm:  { default: true,     type: 'bool' ,    text: 'confirm changes'       }
     dark:     { default: true,     type: 'bool',     text: 'dark theme'            }
@@ -630,21 +646,33 @@ showPrefs = () ->
                     if key == 'dark'
                         toggleStyle()
                 when 'int'
+                    
+                    # 000  000   000  000000000
+                    # 000  0000  000     000   
+                    # 000  000 0 000     000   
+                    # 000  000  0000     000   
+                    # 000  000   000     000   
+                    
                     inputChanged = (e) -> 
+                        input    = e.target.parentElement.select('input.pref-item')[0]
+                        prefKey  = input.id                        
                         intValue = parseInt e.target.value
                         intValue = 0 if isNaN intValue
-                        input = e.target.parentElement.select('input.pref-item')[0]
+                        intValue = Math.max(prefs[prefKey].min, intValue) if prefs[prefKey].min? and intValue
                         e.target.parentElement.select('.int')[0].update intValue or 'never'
-                        prefKey = input.id
                         setPref prefKey, intValue
+                        if prefKey == 'timeout'
+                            startTimeout intValue
                         e.preventDefault()
                         input.focus()
 
                     border = e.target.parentElement
+                    intValue = parseInt e.target.parentElement.select('.int')[0].innerHTML
+                    intValue = 0 if isNaN intValue
                     inp = new Element 'input', 
                         class: 'pref-overlay int'
                         type:  'input'
-                        value: e.target.parentElement.select('.int')[0].innerHTML
+                        value: intValue
                     ipc.send 'disableToggle'                        
                     inp.on 'blur', (e) -> 
                         ipc.send 'enableToggle'
@@ -672,6 +700,13 @@ showPrefs = () ->
                     border.insert inp
                     inp.focus()
                 when 'shortcut'
+                    
+                    #  0000000  000   000   0000000   00000000   000000000   0000000  000   000  000000000
+                    # 000       000   000  000   000  000   000     000     000       000   000     000   
+                    # 0000000   000000000  000   000  0000000       000     000       000   000     000   
+                    #      000  000   000  000   000  000   000     000     000       000   000     000   
+                    # 0000000   000   000   0000000   000   000     000      0000000   0000000      000   
+                    
                     border = e.target.parentElement
                     msg = new Element 'input', 
                         class: 'pref-overlay shortcut'
@@ -716,7 +751,6 @@ showPrefs = () ->
 onPrefsKey = (e) ->
     key  = keyname.ofEvent e
     elem = document.activeElement
-    # dbg key, elem.id
     if elem?
         switch key 
             when 'right', 'down'
@@ -727,8 +761,6 @@ onPrefsKey = (e) ->
                     elem.parentElement.parentElement.previousSibling.select('input')[0].focus()
                 else
                     elem.parentElement?.previousSibling?.firstElementChild?.focus()
-            # else
-            #     dbg key
                     
 ###
  0000000   0000000     0000000   000   000  000000000
@@ -830,6 +862,7 @@ masterSitePassword = () ->
 ###
 
 toggleSettings = ->
+    resetTimeout()
     if not $('bubble')?
         restoreBody()
         if not $('settings').visible()

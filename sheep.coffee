@@ -68,7 +68,7 @@ toggleWindow = () ->
     return if noToggle
     if win && win.isVisible()
         win.hide()
-        knx?.hide()
+        # knx?.hide()
     else
         knx?.show()
         win.show()
@@ -140,6 +140,9 @@ createWindow = () ->
 
         win.loadUrl 'file://' + cwd + '/sheep.html'
         
+        # if not debug
+        win.on 'blur', win.hide
+            
         setTimeout showWindow, 100
               
 createWindow()            

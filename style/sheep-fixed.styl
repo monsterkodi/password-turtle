@@ -50,9 +50,15 @@ a
     nodrag()
     font-size           24px
     padding-left        6px
+    padding-right       6px
     width               100%
     box-sizing          border-box
     text-align          center
+    
+#master
+#site
+    padding-top 0px
+    // padding-bottom 2px
 
 .ghost
     ghost-transition()
@@ -64,7 +70,21 @@ a
     font-size:      24px
     top:            12px
     padding-left:   20px
+
+.timeout-box
+    pointer-events  none
+    position        absolute
+    top             22px
+    left            20px
+    right           20px
     
+.timeout
+    -webkit-transition all 0.3s linear
+    pointer-events  none
+    height          9px
+    border-radius   5px
+    position        absolute
+        
 #lock
 #password-ghost
     fast-transition()

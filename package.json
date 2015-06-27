@@ -1,6 +1,6 @@
 {
   "name": "sheepword",
-  "version": "0.2.44",
+  "version": "0.2.114",
   "description": "a password generator",
   "dependencies": {
     "bcryptjs": "^2.1.0",
