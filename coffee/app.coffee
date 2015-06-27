@@ -293,7 +293,6 @@ timeoutTick = () ->
 
 startTimeout = (mins) ->
     timeoutDelay = mins*60
-    log "start timeout", timeoutDelay
     stopTimeout()
     resetTimeout()
     if mins
@@ -304,7 +303,6 @@ startTimeout = (mins) ->
     
 stopTimeout = () ->
     if timeoutInterval
-        log "stop timeout"
         clearInterval timeoutInterval
         timeoutInterval = undefined        
     $('master-timeout')?.setStyle
@@ -502,12 +500,10 @@ onListKey = (event) ->
     key = keyname.ofEvent event
     e   = document.activeElement
     switch key 
-        when 'right', 'down'
-            if e? then e.parentElement?.nextSibling?.firstElementChild?.focus()
-        when 'left', 'up'
-            if e? then e.parentElement?.previousSibling?.firstElementChild?.focus()
+        when 'right', 'down' then e?.parentElement?.nextSibling?.firstElementChild?.focus()
+        when 'left', 'up'    then e?.parentElement?.previousSibling?.firstElementChild?.focus()
         when 'backspace', 'command+x', 'ctrl+x'
-            if e.id.length
+            if e?.id?.length
                 if e.parentElement.nextSibling?
                     e.parentElement.nextSibling.firstElementChild.focus()
                 else
@@ -518,7 +514,7 @@ onListKey = (event) ->
                 if isEmpty stash.configs
                     restoreBody()
         when 'enter'
-            restoreBody e.nextSibling.innerHTML
+            restoreBody e?.nextSibling?.innerHTML
 
 toggleStash = ->
     if $('stashlist')?
@@ -573,8 +569,10 @@ onVaultKey = (event) ->
     key = keyname.ofEvent event
     e   = document.activeElement
     switch key 
-        when 'command+n', 'control+n'
-            addVaultItem "new"
+        when 'command+n', 'control+n'  
+            hash = uuid.v4()
+            stash.vault[hash] = key: "new"
+            addVaultItem hash, stash.vault[hash].key
         when 'down'  then e?.parentElement?.nextSibling?.firstElementChild?.focus()
         when 'up'    then e?.parentElement?.previousSibling?.firstElementChild?.focus()
         when 'left'  then log 'close item',  e?.id
@@ -594,12 +592,12 @@ onVaultKey = (event) ->
 
 toggleVault = -> if $('vaultlist')? then restoreBody() else showVault()
 
-addVaultItem = (vaultKey) ->
-
+addVaultItem = (vaultHash, vaultKey, vaultValue) ->
+    log vaultHash, vaultKey, vaultValue
     item  = new Element 'div', 
         class: 'vault-item-border border'
     input = new Element 'input', 
-        id:    'item-'+genHash()
+        id:    vaultHash
         class: 'vault-item vault-key'
         value: vaultKey
         type:  'button'
@@ -618,25 +616,22 @@ addVaultItem = (vaultKey) ->
         inp = new Element 'input', 
             class: 'vault-overlay vault-key'
             type:  'input'
-            value: vaultKey
+            value: border.select('.vault-key')[0].value
         ipc.send 'disableToggle'
         inp.on 'keydown', (e) ->
             key = keyname.ofEvent e
-            input = e.target.parentElement.select('input')[0]
-            switch key
-                when 'esc', 'tab'
-                    e.preventDefault()
-                    e.stopPropagation()
-                    input.focus()
-                when 'enter'
-                    e.target.parentElement.select('.shortcut')[0].update key
-                    vaultKey = input.id
-                    log 'set vaultKey', vaultKey
-                    input.focus()                    
-                when 'backspace'
-                    e.target.parentElement.select('.shortcut')[0].update ''
-                    log 'del vault key'
-                    input.focus()                                
+            if key == 'esc'
+                input = e.target.parentElement.select('.vault-key')[0]
+                e.target.value = input.value
+                e.stopPropagation()
+                input.focus()
+        inp.on 'change', (e) ->
+            input = e.target.parentElement.select('.vault-key')[0]
+            stash.vault[input.id].key = e.target.value
+            input.value = stash.vault[input.id].key
+            writeStash()
+            input.focus()
+            
         inp.on 'blur', (e) -> 
             ipc.send 'enableToggle'
             e.target.remove()
@@ -648,12 +643,16 @@ showVault = () ->
     
     saveBody()
     
-    stash.vault = { "key": "some secret" } if not stash.vault? or isEmpty Object.keys(stash.vault)
+    if not stash.vault? or isEmpty Object.keys(stash.vault)
+        stash.vault = {} 
+        stash.vault[uuid.v4()] = 
+            key:   "title"
+            value: "some secret"
         
     document.body.innerHTML = '<div id="vaultlist"></div>'    
         
-    for vaultKey in Object.keys stash.vault
-        addVaultItem vaultKey
+    for vaultHash in Object.keys stash.vault
+        addVaultItem vaultHash, stash.vault[vaultHash].key, stash.vault[vaultHash].value
             
     $('vaultlist').firstElementChild.firstElementChild.focus()    
     
