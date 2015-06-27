@@ -80,6 +80,7 @@ masterAnim = ->
             win.setSize win.getSize()[0], Math.max(win.getSize()[1], 492-$("master").value.length*6)
             masterAnim()
         else
+            startTimeout getPref 'timeout'
             masterAnimDir = 0
             if stashExists
                 showSitePassword()
@@ -136,16 +137,12 @@ patternConfirmed = ->
         toggleSettings()
 
 masterChanged = ->
-    mstr = $("master").value
-    hideSitePassword()
-    hideSettings()
-    stashLoaded = false
     if stashExists
         say()
     else
         say 'Welcome to <b>sheepword</b>.', 
             'What will be your <span class="open" onclick="openUrl(\'http://github.com\');">master key?</span>'
-    masterFade()
+    logOut()
     
 patternChanged = ->
     updateFloppy()
@@ -240,6 +237,7 @@ document.observe 'dom:loaded', ->
     prefs = loadPrefs()
     
     toggleStyle() if not prefs.dark
+    # startTimeout prefs.timeout
     
     $("master").focus()
     if domain = extractDomain clipboard.readText()
@@ -267,6 +265,52 @@ win.on 'focus', (event) ->
             $("site").setSelectionRange 0, $("site").value.length
     else
         $("master").focus()
+    
+###
+000000000  000  00     00  00000000   0000000   000   000  000000000
+   000     000  000   000  000       000   000  000   000     000   
+   000     000  000000000  0000000   000   000  000   000     000   
+   000     000  000 0 000  000       000   000  000   000     000   
+   000     000  000   000  00000000   0000000    0000000      000   
+###
+
+timeoutInterval = undefined
+timeoutInSeconds = 0
+timeoutDelay = 0
+
+timeoutTick = () ->
+    timeoutInSeconds -= 1
+    log timeoutInSeconds
+    if timeoutInSeconds == 0
+        logOut()
+
+startTimeout = (secs) ->
+    timeoutDelay = secs
+    log "start timeout", timeoutDelay
+    resetTimeout()
+    if timeoutInterval
+        clearInterval timeoutInterval
+    timeoutInterval = setInterval timeoutTick, 1000
+    
+stopTimeout = () ->
+    if timeoutInterval
+        log "stop timeout"
+        clearInterval timeoutInterval
+        timeoutInterval = undefined        
+    
+resetTimeout = () ->
+    timeoutInSeconds = timeoutDelay
+    if timeoutInterval
+        log 'reset timeout', timeoutInSeconds
+    
+logOut = ->
+    stopTimeout()
+    if not $('bubble')? then restoreBody()
+    mstr = $('master').value
+    hideSitePassword()
+    hideSettings()
+    stashLoaded = false
+    masterFade()    
         
 ###
 000   000  00000000  000   000  0000000     0000000   000   000  000   000
@@ -280,6 +324,7 @@ onKeyDown = (event) ->
     key = keyname.ofEvent event
     e   = document.activeElement
     # dbg key
+    resetTimeout()
     
     switch key
         when 'command+l', 'ctrl+l' then return toggleStash()    
