@@ -75,11 +75,12 @@ masterAnim = ->
         else 
             masterAnimDir = -1
     if masterAnimDir == -1
-        if $("master").value.length > 1
-            $("master").value = $("master").value.substr(0, Math.max(1, $("master").value.length-2))
-            win.setSize win.getSize()[0], Math.max(win.getSize()[1], 492-$("master").value.length*6)
+        if $("master").value.length > 0
+            $("master").value = $("master").value.substr(0, Math.max(0, $("master").value.length-2))
+            win.setSize win.getSize()[0], Math.max(win.getSize()[1], 491-$("master").value.length*6)
             masterAnim()
         else
+            win.setSize win.getSize()[0], 491
             startTimeout getPref 'timeout'
             masterAnimDir = 0
             if stashExists
@@ -93,7 +94,7 @@ masterAnim = ->
 masterFade = ->
     $('sheep').disabled = true
     if win.getSize()[1] > 355
-        win.setSize win.getSize()[0], win.getSize()[1]-12
+        win.setSize win.getSize()[0], Math.max 355, win.getSize()[1]-12
         setTimeout masterFade, 0
 
 ###
@@ -320,6 +321,7 @@ logOut = ->
     stopTimeout()
     if not $('bubble')? then restoreBody()
     mstr = $('master').value
+    setInput 'master', mstr
     $('master').focus()
     hideSitePassword()
     hideSettings()
@@ -371,6 +373,11 @@ onKeyDown = (event) ->
                 $('site').setSelectionRange 0, $('site').value.length
                 event.preventDefault()
                 return
+                
+    if e == $('master') and not $('master').value.length
+        if key in ['backspace', 'enter']
+            logOut()
+            return
     
     btnames = ['list', 'delete', 'prefs', 'about', 'help']
     if e.id in btnames
@@ -420,7 +427,6 @@ saveBody = () ->
         document.body.innerHTML = savedBody
         initEvents()
         setInput 'pattern', stash.pattern
-        setInput 'master',  mstr[0]
         if site?
             hideSettings()
             showSitePassword()
