@@ -46,7 +46,7 @@ decryptFile = (file, key, cb) ->
     else
         cb ['no file at', file]
     
-genHash = (value) -> crypto.createHash('sha512').update(value).digest('hex')    
+genHash = (value) -> crypto.createHash('sha512').update(value).digest('hex')
 genSalt = (length) -> 
     salt = ""
     while salt.length < length

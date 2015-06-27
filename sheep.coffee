@@ -15,7 +15,7 @@ events        = require 'events'
 Tray          = require 'tray'
 BrowserWindow = require 'browser-window'
 
-debug = false
+debug = true
 win   = undefined
 knx   = undefined
 tray  = undefined

@@ -13,6 +13,7 @@ random    = require 'lodash.random'
 trim      = require 'lodash.trim'
 pad       = require 'lodash.pad'
 isNaN     = require 'lodash.isnan'
+uuid      = require 'node-uuid'
 fs        = require 'fs'
 _url      = require './js/tools/urltools'
 password  = require './js/tools/password' 
@@ -223,7 +224,7 @@ initEvents = () ->
     $('prefs'   ).on 'click', showPrefs
     $('about'   ).on 'click', showAbout
     $('help'    ).on 'click', showHelp
-    $('delete'  ).on 'click', deleteStash
+    $('vault'   ).on 'click', showVault
     $('password').on 'mousedown', copyPassword
     $('sheep'   ).on 'mouseenter', (e) -> $('sheep').focus()
             
@@ -346,6 +347,7 @@ onKeyDown = (event) ->
         when 'command+l', 'ctrl+l' then return toggleStash()    
         when 'command+,', 'ctrl+,' then return toggleSettings() 
         when 'command+p', 'ctrl+p' then return togglePrefs()    
+        when 'command+o', 'ctrl+o' then return toggleVault()    
         when 'command+t'           then return toggleStyle()
         when 'command+i'           then return toggleAbout()
         when 'esc' 
@@ -353,6 +355,7 @@ onKeyDown = (event) ->
             if $('settings').visible() then return toggleSettings()
 
     if $('stashlist')?   then return onListKey  event
+    if $('vaultlist')?   then return onVaultKey event
     if $('preferences')? then return onPrefsKey event
             
     site = $('site').value
@@ -379,7 +382,7 @@ onKeyDown = (event) ->
             logOut()
             return
     
-    btnames = ['list', 'delete', 'prefs', 'about', 'help']
+    btnames = ['list', 'vault', 'prefs', 'about', 'help']
     if e.id in btnames
         switch key
             when 'left', 'up'
@@ -557,6 +560,102 @@ listStash = () ->
         input.on 'mouseenter', (e) -> $(e.target).focus()
             
     $('stashlist').firstElementChild.firstElementChild.focus()
+    
+###
+000   000   0000000   000   000  000      000000000
+000   000  000   000  000   000  000         000   
+ 000 000   000000000  000   000  000         000   
+   000     000   000  000   000  000         000   
+    0      000   000   0000000   0000000     000   
+###
+
+onVaultKey = (event) ->
+    key = keyname.ofEvent event
+    e   = document.activeElement
+    switch key 
+        when 'command+n', 'control+n'
+            addVaultItem "new"
+        when 'down'  then e?.parentElement?.nextSibling?.firstElementChild?.focus()
+        when 'up'    then e?.parentElement?.previousSibling?.firstElementChild?.focus()
+        when 'left'  then log 'close item',  e?.id
+        when 'right' then log 'open item',   e?.id
+        when 'space' 
+            log 'toggle item', e?.id
+            event.preventDefault()
+        when 'backspace', 'command+x', 'ctrl+x'
+            if e.id.length
+                if e.parentElement.nextSibling?
+                    e.parentElement.nextSibling.firstElementChild.focus()
+                else
+                    e.parentElement.previousSibling?.firstElementChild?.focus()
+                delete stash.vault[e.id]
+                e.parentElement.remove()
+                writeStash()
+
+toggleVault = -> if $('vaultlist')? then restoreBody() else showVault()
+
+addVaultItem = (vaultKey) ->
+
+    item  = new Element 'div', 
+        class: 'vault-item-border border'
+    input = new Element 'input', 
+        id:    'item-'+genHash()
+        class: 'vault-item vault-key'
+        value: vaultKey
+        type:  'button'
+    arrow = new Element('div', class:'vault-arrow').update '▶'
+    item.insert input
+    item.insert arrow
+    $('vaultlist').insert item
+        
+    item.on  'mouseenter', (e) -> e.target.childElements[0]?.focus()
+    input.on 'focus',      (e) -> $(e.target.parentElement).addClassName 'focus'
+    input.on 'blur',       (e) -> $(e.target.parentElement).removeClassName 'focus'
+    input.on 'mouseenter', (e) -> $(e.target).focus()    
+    arrow.on 'click',      (e) -> log 'toggle item', $(e.target).parentElement.firstElementChild.id
+    input.on 'click',      (e) ->
+        border = e.target.parentElement
+        inp = new Element 'input', 
+            class: 'vault-overlay vault-key'
+            type:  'input'
+            value: vaultKey
+        ipc.send 'disableToggle'
+        inp.on 'keydown', (e) ->
+            key = keyname.ofEvent e
+            input = e.target.parentElement.select('input')[0]
+            switch key
+                when 'esc', 'tab'
+                    e.preventDefault()
+                    e.stopPropagation()
+                    input.focus()
+                when 'enter'
+                    e.target.parentElement.select('.shortcut')[0].update key
+                    vaultKey = input.id
+                    log 'set vaultKey', vaultKey
+                    input.focus()                    
+                when 'backspace'
+                    e.target.parentElement.select('.shortcut')[0].update ''
+                    log 'del vault key'
+                    input.focus()                                
+        inp.on 'blur', (e) -> 
+            ipc.send 'enableToggle'
+            e.target.remove()
+        border.insert inp
+        inp.focus()
+
+showVault = () ->
+    return if not stashLoaded
+    
+    saveBody()
+    
+    stash.vault = { "key": "some secret" } if not stash.vault? or isEmpty Object.keys(stash.vault)
+        
+    document.body.innerHTML = '<div id="vaultlist"></div>'    
+        
+    for vaultKey in Object.keys stash.vault
+        addVaultItem vaultKey
+            
+    $('vaultlist').firstElementChild.firstElementChild.focus()    
     
 ###
 00000000   00000000   00000000  00000000   0000000
