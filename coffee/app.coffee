@@ -44,7 +44,7 @@ currentPassword = undefined
 log   = () -> ipc.send 'knixlog',   [].slice.call arguments, 0
 dbg   = () -> ipc.send 'knixlog',   [].slice.call arguments, 0
 
-console.log   = () -> ipc.send 'console.log', [].slice.call arguments, 0
+console.log   = () -> ipc.send 'console.log',   [].slice.call arguments, 0
 console.error = () -> ipc.send 'console.error', [].slice.call arguments, 0
 
 resetStash = ->
@@ -216,7 +216,6 @@ initEvents = () ->
                 
     $('master'  ).on 'input', masterChanged
     $('site'    ).on 'input', siteChanged
-    $('password').on 'mousedown', copyPassword
     $('pattern' ).on 'input', patternChanged
     $('sheep'   ).on 'click', toggleSettings
     $('list'    ).on 'click', listStash
@@ -224,6 +223,7 @@ initEvents = () ->
     $('about'   ).on 'click', showAbout
     $('help'    ).on 'click', showHelp
     $('delete'  ).on 'click', deleteStash
+    $('password').on 'mousedown', copyPassword
     $('sheep'   ).on 'mouseenter', (e) -> $('sheep').focus()
             
 ###
@@ -290,6 +290,9 @@ onKeyDown = (event) ->
             return
         when 'command+p', 'ctrl+p' 
             togglePrefs()    
+            return
+        when 'command+t'
+            toggleStyle()
             return
 
     if $('stashlist')?
@@ -642,6 +645,7 @@ showPrefs = () ->
                         class: 'pref-overlay shortcut'
                         type:  'button'
                         value: 'press the shortcut'
+                    win.preventToggle = true
                     msg.on 'keydown', (e) ->
                         key = keyname.ofEvent e
                         input = e.target.parentElement.select('input')[0]
@@ -651,6 +655,13 @@ showPrefs = () ->
                             e.target.parentElement.select('.shortcut')[0].update key
                             prefKey = input.id
                             setPref prefKey, key
+                            dbg prefKey
+                            if prefKey == 'shortcut'
+                                gs = remote.require 'global-shortcut'
+                                dbg gs
+                                gs.unregisterAll()
+                                dbg key, remote.toggleWindow?
+                                gs.register key, remote.toggleWindow
                             input.focus()
                         else if not keyname.isModifier(key) and key != ''
                             switch key
@@ -666,7 +677,6 @@ showPrefs = () ->
                                     e.target.value = 'no modifier'
                                     event.stopPropagation()
                         else
-                            # e.target.value = 'continue shortcut ...'
                             e.target.value = keyname.modifiersOfEvent e
                     msg.on 'blur', (e) -> e.target.remove()
                     border.insert msg

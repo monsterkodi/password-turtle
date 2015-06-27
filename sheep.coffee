@@ -58,6 +58,8 @@ showWindow = () ->
 ###
 
 toggleWindow = () ->
+    console.log win.preventToggle
+    return if win.preventToggle
     if win && win.isVisible()
         win.hide()
         knx?.hide()
