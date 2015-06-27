@@ -15,7 +15,7 @@ events        = require 'events'
 Tray          = require 'tray'
 BrowserWindow = require 'browser-window'
 
-debug = true
+debug = false
 win   = undefined
 knx   = undefined
 tray  = undefined
@@ -140,8 +140,8 @@ createWindow = () ->
 
         win.loadUrl 'file://' + cwd + '/sheep.html'
         
-        # if not debug
-        win.on 'blur', win.hide
+        if not debug
+            win.on 'blur', win.hide
             
         setTimeout showWindow, 100
               

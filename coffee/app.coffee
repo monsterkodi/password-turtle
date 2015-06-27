@@ -283,23 +283,22 @@ timeoutDelay = 0
 timeoutTick = () ->
     timeoutInSeconds -= 1
     pct = 100 * timeoutInSeconds / timeoutDelay
-    # log timeoutInSeconds, pct, (50-pct/2)
     $('master-timeout')?.setStyle
         width: pct+'%'
         left:  (50-pct/2)+'%'    
     if timeoutInSeconds == 0
         logOut()
 
-startTimeout = (secs) ->
-    timeoutDelay = Math.max secs, 10
+startTimeout = (mins) ->
+    timeoutDelay = mins*60
     log "start timeout", timeoutDelay
     stopTimeout()
     resetTimeout()
-    if secs
+    if mins
         timeoutInterval = setInterval timeoutTick, 1000
     $('master-timeout')?.setStyle
-        width: secs and '100%' or '0%'
-        left:  secs and '0%' or '50%'
+        width: mins and '100%' or '0%'
+        left:  mins and '0%' or '50%'
     
 stopTimeout = () ->
     if timeoutInterval
@@ -313,7 +312,6 @@ stopTimeout = () ->
 resetTimeout = () ->
     timeoutInSeconds = timeoutDelay
     if timeoutInterval 
-        # log 'reset timeout', timeoutInSeconds
         $('master-timeout')?.setStyle
             width: '100%'
             left: '0%'
@@ -565,7 +563,7 @@ listStash = () ->
 prefsFile = process.env.HOME+'/Library/Preferences/sheepword.json'
 prefs = 
     shortcut: { default: 'ctrl+`', type: 'shortcut', text: 'global shortcut'       }
-    timeout:  { default: 60,       type: 'int',      text: 'autoclose delay',      min: 10 }
+    timeout:  { default: 5,        type: 'int',      text: 'autoclose delay', min: 0 }
     mask:     { default: true,     type: 'bool',     text: 'mask locked passwords' }
     confirm:  { default: true,     type: 'bool' ,    text: 'confirm changes'       }
     dark:     { default: true,     type: 'bool',     text: 'dark theme'            }
@@ -616,7 +614,7 @@ showPrefs = () ->
                 item.insert bool
                 setBool bool, value
             when 'int'
-                item.insert (new Element 'span', class: 'int').update value
+                item.insert (new Element 'span', class: 'int').update value and value+' min' or 'never'
             when 'shortcut'
                 item.insert (new Element 'span', class: 'shortcut').update value
             
@@ -659,7 +657,7 @@ showPrefs = () ->
                         intValue = parseInt e.target.value
                         intValue = 0 if isNaN intValue
                         intValue = Math.max(prefs[prefKey].min, intValue) if prefs[prefKey].min? and intValue
-                        e.target.parentElement.select('.int')[0].update intValue or 'never'
+                        e.target.parentElement.select('.int')[0].update(intValue and intValue+' min' or 'never')
                         setPref prefKey, intValue
                         if prefKey == 'timeout'
                             startTimeout intValue
@@ -688,7 +686,11 @@ showPrefs = () ->
                                     e.preventDefault()
                                     e.target.parentElement.select('input')[0].focus()
                                 when 'up', 'down'
-                                    e.target.value = parseInt(e.target.value) + (key == 'up' and 10 or -10)
+                                    prefKey = e.target.parentElement.select('input')[0].id
+                                    inc = prefs[prefKey].inc or 1
+                                    newValue = parseInt(e.target.value) + (key == 'up' and inc or -inc)
+                                    newValue = Math.max(newValue, prefs[prefKey].min) if prefs[prefKey].min?
+                                    e.target.value = newValue
                                     e.preventDefault()
                                 when 'enter'
                                     inputChanged e
