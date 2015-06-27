@@ -35,6 +35,13 @@ ipc.on 'knixwarning', (event, args) -> knx?.webContents.send 'knix_warning', arg
 ipc.on 'console.log',   (event, args) -> console.log.apply console, args
 ipc.on 'console.error', (event, args) -> console.log.apply console, args
 ipc.on 'process.exit',  (event, code) -> console.log 'exit via ipc';  process.exit code
+    
+noToggle = false 
+ipc.on 'enableToggle', -> noToggle = false;console.log 'doToggle'
+ipc.on 'disableToggle', -> noToggle = true;console.log 'noToggle'
+ipc.on 'globalShortcut', (event, key) -> 
+    shortcut.unregisterAll()
+    shortcut.register key, toggleWindow
      
 ###
  0000000  000   000   0000000   000   000
@@ -58,8 +65,7 @@ showWindow = () ->
 ###
 
 toggleWindow = () ->
-    console.log win.preventToggle
-    return if win.preventToggle
+    return if noToggle
     if win && win.isVisible()
         win.hide()
         knx?.hide()

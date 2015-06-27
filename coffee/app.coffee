@@ -613,8 +613,9 @@ showPrefs = () ->
                         class: 'pref-overlay int'
                         type:  'input'
                         value: e.target.parentElement.select('.int')[0].innerHTML
+                    ipc.send 'disableToggle'                        
                     inp.on 'blur', (e) -> 
-                        log 'blur'
+                        ipc.send 'enableToggle'
                         e.target.remove()
                     inp.on 'change', inputChanged
                     inp.on 'keydown', (e) ->
@@ -645,7 +646,7 @@ showPrefs = () ->
                         class: 'pref-overlay shortcut'
                         type:  'button'
                         value: 'press the shortcut'
-                    win.preventToggle = true
+                    ipc.send 'disableToggle'
                     msg.on 'keydown', (e) ->
                         key = keyname.ofEvent e
                         input = e.target.parentElement.select('input')[0]
@@ -655,13 +656,8 @@ showPrefs = () ->
                             e.target.parentElement.select('.shortcut')[0].update key
                             prefKey = input.id
                             setPref prefKey, key
-                            dbg prefKey
                             if prefKey == 'shortcut'
-                                gs = remote.require 'global-shortcut'
-                                dbg gs
-                                gs.unregisterAll()
-                                dbg key, remote.toggleWindow?
-                                gs.register key, remote.toggleWindow
+                                ipc.send 'globalShortcut', key
                             input.focus()
                         else if not keyname.isModifier(key) and key != ''
                             switch key
@@ -678,7 +674,9 @@ showPrefs = () ->
                                     event.stopPropagation()
                         else
                             e.target.value = keyname.modifiersOfEvent e
-                    msg.on 'blur', (e) -> e.target.remove()
+                    msg.on 'blur', (e) -> 
+                        ipc.send 'enableToggle'
+                        e.target.remove()
                     border.insert msg
                     msg.focus()
             

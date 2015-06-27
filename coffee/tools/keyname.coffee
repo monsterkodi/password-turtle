@@ -26,12 +26,10 @@ class keyname
         args.join '+'
     @ofEvent: (event) ->
         key = keycode event
-        console.log event, key
         if key not in @modifierNames
             key = @join @modifiersOfEvent(event), key
         else
             key = ""
-        console.log event, key
         key        
 
 module.exports = keyname
