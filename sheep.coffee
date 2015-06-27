@@ -15,7 +15,7 @@ events        = require 'events'
 Tray          = require 'tray'
 BrowserWindow = require 'browser-window'
 
-debug = true
+debug = false
 win   = undefined
 knx   = undefined
 tray  = undefined
@@ -172,6 +172,7 @@ savePrefs = (values) ->
    000      0000000   0000000     0000000 
 ###
 ###
+
 - timeout
 - autocompletion
 - snatch site from firefox
