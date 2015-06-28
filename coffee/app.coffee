@@ -583,12 +583,13 @@ onVaultKey = (event) ->
                 toggleVaultItem e.id
                 event.preventDefault()
         when 'backspace', 'command+x', 'ctrl+x'
-            if e.id.length
-                if e.parentElement.nextSibling?
-                    e.parentElement.nextSibling.firstElementChild.focus()
+            if e?.id?.length
+                if e.parentElement.nextSibling?.nextSibling?
+                    e.parentElement.nextSibling.nextSibling.firstElementChild.focus()
                 else
-                    e.parentElement.previousSibling?.firstElementChild?.focus()
+                    e.parentElement.previousSibling?.previousSibling?.firstElementChild?.focus()
                 delete stash.vault[e.id]
+                e.parentElement.nextSibling.remove()
                 e.parentElement.remove()
                 writeStash()
 
