@@ -574,8 +574,8 @@ onVaultKey = (event) ->
             hash = uuid.v4()
             stash.vault[hash] = key: "new"
             addVaultItem hash, stash.vault[hash].key
-        when 'down'  then e?.parentElement?.nextSibling?.firstElementChild?.focus()
-        when 'up'    then e?.parentElement?.previousSibling?.firstElementChild?.focus()
+        when 'down'  then e?.parentElement?.nextSibling?.nextSibling?.firstElementChild?.focus()
+        when 'up'    then e?.parentElement?.previousSibling?.previousSibling?.firstElementChild?.focus()
         when 'left'  then closeVaultItem  e?.id
         when 'right' then openVaultItem   e?.id
         when 'space' 
@@ -594,18 +594,56 @@ onVaultKey = (event) ->
 
 toggleVault = -> if $('vaultlist')? then restoreBody() else showVault()
 
+adjustValue = (value) ->
+    value.style.height = 'auto'
+    value.style.height = value.scrollHeight+'px'
+    if value.scrollHeight < 46
+        value.style.height = '28px'
+
 vaultValue     = (vaultKey) -> $(vaultKey).parentElement.nextSibling
-openVaultItem  = (vaultKey) -> vaultValue(vaultKey).setStyle display: 'block'
-closeVaultItem = (vaultKey) -> vaultValue(vaultKey).setStyle display: 'none'
+vaultArrow     = (vaultKey) -> $(vaultKey).nextSibling
+openVaultItem  = (vaultKey) -> 
+    vaultValue(vaultKey).setStyle display: 'block'
+    vaultArrow(vaultKey).update '▼'
+    vaultArrow(vaultKey).addClassName 'open'
+closeVaultItem = (vaultKey) -> 
+    vaultValue(vaultKey).setStyle display: 'none'
+    vaultArrow(vaultKey).update '►'
+    vaultArrow(vaultKey).removeClassName 'open'
 toggleVaultItem = (vaultKey) ->
-    dbg vaultKey, vaultValue(vaultKey).getStyle('display')
-    if vaultValue(vaultKey).getStyle('display') == 'none'
-        openVaultItem vaultKey
-    else
-        closeVaultItem vaultKey
+    if vaultValue(vaultKey).getStyle('display') == 'none' then openVaultItem vaultKey else closeVaultItem vaultKey
+
+editVaultKey = (vaultKey) ->
+    border = $(vaultKey).parentElement
+    inp = new Element 'input', 
+        class: 'vault-overlay vault-key'
+        type:  'input'
+        value: border.select('.vault-key')[0].value
+    ipc.send 'disableToggle'
+    
+    inp.on 'keydown', (e) ->
+        key = keyname.ofEvent e
+        if key == 'esc'
+            input = e.target.parentElement.select('.vault-key')[0]
+            e.target.value = input.value
+            e.stopPropagation()
+            input.focus()
+            
+    inp.on 'change', (e) ->
+        input = e.target.parentElement.select('.vault-key')[0]
+        stash.vault[input.id].key = e.target.value
+        input.value = stash.vault[input.id].key
+        writeStash()
+        input.focus()
+        
+    inp.on 'blur', (e) -> 
+        ipc.send 'enableToggle'
+        e.target.remove()
+        
+    border.insert inp
+    inp.focus()
 
 addVaultItem = (vaultHash, vaultKey, vaultValue) ->
-    log vaultHash, vaultKey, vaultValue
     item  = new Element 'div', 
         class: 'vault-item-border border'
     input = new Element 'input', 
@@ -613,52 +651,31 @@ addVaultItem = (vaultHash, vaultKey, vaultValue) ->
         type:  'button'
         id:    vaultHash
         value: vaultKey
-    arrow = new Element('div', class:'vault-arrow').update '▶'
+    arrow = new Element('div', class:'vault-arrow').update '►'
     item.insert input
     item.insert arrow
     $('vaultlist').insert item
     value = new Element 'textarea',
         class: 'vault-value'
-        rows:  1
+        wrap:  'off'
+        rows:   1
     value.update vaultValue or ''
-    value.setStyle display: 'none'
     $('vaultlist').insert value
+    adjustValue value
+    value.setStyle display: 'none'
 
-    value.on 'input',      (e) -> e.target.style.height = 'auto'; e.target.style.height = e.target.scrollHeight+'px'
     item.on  'mouseenter', (e) -> e.target.childElements[0]?.focus()
     input.on 'focus',      (e) -> $(e.target.parentElement).addClassName 'focus'
     input.on 'blur',       (e) -> $(e.target.parentElement).removeClassName 'focus'
     input.on 'mouseenter', (e) -> $(e.target).focus()    
     arrow.on 'click',      (e) -> toggleVaultItem $(e.target).parentElement.firstElementChild.id
-    input.on 'click',      (e) ->
-        border = e.target.parentElement
-        inp = new Element 'input', 
-            class: 'vault-overlay vault-key'
-            type:  'input'
-            value: border.select('.vault-key')[0].value
-        ipc.send 'disableToggle'
-        
-        inp.on 'keydown', (e) ->
-            key = keyname.ofEvent e
-            if key == 'esc'
-                input = e.target.parentElement.select('.vault-key')[0]
-                e.target.value = input.value
-                e.stopPropagation()
-                input.focus()
-                
-        inp.on 'change', (e) ->
-            input = e.target.parentElement.select('.vault-key')[0]
-            stash.vault[input.id].key = e.target.value
-            input.value = stash.vault[input.id].key
-            writeStash()
-            input.focus()
-            
-        inp.on 'blur', (e) -> 
-            ipc.send 'enableToggle'
-            e.target.remove()
-            
-        border.insert inp
-        inp.focus()
+    input.on 'click',      (e) -> toggleVaultItem $(e.target).id
+    input.on 'keydown',    (e) -> if keyname.ofEvent(e) == 'enter' then editVaultKey $(e.target).id
+    value.on 'input',      (e) -> adjustValue e.target
+    value.on 'change',     (e) -> 
+        input = e.target.previousSibling.select('.vault-key')[0]
+        stash.vault[input.id].value = e.target.value
+        writeStash()
 
 showVault = () ->
     return if not stashLoaded

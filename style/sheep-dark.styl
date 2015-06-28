@@ -322,20 +322,33 @@ clr.bubble-ask = rgba(0,0,0,0.8)
 .vault-item
     border:           none
     border-radius:    6px    
-    background-color: clr.gray-dark    
+    background-color: clr.gray-very-dark    
     color:            clr.white
+    &:focus
+        color:        clr.orange
 
 .vault-value
+    border:           1px solid clr.gray-very-dark
+    background-color: #222222
+    color:            clr.orange-bright
+    box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.25)
+
+.vault-value:focus
 .vault-overlay    
 .vault-overlay.vault-key
 .vault-overlay.vault-value
     border:           1px solid clr.gray-very-dark
-    // color:            clr.pattern-bright
-    // background-color: clr.pattern
     color:            clr.black
     background-color: clr.orange
     box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.75)
 
+.vault-arrow
+    color:            clr.gray-very-dark
+.vault-arrow.open
+    color:            #444444
+.vault-item-border.focus .vault-arrow
+    color:            clr.orange
+        
 /*
 *  00000000   00000000   00000000  00000000   0000000
 *  000   000  000   000  000       000       000     

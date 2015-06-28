@@ -271,6 +271,49 @@ clr.bubble-ask = rgba(255,255,255,0.8)
         background-color: clr.gray-bright
     
 /*
+*  000   000   0000000   000   000  000      000000000
+*  000   000  000   000  000   000  000         000   
+*   000 000   000000000  000   000  000         000   
+*     000     000   000  000   000  000         000   
+*      0      000   000   0000000   0000000     000   
+*/
+
+.vault-item-border
+    border:               1px solid transparent
+    background-color:     clr.white
+    &.focus
+        background-color: clr.orange
+
+.vault-item
+    border:           none
+    border-radius:    6px    
+    background-color: clr.white
+    color:            clr.gray
+    &:focus
+        color:        clr.red
+
+.vault-value
+    border:           1px solid transparent
+    color:            clr.gray-medium
+    box-shadow:       inset 0px 0px 10px rgba(0, 0, 0, 0.15)
+
+.vault-value:focus
+.vault-overlay    
+.vault-overlay.vault-key
+.vault-overlay.vault-value
+    border:           1px solid transparent
+    color:            clr.black
+    background-color: clr.orange
+    box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.25)
+
+.vault-arrow
+    color:            clr.white
+.vault-arrow.open
+    color:            clr.gray-super-bright
+.vault-item-border.focus .vault-arrow
+    color:            clr.red
+    
+/*
 *   0000000  000000000   0000000    0000000  000   000
 *  000          000     000   000  000       000   000
 *  0000000      000     000000000  0000000   000000000
