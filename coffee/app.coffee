@@ -260,6 +260,7 @@ win.on 'close', (event) ->
     savePrefs values
     
 win.on 'focus', (event) -> 
+    resetTimeout()
     if stashLoaded
         if domain = extractDomain clipboard.readText()
             setSite domain
@@ -281,14 +282,18 @@ win.on 'focus', (event) ->
 timeoutInterval = undefined
 timeoutInSeconds = 0
 timeoutDelay = 0
+timeoutLast = undefined
+
+timeoutPercent = (pct) -> $('master-timeout')?.setStyle { width: pct+'%', left: (50-pct/2)+'%'}
 
 timeoutTick = () ->
-    timeoutInSeconds -= 1
+    now = Date.now()
+    delta = (now - timeoutLast)/1000
+    timeoutLast = now
+    timeoutInSeconds -= delta
     pct = 100 * timeoutInSeconds / timeoutDelay
-    $('master-timeout')?.setStyle
-        width: pct+'%'
-        left:  (50-pct/2)+'%'    
-    if timeoutInSeconds == 0
+    timeoutPercent pct
+    if timeoutInSeconds <= 0
         logOut()
 
 startTimeout = (mins) ->
@@ -296,25 +301,20 @@ startTimeout = (mins) ->
     stopTimeout()
     resetTimeout()
     if mins
+        timeoutLast = Date.now()
         timeoutInterval = setInterval timeoutTick, 1000
-    $('master-timeout')?.setStyle
-        width: mins and '100%' or '0%'
-        left:  mins and '0%' or '50%'
+    timeoutPercent mins and 100 or 0
     
 stopTimeout = () ->
     if timeoutInterval
         clearInterval timeoutInterval
         timeoutInterval = undefined        
-    $('master-timeout')?.setStyle
-        width: '0%'
-        left: '50%'
+    timeoutPercent 0
     
 resetTimeout = () ->
     timeoutInSeconds = timeoutDelay
     if timeoutInterval 
-        $('master-timeout')?.setStyle
-            width: '100%'
-            left: '0%'
+        timeoutPercent 100
     
 logOut = ->
     stopTimeout()
@@ -322,6 +322,7 @@ logOut = ->
     mstr = $('master').value
     setInput 'master', mstr
     $('master').focus()
+    timeoutPercent 0
     hideSitePassword()
     hideSettings()
     stashLoaded = false
@@ -483,7 +484,7 @@ readStash = (cb) ->
                 stash = JSON.parse(json)
                 setInput 'pattern', stash.pattern
                 updateFloppy()
-                log jsonStr stash
+                # log jsonStr stash
             cb()
     else
         resetStash()
@@ -572,8 +573,11 @@ onVaultKey = (event) ->
     switch key 
         when 'command+n', 'control+n'  
             hash = uuid.v4()
-            stash.vault[hash] = key: "new"
+            stash.vault[hash] = key: ""
             addVaultItem hash, stash.vault[hash].key
+            $(hash).focus()
+            toggleVaultItem hash
+            editVaultKey hash
         when 'down'  then e?.parentElement?.nextSibling?.nextSibling?.firstElementChild?.focus()
         when 'up'    then e?.parentElement?.previousSibling?.previousSibling?.firstElementChild?.focus()
         when 'left'  then closeVaultItem  e?.id
@@ -601,21 +605,27 @@ adjustValue = (value) ->
     if value.scrollHeight < 46
         value.style.height = '28px'
 
-vaultValue     = (vaultKey) -> $(vaultKey).parentElement.nextSibling
-vaultArrow     = (vaultKey) -> $(vaultKey).nextSibling
-openVaultItem  = (vaultKey) -> 
-    vaultValue(vaultKey).setStyle display: 'block'
-    vaultArrow(vaultKey).update '▼'
-    vaultArrow(vaultKey).addClassName 'open'
-closeVaultItem = (vaultKey) -> 
-    vaultValue(vaultKey).setStyle display: 'none'
-    vaultArrow(vaultKey).update '►'
-    vaultArrow(vaultKey).removeClassName 'open'
-toggleVaultItem = (vaultKey) ->
-    if vaultValue(vaultKey).getStyle('display') == 'none' then openVaultItem vaultKey else closeVaultItem vaultKey
+vaultValue     = (hash) -> $(hash).parentElement.nextSibling
+vaultArrow     = (hash) -> $(hash).nextSibling
+openVaultItem  = (hash) -> 
+    vaultValue(hash).setStyle display: 'block'
+    vaultArrow(hash).update '▼'
+    vaultArrow(hash).addClassName 'open'
+closeVaultItem = (hash) -> 
+    vaultValue(hash).setStyle display: 'none'
+    vaultArrow(hash).update '►'
+    vaultArrow(hash).removeClassName 'open'
+toggleVaultItem = (hash) ->
+    if vaultValue(hash).getStyle('display') == 'none' then openVaultItem hash else closeVaultItem hash
 
-editVaultKey = (vaultKey) ->
-    border = $(vaultKey).parentElement
+saveVaultKey = (e) ->
+    input = e.parentElement.select('.vault-key')[0]
+    stash.vault[input.id].key = e.value
+    input.value = stash.vault[input.id].key
+    writeStash()
+
+editVaultKey = (hash) ->
+    border = $(hash).parentElement
     inp = new Element 'input', 
         class: 'vault-overlay vault-key'
         type:  'input'
@@ -624,18 +634,20 @@ editVaultKey = (vaultKey) ->
     
     inp.on 'keydown', (e) ->
         key = keyname.ofEvent e
-        if key == 'esc'
-            input = e.target.parentElement.select('.vault-key')[0]
-            e.target.value = input.value
-            e.stopPropagation()
-            input.focus()
+        switch key
+            when 'esc'
+                input = e.target.parentElement.select('.vault-key')[0]
+                e.target.value = input.value
+                e.stopPropagation()
+                input.focus()
+            when 'enter'
+                input = e.target.parentElement.select('.vault-key')[0]
+                saveVaultKey e.target
+                input.focus()
+                e.stopPropagation()
+                e.preventDefault()
             
-    inp.on 'change', (e) ->
-        input = e.target.parentElement.select('.vault-key')[0]
-        stash.vault[input.id].key = e.target.value
-        input.value = stash.vault[input.id].key
-        writeStash()
-        input.focus()
+    inp.on 'change', (e) -> saveVaultKey e.target
         
     inp.on 'blur', (e) -> 
         ipc.send 'enableToggle'
@@ -643,14 +655,15 @@ editVaultKey = (vaultKey) ->
         
     border.insert inp
     inp.focus()
+    inp.setSelectionRange inp.value.length, inp.value.length
 
-addVaultItem = (vaultHash, vaultKey, vaultValue) ->
+addVaultItem = (hash, vaultKey, vaultValue) ->
     item  = new Element 'div', 
         class: 'vault-item-border border'
     input = new Element 'input', 
         class: 'vault-item vault-key'
         type:  'button'
-        id:    vaultHash
+        id:    hash
         value: vaultKey
     arrow = new Element('div', class:'vault-arrow').update '►'
     item.insert input
@@ -672,6 +685,9 @@ addVaultItem = (vaultHash, vaultKey, vaultValue) ->
     arrow.on 'click',      (e) -> toggleVaultItem $(e.target).parentElement.firstElementChild.id
     input.on 'click',      (e) -> toggleVaultItem $(e.target).id
     input.on 'keydown',    (e) -> if keyname.ofEvent(e) == 'enter' then editVaultKey $(e.target).id
+    value.on 'focus',      (e) -> 
+        selToEnd = -> @selectionStart = @selectionEnd = @value.length
+        setTimeout selToEnd.bind(e.target), 1
     value.on 'input',      (e) -> adjustValue e.target
     value.on 'change',     (e) -> 
         input = e.target.previousSibling.select('.vault-key')[0]
@@ -1024,7 +1040,8 @@ toggleSettings = ->
 showSettings = ->
     updateFloppy()
     updateListButton()
-    $('settings').show()
+    $('settings').show()    
+    $('list-border').removeClassName 'focus'
     $('pattern').focus()
     
 hideSettings = ->
