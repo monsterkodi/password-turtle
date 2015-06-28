@@ -31,6 +31,7 @@ body
 
 input 
 textarea
+    nodrag()
     outline             none
     
 #password
@@ -96,7 +97,7 @@ a
     
 .lock    
 #lock
-    top:            14px
+    top:            12px
     opacity:        0    
     &.closed
     &.open
@@ -117,6 +118,7 @@ a
     padding-right:  20px
     
 .border
+    nodrag()
     input-transition()
     position:      relative
     padding:       10px
@@ -187,23 +189,32 @@ a
 .open:hover
     cursor: pointer
 
+.scroll
+    overflow-x hidden
+    overflow-y auto
+    border 1px solid reds
+    height 397px
+
 #settings
     position: absolute
     left:     0
     right:    0
 
-#button-list
-    margin-top    12px
-    margin-left   12px
-    margin-right  12px
-    margin-right  12px
-
-.bottom-buttons
-    position:      absolute
+.buttons
+    position:      fixed
     bottom:        12px
-    left:          6px
-    right:         0
-    text-align:    center
+    left:          0px
+    right:         0px
+
+.button-border
+    drag()
+    input-transition()
+    pointer-events:       all
+    display:              inline-block
+    position:             relative
+    padding:              10px
+    margin:               0px
+    margin-left:          13px
 
 .button
     nodrag()
@@ -215,28 +226,16 @@ a
     height:           35px
     width:            35px
 
-.button-border
-    drag()
-    input-transition()
-    pointer-events:       all
-    display:              inline-block
-    position:             relative
-    padding:              10px
-    margin:               0px
-    margin-right:         8px
-
-#help-border
-    margin-right:   0px
-
 .button-icon
     pointer-events: none
     position:       absolute
     left:           21px
     top:            19px
 
-#preferences
-#stashlist
-#vaultlist
+#vault-border .button-icon
+    left: 20px
+
+.list
     position:       absolute
     padding-top:    13px
     padding-bottom: 10px
@@ -334,7 +333,7 @@ a
     & .pref    
         position:       absolute
         pointer-events: none
-        top:            18px
+        top:            11px
     & .pref        
         left:      20px
     & .int
@@ -344,7 +343,7 @@ a
 
 .pref-item
     width:         100%
-    height:        48px
+    height:        32px
     
 .pref-overlay.shortcut
 .pref-overlay.int
@@ -377,7 +376,8 @@ a
 
     & h1
         nodrag()
-        margin-bottom: 9px
+        margin-top    33px
+        margin-bottom 9px
         &:hover 
             cursor: pointer
     & .link

@@ -15,7 +15,7 @@ events        = require 'events'
 Tray          = require 'tray'
 BrowserWindow = require 'browser-window'
 
-debug = true
+debug = false
 win   = undefined
 knx   = undefined
 tray  = undefined
@@ -176,5 +176,5 @@ savePrefs = (values) ->
 ###
 - autocompletion
 - snatch site from firefox
-- sort stash list
+- sort stash and other list?
 ###

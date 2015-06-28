@@ -2,6 +2,7 @@
 clr                  = {} 
 clr.black            = #000000
 clr.gray-most-dark   = #181818
+clr.gray-super-dark  = #222222
 clr.gray-very-dark   = #282828
 clr.gray-dark        = #333333
 clr.gray-medium      = #555555
@@ -102,9 +103,10 @@ clr.password-bright = clr.blue-very-bright
 */
     
 .border
-    box-shadow:    inset 2px 2px 17px rgba(0, 0, 0, 0.25)
-    border:        1px solid clr.gray-very-dark
-    background-color: clr.gray-dark
+    box-shadow:           inset 2px 2px 17px rgba(0, 0, 0, 0.25)
+    border:               1px solid clr.gray-very-dark
+    background-color:     clr.gray-dark
+
     &.focus
         background-color: clr.orange
         box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.75)
@@ -248,7 +250,7 @@ clr.bubble-ask = rgba(0,0,0,0.8)
         box-shadow: 0 0 10px clr.pattern-bright
         color:               clr.pattern-medium
 
-#list
+#stash
 #help
     &:focus
         box-shadow: 0 0 10px clr.site-bright
@@ -258,7 +260,7 @@ clr.bubble-ask = rgba(0,0,0,0.8)
     box-shadow:           inset 2px 2px 17px rgba(0, 0, 0, 0.25)
     border:               1px solid clr.gray-very-dark
     border-radius:        10px
-    background-color:     clr.gray-dark
+    background-color:     clr.gray-super-dark
     color:                gray
     &.focus
         color:            clr.yellow
@@ -267,7 +269,7 @@ clr.bubble-ask = rgba(0,0,0,0.8)
     &.disabled
         opacity:          0.5
         color:            clr.gray-dark
-        
+                
 #about-border
     &.focus
         color:            clr.password-bright
@@ -280,7 +282,7 @@ clr.bubble-ask = rgba(0,0,0,0.8)
         background-color: clr.pattern
         box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.75)
     
-#list-border
+#stash-border
 #help-border
     &.focus
         color:            clr.site-bright
@@ -329,7 +331,7 @@ clr.bubble-ask = rgba(0,0,0,0.8)
 
 .vault-value
     border:           1px solid clr.gray-very-dark
-    background-color: #222222
+    background-color: clr.gray-super-dark
     color:            clr.orange-bright
     box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.25)
 

@@ -89,7 +89,7 @@ masterAnim = ->
                 masterSitePassword()
             else
                 showSettings()
-                $('button-list').hide()
+                $('buttons').hide()
                 $('sheep').disabled = false
             
 masterFade = ->
@@ -131,7 +131,6 @@ patternConfirmed = ->
         if stash.pattern == ''
             say ['Also nice!', 'What a beautiful pattern!', 'The setup is done!'][random 2], 
                 'Have fun generating passwords!', 5000
-            $('button-list').show()
         else
             if not ask 'change the default <i>pattern</i>?', 'if yes, press return again.'
                 return
@@ -178,6 +177,7 @@ copyAndSavePattern = ->
         savePattern()
                     
 copyPassword = -> 
+    resetTimeout()
     pw = currentPassword
     if pw?.length
         clipboard.writeText pw
@@ -220,11 +220,6 @@ initEvents = () ->
     $('site'    ).on 'input', siteChanged
     $('pattern' ).on 'input', patternChanged
     $('sheep'   ).on 'click', toggleSettings
-    $('list'    ).on 'click', listStash
-    $('prefs'   ).on 'click', showPrefs
-    $('about'   ).on 'click', showAbout
-    $('help'    ).on 'click', showHelp
-    $('vault'   ).on 'click', showVault
     $('password').on 'mousedown', copyPassword
     $('sheep'   ).on 'mouseenter', (e) -> $('sheep').focus()
             
@@ -339,7 +334,7 @@ logOut = ->
 onKeyDown = (event) ->
     key = keyname.ofEvent event
     e   = document.activeElement
-    # dbg key
+
     resetTimeout()
     
     switch key
@@ -353,10 +348,14 @@ onKeyDown = (event) ->
             if not $('bubble')?        then return restoreBody()
             if $('settings').visible() then return toggleSettings()
 
-    if $('stashlist')?   then return onListKey  event
-    if $('vaultlist')?   then return onVaultKey event
-    if $('preferences')? then return onPrefsKey event
+    if $('stashlist')? then return onStashKey event
+    if $('vaultlist')? then return onVaultKey event
+    if $('prefslist')? then return onPrefsKey event
             
+    if not $('site')?
+        # log 'no site?'
+        return
+        
     site = $('site').value
     hash = genHash(site+mstr)
     
@@ -381,7 +380,7 @@ onKeyDown = (event) ->
             logOut()
             return
     
-    btnames = ['list', 'vault', 'prefs', 'about', 'help']
+    btnames = ['stash', 'vault', 'prefs', 'about', 'help']
     if e.id in btnames
         switch key
             when 'left', 'up'
@@ -439,10 +438,63 @@ saveBody = () ->
             setInput 'site', savedSite
             $(savedFocus)?.focus()                
             masterSitePassword()
-            updateFloppy()    
-            updateListButton()
-            if isEmpty(stash.configs) and savedFocus == 'list'
+            updateFloppy()
+            if $('settings').visible()
+                showSettings()
+            if isEmpty(stash.configs) and savedFocus == 'stash'
                 $('prefs').focus()
+
+initBody = (name) ->
+    saveBody()    
+    lst = new Element 'div', class: 'list', id: name+'list'
+    scroll = new Element 'div', class: 'scroll', id: name+'scroll'
+    lst.insert scroll            
+    lst.insert initButtons()
+    document.body.update lst
+
+###
+0000000    000   000  000000000  000000000   0000000   000   000   0000000
+000   000  000   000     000        000     000   000  0000  000  000     
+0000000    000   000     000        000     000   000  000 0 000  0000000 
+000   000  000   000     000        000     000   000  000  0000       000
+0000000     0000000      000        000      0000000   000   000  0000000 
+###
+
+initInputBorder = (inp) ->
+    inp.on 'focus',      (e) -> $(e.target.parentElement).addClassName 'focus'
+    inp.on 'blur',       (e) -> $(e.target.parentElement).removeClassName 'focus'
+    inp.on 'mouseenter', (e) -> $(e.target).focus()
+
+initButtons = () ->
+
+    buttons  = new Element 'div', class: 'buttons', id: 'buttons'
+    
+    for btn in [
+        ['stash', 'database']         , 
+        ['vault', 'archive']          , 
+        ['prefs', 'cog']              , 
+        ['about', 'info-circle']      , 
+        ['help' , 'question-circle'] ]
+        spn = new Element 'span'
+        brd = new Element 'div', class: 'button-border border', id: btn[0]+'-border'
+        inp = new Element 'input', type: 'button', class: 'button', id: btn[0]
+        icn = new Element 'i', class: 'button-icon fa fa-'+btn[1]
+        spn.insert brd
+        brd.insert inp
+        brd.insert icn
+        buttons.insert spn
+        initInputBorder inp
+        inp.on 'click', onButton
+        
+    buttons    
+
+onButton = (e) ->
+    switch e.target.id
+        when 'stash' then toggleStash()
+        when 'vault' then toggleVault()
+        when 'prefs' then togglePrefs()
+        when 'about' then showAbout()
+        when 'help'  then showHelp()
 
 ###
  0000000  000000000   0000000    0000000  000   000
@@ -498,7 +550,7 @@ readStash = (cb) ->
 0000000  000  0000000      000   
 ###
 
-onListKey = (event) ->
+onStashKey = (event) ->
     key = keyname.ofEvent event
     e   = document.activeElement
     switch key 
@@ -522,15 +574,13 @@ toggleStash = ->
     if $('stashlist')?
         restoreBody()
     else
-        listStash()
+        showStash()
 
-listStash = () ->
+showStash = () ->
     return if not stashLoaded
     return if isEmpty stash.configs
     
-    saveBody()
-        
-    document.body.innerHTML = '<div id="stashlist"></div>'    
+    initBody 'stash'    
         
     for hash in Object.keys stash.configs
         config = stash.configs[hash]
@@ -547,17 +597,14 @@ listStash = () ->
             item.insert (new Element 'span', 
                 class: 'pattern').update config.pattern
             
-        $('stashlist').insert item
+        $('stashscroll').insert item
             
         item.on 'mouseenter', (e) -> e.target.childElements[0]?.focus()
         $(hash).on 'click',   (e) -> restoreBody e.target.nextSibling.innerHTML
 
-    for input in $$('input')
-        input.on 'focus',      (e) -> $(e.target.parentElement).addClassName 'focus'
-        input.on 'blur',       (e) -> $(e.target.parentElement).removeClassName 'focus'
-        input.on 'mouseenter', (e) -> $(e.target).focus()
-            
-    $('stashlist').firstElementChild.firstElementChild.focus()
+        initInputBorder $(hash)
+                    
+    $('stashscroll').firstElementChild.firstElementChild.focus()
     
 ###
 000   000   0000000   000   000  000      000000000
@@ -668,20 +715,18 @@ addVaultItem = (hash, vaultKey, vaultValue) ->
     arrow = new Element('div', class:'vault-arrow').update '►'
     item.insert input
     item.insert arrow
-    $('vaultlist').insert item
+    $('vaultscroll').insert item
     value = new Element 'textarea',
         class: 'vault-value'
         wrap:  'off'
         rows:   1
     value.update vaultValue or ''
-    $('vaultlist').insert value
+    $('vaultscroll').insert value
     adjustValue value
     value.setStyle display: 'none'
 
+    initInputBorder input
     item.on  'mouseenter', (e) -> e.target.childElements[0]?.focus()
-    input.on 'focus',      (e) -> $(e.target.parentElement).addClassName 'focus'
-    input.on 'blur',       (e) -> $(e.target.parentElement).removeClassName 'focus'
-    input.on 'mouseenter', (e) -> $(e.target).focus()    
     arrow.on 'click',      (e) -> toggleVaultItem $(e.target).parentElement.firstElementChild.id
     input.on 'click',      (e) -> toggleVaultItem $(e.target).id
     input.on 'keydown',    (e) -> if keyname.ofEvent(e) == 'enter' then editVaultKey $(e.target).id
@@ -697,7 +742,7 @@ addVaultItem = (hash, vaultKey, vaultValue) ->
 showVault = () ->
     return if not stashLoaded
     
-    saveBody()
+    initBody 'vault'
     
     if not stash.vault? or isEmpty Object.keys(stash.vault)
         stash.vault = {} 
@@ -705,12 +750,10 @@ showVault = () ->
             key:   "title"
             value: "some secret"
         
-    document.body.innerHTML = '<div id="vaultlist"></div>'    
-        
     for vaultHash in Object.keys stash.vault
         addVaultItem vaultHash, stash.vault[vaultHash].key, stash.vault[vaultHash].value
             
-    $('vaultlist').firstElementChild.firstElementChild.focus()    
+    $('vaultscroll').firstElementChild.firstElementChild.focus()    
     
 ###
 00000000   00000000   00000000  00000000   0000000
@@ -722,11 +765,15 @@ showVault = () ->
 
 prefsFile = process.env.HOME+'/Library/Preferences/sheepword.json'
 prefs = 
-    shortcut: { default: 'ctrl+`', type: 'shortcut', text: 'global shortcut'       }
-    timeout:  { default: 5,        type: 'int',      text: 'autoclose delay', min: 0 }
-    mask:     { default: true,     type: 'bool',     text: 'mask locked passwords' }
-    confirm:  { default: true,     type: 'bool' ,    text: 'confirm changes'       }
-    dark:     { default: true,     type: 'bool',     text: 'dark theme'            }
+    shortcut: { default: 'ctrl+`',    type: 'shortcut', text: 'global shortcut'         }
+    timeout:  { default: 5,           type: 'int',      text: 'autoclose delay', min: 0 }
+    mask:     { default: true,        type: 'bool',     text: 'mask locked passwords'   }
+    confirm:  { default: true,        type: 'bool' ,    text: 'confirm changes'         }
+    dark:     { default: true,        type: 'bool',     text: 'dark theme'              }
+    stashkey: { default: 'command+l', type: 'shortcut', text: 'sites shortcut'          }
+    vaultkey: { default: 'command+o', type: 'shortcut', text: 'vault shortcut'          }
+    prefskey: { default: 'command+p', type: 'shortcut', text: 'preferences shortcut'    }
+    sttgskey: { default: 'command+,', type: 'shortcut', text: 'settings shortcut'       }
 
 getPref = (key) -> loadPrefs()[key]
 setPref = (key, value) -> 
@@ -750,22 +797,23 @@ savePrefs = (values) ->
     fs.writeFileSync prefsFile, jsonStr(values), encoding:'utf8'
 
 togglePrefs = ->
-    if $('preferences')?
+    if $('prefslist')?
         restoreBody()
     else
         showPrefs()
 
 showPrefs = () ->
     return if not stashLoaded
-    saveBody()
-    document.body.innerHTML = '<div id="preferences"></div>'
-    values = loadPrefs()
     
+    initBody 'prefs'
+    
+    values = loadPrefs()
     for key in Object.keys prefs
         pref = prefs[key]
         value = values[key]
-        item =       new Element 'div', class: 'pref-item-border border'
-        item.insert  new Element 'input', id: key, type: 'button', class: 'pref-item'
+        item  = new Element 'div', class: 'pref-item-border border'
+        input = new Element 'input', id: key, type: 'button', class: 'pref-item'
+        item.insert input
         item.insert (new Element 'span', class: 'pref').update pref.text
         switch pref.type
             when 'bool'
@@ -777,24 +825,13 @@ showPrefs = () ->
             when 'shortcut'
                 item.insert (new Element 'span', class: 'shortcut').update value
             
-        $('preferences').insert item
+        $('prefsscroll').insert item
 
-    ok =       new Element 'div', class: 'button-border border', id: 'ok-border'
-    ok.insert  new Element 'input', id: 'ok', type: 'button', class: 'button'
-    ok.insert  new Element 'i', class:"button-icon fa fa-floppy-o"
-    ok.on 'click', -> restoreBody()
-    buttons  = new Element 'div', class: 'bottom-buttons'
-    buttons.insert ok
-    $('preferences').insert buttons
-        
-    for input in $$('input')
-        input.on 'focus',      (e) -> $(e.target.parentElement).addClassName 'focus'
-        input.on 'blur',       (e) -> $(e.target.parentElement).removeClassName 'focus'
-        input.on 'mouseenter', (e) -> $(e.target).focus()
+        initInputBorder input
         input.on 'click',      (e) -> 
             key = e.target.id
             pref = prefs[key]
-            switch pref.type
+            switch pref?.type
                 when 'bool'
                     values[key] = not values[key]
                     bool = e.target.parentElement.select('.bool')[0]
@@ -907,7 +944,7 @@ showPrefs = () ->
                     border.insert msg
                     msg.focus()
             
-    $('preferences').firstElementChild.firstElementChild.focus()
+    $('prefsscroll').firstElementChild.firstElementChild.focus()
     
 onPrefsKey = (e) ->
     key  = keyname.ofEvent e
@@ -1038,14 +1075,16 @@ toggleSettings = ->
             showSettings()
 
 showSettings = ->
+    $('buttons')?.remove()
     updateFloppy()
-    updateListButton()
+    $('settings').insert initButtons()
     $('settings').show()    
-    $('list-border').removeClassName 'focus'
     $('pattern').focus()
+    updateStashButton()    
     
 hideSettings = ->
     $('settings').hide()
+    $('buttons')?.remove()
     say() if stashExists
     stashExists = fs.existsSync stashFile
     if $('pattern').value.length == 0 and stash?.pattern
@@ -1061,6 +1100,7 @@ hideSitePassword = ->
     $('password').disabled = true
 
 showSitePassword = ->
+    return if not $('site-border')?
     $('site-border').setStyle  opacity: 1
     $('site-border').removeClassName 'no-pointer'
     $('site').disabled = false    
@@ -1104,13 +1144,13 @@ updateFloppy = ->
         else
             floppy.addClassName 'saved'
 
-updateListButton = ->        
+updateStashButton = ->        
     if isEmpty stash.configs
-        $('list').disabled = true
-        $('list-border').addClassName 'disabled'
+        $('stash')?.disabled = true
+        $('stash-border')?.addClassName 'disabled'
     else 
-        $('list').disabled = false
-        $('list-border').removeClassName 'disabled'
+        $('stash')?.disabled = false
+        $('stash-border')?.removeClassName 'disabled'
         
 ###
  0000000  000000000  000   000  000      00000000

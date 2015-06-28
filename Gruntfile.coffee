@@ -107,7 +107,7 @@ module.exports = (grunt) ->
             kill:
                 command: "killall Electron || echo 1"
             build: 
-                command: "node_modules/electron-packager/cli.js . sheepword --platform=darwin --arch=x64 --prune --version=0.28.2 --app-version=0.1.0 --app-bundle-id=net.monsterkodi.sheepword --ignore=node_modules/electron --icon=img/sheepword.icns"
+                command: "node_modules/electron-packager/cli.js . sheepword --platform=darwin --arch=x64 --prune --version=0.28.2 --app-version=0.9.2 --app-bundle-id=net.monsterkodi.sheepword --ignore=node_modules/electron --icon=img/sheepword.icns"
             test: 
                 command: "electron ."
             start: 
