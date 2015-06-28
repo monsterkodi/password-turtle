@@ -483,6 +483,7 @@ readStash = (cb) ->
                 stash = JSON.parse(json)
                 setInput 'pattern', stash.pattern
                 updateFloppy()
+                log jsonStr stash
             cb()
     else
         resetStash()
@@ -575,11 +576,12 @@ onVaultKey = (event) ->
             addVaultItem hash, stash.vault[hash].key
         when 'down'  then e?.parentElement?.nextSibling?.firstElementChild?.focus()
         when 'up'    then e?.parentElement?.previousSibling?.firstElementChild?.focus()
-        when 'left'  then log 'close item',  e?.id
-        when 'right' then log 'open item',   e?.id
+        when 'left'  then closeVaultItem  e?.id
+        when 'right' then openVaultItem   e?.id
         when 'space' 
-            log 'toggle item', e?.id
-            event.preventDefault()
+            if e?.id?
+                toggleVaultItem e.id
+                event.preventDefault()
         when 'backspace', 'command+x', 'ctrl+x'
             if e.id.length
                 if e.parentElement.nextSibling?
@@ -592,25 +594,42 @@ onVaultKey = (event) ->
 
 toggleVault = -> if $('vaultlist')? then restoreBody() else showVault()
 
+vaultValue     = (vaultKey) -> $(vaultKey).parentElement.nextSibling
+openVaultItem  = (vaultKey) -> vaultValue(vaultKey).setStyle display: 'block'
+closeVaultItem = (vaultKey) -> vaultValue(vaultKey).setStyle display: 'none'
+toggleVaultItem = (vaultKey) ->
+    dbg vaultKey, vaultValue(vaultKey).getStyle('display')
+    if vaultValue(vaultKey).getStyle('display') == 'none'
+        openVaultItem vaultKey
+    else
+        closeVaultItem vaultKey
+
 addVaultItem = (vaultHash, vaultKey, vaultValue) ->
     log vaultHash, vaultKey, vaultValue
     item  = new Element 'div', 
         class: 'vault-item-border border'
     input = new Element 'input', 
-        id:    vaultHash
         class: 'vault-item vault-key'
-        value: vaultKey
         type:  'button'
+        id:    vaultHash
+        value: vaultKey
     arrow = new Element('div', class:'vault-arrow').update '▶'
     item.insert input
     item.insert arrow
     $('vaultlist').insert item
-        
+    value = new Element 'textarea',
+        class: 'vault-value'
+        rows:  1
+    value.update vaultValue or ''
+    value.setStyle display: 'none'
+    $('vaultlist').insert value
+
+    value.on 'input',      (e) -> e.target.style.height = 'auto'; e.target.style.height = e.target.scrollHeight+'px'
     item.on  'mouseenter', (e) -> e.target.childElements[0]?.focus()
     input.on 'focus',      (e) -> $(e.target.parentElement).addClassName 'focus'
     input.on 'blur',       (e) -> $(e.target.parentElement).removeClassName 'focus'
     input.on 'mouseenter', (e) -> $(e.target).focus()    
-    arrow.on 'click',      (e) -> log 'toggle item', $(e.target).parentElement.firstElementChild.id
+    arrow.on 'click',      (e) -> toggleVaultItem $(e.target).parentElement.firstElementChild.id
     input.on 'click',      (e) ->
         border = e.target.parentElement
         inp = new Element 'input', 
@@ -618,6 +637,7 @@ addVaultItem = (vaultHash, vaultKey, vaultValue) ->
             type:  'input'
             value: border.select('.vault-key')[0].value
         ipc.send 'disableToggle'
+        
         inp.on 'keydown', (e) ->
             key = keyname.ofEvent e
             if key == 'esc'
@@ -625,6 +645,7 @@ addVaultItem = (vaultHash, vaultKey, vaultValue) ->
                 e.target.value = input.value
                 e.stopPropagation()
                 input.focus()
+                
         inp.on 'change', (e) ->
             input = e.target.parentElement.select('.vault-key')[0]
             stash.vault[input.id].key = e.target.value
@@ -635,6 +656,7 @@ addVaultItem = (vaultHash, vaultKey, vaultValue) ->
         inp.on 'blur', (e) -> 
             ipc.send 'enableToggle'
             e.target.remove()
+            
         border.insert inp
         inp.focus()
 
@@ -682,7 +704,6 @@ loadPrefs = () ->
     values = {}
     try
         values = JSON.parse fs.readFileSync(prefsFile, encoding:'utf8')
-        # log 'loaded values:', jsonStr values
     catch        
         log 'can\'t load prefs file', prefsFile
     for key in Object.keys prefs
