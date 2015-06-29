@@ -1,4 +1,7 @@
 password-turtle.app*
+.release.sh
+.pepper
+node_modules
 bower_components
 style/*.css
 js
