@@ -110,7 +110,7 @@ module.exports = (grunt) ->
         bumpup:
             file: 'package.json'
             
-        clean: ['password-turtle.app', 'password-turtle.tgz', 'style/*.css', 'js', 'pepper', '.release.*']
+        clean: ['password-turtle.app', 'password-turtle.zip', 'style/*.css', 'js', 'pepper', '.release.*']
             
             
         githubAsset:
