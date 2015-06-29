@@ -55,7 +55,7 @@ class Console extends Window
             ]
             child:
                 class  : 'console'
-                text   : '<span class="tiny-text" style="vertical-align:top">sheepword version '+knix.version+'</span>'
+                text   : '<span class="tiny-text" style="vertical-align:top">password-turtle version '+knix.version+'</span>'
                 noMove : true
 
         @elem.addEventListener 'contextmenu', @onContextMenu

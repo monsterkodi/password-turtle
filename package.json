@@ -1,6 +1,6 @@
 {
-  "name": "sheepword",
-  "version": "0.9.89",
+  "name": "password-tutle",
+  "version": "0.9.6",
   "description": "a password generator",
   "dependencies": {
     "bcryptjs": "^2.1.0",
@@ -49,9 +49,9 @@
     "moment": "^2.10.3",
     "process": "^0.11.1"
   },
-  "main": "js/sheep.js",
+  "main": "js/turtle.js",
   "scripts": {
-    "build": "electron-packager . Example --platform=darwin --arch=x64 --version=0.26.0 --ignore=node_modules/electron --icon=Icon.icns",
+    "build": "electron-packager . password-turtle --platform=darwin --arch=x64 --version=0.28.2 --ignore=node_modules/electron --icon=img/turtle.icns",
     "start": "electron .",
     "bower": "bower install octicons font-awesome prototype.js"
   }

@@ -13,7 +13,7 @@ module.exports = (grunt) ->
                 quiet:   true
             task:
                 files:
-                    'sheep': [ 'sheep.coffee', 'coffee/**/*.coffee' ]
+                    'turtle': [ 'turtle.coffee', 'coffee/**/*.coffee' ]
 
         salt:
             options:
@@ -24,7 +24,7 @@ module.exports = (grunt) ->
                 options:
                     textMarker  : '#!!'
                 files:
-                    'asciiText': [ 'sheep.coffee', 'coffee/**/*.coffee' ]
+                    'asciiText': [ 'turtle.coffee', 'coffee/**/*.coffee' ]
             coffeesmall:
                 options:
                     textMarker  : '#!'
@@ -32,7 +32,7 @@ module.exports = (grunt) ->
                     textFill    : '# '
                     textPostfix : null
                 files:
-                    'asciiText': [ 'sheep.coffee', 'coffee/**/*.coffee' ]
+                    'asciiText': [ 'turtle.coffee', 'coffee/**/*.coffee' ]
             style: 
                 options:
                     verbose     : false
@@ -48,9 +48,9 @@ module.exports = (grunt) ->
                 compress: false
             compile:
                 files:
-                    'style/sheep-fixed.css':   ['style/sheep-fixed.styl']
-                    'style/sheep-bright.css':  ['style/sheep-bright.styl']
-                    'style/sheep-dark.css':    ['style/sheep-dark.styl']
+                    'style/turtle-fixed.css':  ['style/turtle-fixed.styl']
+                    'style/turtle-bright.css': ['style/turtle-bright.styl']
+                    'style/turtle-dark.css':   ['style/turtle-dark.styl']
                     'style/bright.css':        ['style/bright-style.styl']
                     'style/dark.css':          ['style/dark-style.styl']
 
@@ -69,11 +69,11 @@ module.exports = (grunt) ->
         coffee:
             options:
                 bare: true
-            sheep:
+            turtle:
                 expand:  true,
                 flatten: true,
                 cwd:     '.',
-                src:     ['.pepper/sheep.coffee'],
+                src:     ['.pepper/turtle.coffee'],
                 dest:    'js',
                 ext:     '.js'
             coffee:
@@ -101,21 +101,21 @@ module.exports = (grunt) ->
         bumpup:
             file: 'package.json'
             
-        clean: ['sheepword.app', 'style/*.css', 'js', 'pepper']
+        clean: ['password-turtle.app', 'style/*.css', 'js', 'pepper']
             
         shell:
             kill:
                 command: "killall Electron || echo 1"
             build: 
-                command: "node_modules/electron-packager/cli.js . sheepword --platform=darwin --arch=x64 --prune --version=0.28.2 --app-version=0.9.2 --app-bundle-id=net.monsterkodi.sheepword --ignore=node_modules/electron --icon=img/sheepword.icns"
+                command: "node_modules/electron-packager/cli.js . password-turtle --platform=darwin --arch=x64 --prune --version=0.28.2 --app-version=0.9.2 --app-bundle-id=net.monsterkodi.password-turtle --ignore=node_modules/electron --icon=img/turtle.icns"
             test: 
                 command: "electron ."
             start: 
-                command: "open sheepword.app"
+                command: "open password-turtle.app"
             publish:
                 command: 'npm publish'
             npmpage:
-                command: 'open https://www.npmjs.com/package/sheepword'
+                command: 'open https://www.npmjs.com/package/password-turtle'
     ###
     npm install --save-dev grunt-contrib-watch
     npm install --save-dev grunt-contrib-coffee

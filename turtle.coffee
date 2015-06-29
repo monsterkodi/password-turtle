@@ -1,9 +1,9 @@
 ###
- 0000000  000   000  00000000  00000000  00000000 
-000       000   000  000       000       000   000
-0000000   000000000  0000000   0000000   00000000 
-     000  000   000  000       000       000      
-0000000   000   000  00000000  00000000  000      
+000000000  000   000  00000000   000000000  000      00000000
+   000     000   000  000   000     000     000      000     
+   000     000   000  0000000       000     000      0000000 
+   000     000   000  000   000     000     000      000     
+   000      0000000   000   000     000     0000000  00000000
 ###
 
 shortcut      = require 'global-shortcut'
@@ -138,7 +138,7 @@ createWindow = () ->
         catch err
             console.log 'shortcut installation failed', err
 
-        win.loadUrl 'file://' + cwd + '/sheep.html'
+        win.loadUrl 'file://' + cwd + '/turtle.html'
         
         if not debug
             win.on 'blur', win.hide
@@ -155,7 +155,7 @@ createWindow()
 000        000   000  00000000  000       0000000 
 ###
 
-prefsFile = process.env.HOME+'/Library/Preferences/sheepword.json'
+prefsFile = process.env.HOME+'/Library/Preferences/password-turtle.json'
 
 loadPrefs = () ->
     try
