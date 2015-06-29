@@ -11,9 +11,18 @@ module.exports = (grunt) ->
                 paprika: ['dbg']
                 join:    false
                 quiet:   true
-            task:
+            turtle:
                 files:
                     'turtle': [ 'turtle.coffee', 'coffee/**/*.coffee' ]
+            release:
+                options: 
+                    outdir: '.'
+                    type:   '.sh'
+                    pepper:  null
+                    paprika: null
+                    join:    true
+                files:
+                    '.release': ['release.sh']
 
         salt:
             options:
@@ -101,7 +110,7 @@ module.exports = (grunt) ->
         bumpup:
             file: 'package.json'
             
-        clean: ['password-turtle.app', 'style/*.css', 'js', 'pepper']
+        clean: ['password-turtle.app*', 'style/*.css', 'js', 'pepper', '.release.sh']
             
         shell:
             kill:
@@ -112,6 +121,8 @@ module.exports = (grunt) ->
                 command: "electron ."
             start: 
                 command: "open password-turtle.app"
+            release:
+                command: 'bash .release.sh'
             publish:
                 command: 'npm publish'
             npmpage:
@@ -136,7 +147,8 @@ module.exports = (grunt) ->
     grunt.loadNpmTasks 'grunt-pepper'
     grunt.loadNpmTasks 'grunt-shell'
 
-    grunt.registerTask 'build',     [ 'clean', 'bumpup', 'stylus', 'salt', 'pepper', 'bower_concat', 'coffee',  'shell:kill', 'shell:build', 'shell:start' ]
+    grunt.registerTask 'build',     [ 'clean', 'bumpup', 'stylus', 'salt', 'pepper', 'bower_concat', 'coffee', 'shell:kill', 'shell:build', 'shell:start' ]
+    grunt.registerTask 'release',   [ 'clean', 'stylus', 'salt', 'pepper', 'bower_concat', 'coffee', 'shell:release' ]
     grunt.registerTask 'test',      [ 'clean', 'bumpup', 'stylus', 'salt', 'pepper', 'bower_concat', 'coffee', 'shell:kill', 'shell:test' ]
     grunt.registerTask 'default',   [ 'test' ]
     #grunt.registerTask 'publish',   [ 'bumpup', 'shell:publish', 'shell:npmpage' ]
