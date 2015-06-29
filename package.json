@@ -1,6 +1,6 @@
 {
   "name": "password-tutle",
-  "version": "0.9.6",
+  "version": "0.9.16",
   "description": "a password generator",
   "dependencies": {
     "bcryptjs": "^2.1.0",

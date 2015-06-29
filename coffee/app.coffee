@@ -35,12 +35,16 @@ extractDomain = _url.extractDomain
 containsLink  = _url.containsLink
 jsonStr       = (a) -> JSON.stringify a, null, " "
 
-mstr        = undefined
-stashFile   = process.env.HOME+'/Library/Preferences/password-turtle.stash'
-stash       = undefined
-stashExists = false
-stashLoaded = false
+mstr          = undefined
+stashFile     = process.env.HOME+'/Library/Preferences/password-turtle.stash'
+stash         = undefined
+stashExists   = false
+stashLoaded   = false
 currentPassword = undefined
+stash_key     = ''
+prefs_key     = ''
+vault_key     = ''
+settings_key  = ''
 
 log   = () -> ipc.send 'knixlog',   [].slice.call arguments, 0
 dbg   = () -> ipc.send 'knixlog',   [].slice.call arguments, 0
@@ -85,12 +89,13 @@ masterAnim = ->
             startTimeout getPref 'timeout'
             masterAnimDir = 0
             if stashExists
+                $('turtle').disabled = false
+                updateSiteFromClipboard()
                 showSitePassword()
                 masterSitePassword()
             else
                 showSettings()
                 $('buttons').hide()
-                $('turtle').disabled = false
             
 masterFade = ->
     $('turtle').disabled = true
@@ -131,6 +136,7 @@ patternConfirmed = ->
         if stash.pattern == ''
             say ['Also nice!', 'What a beautiful pattern!', 'The setup is done!'][random 2], 
                 'Have fun generating passwords!', 5000
+            $('turtle').disabled = false    
         else
             if not ask 'change the default <i>pattern</i>?', 'if yes, press return again.'
                 return
@@ -183,16 +189,7 @@ copyPassword = ->
         clipboard.writeText pw
         $("password").focus()
         whisper '<u>password</u> copied', 2000
-    
-setSite = (site) ->
-    setInput 'site', site
-    siteChanged()
-    
-siteChanged = ->
-    if $("site").value.length == 0
-        hideLock()
-    masterSitePassword()
-    
+        
 ###
 00000000  000   000  00000000  000   000  000000000   0000000
 000       000   000  000       0000  000     000     000     
@@ -239,9 +236,7 @@ document.observe 'dom:loaded', ->
     toggleStyle() if not prefs.dark
     
     $("master").focus()
-    if domain = extractDomain clipboard.readText()
-        setSite domain 
-
+    
     hideSitePassword()
     hideSettings()
     resetStash()
@@ -257,12 +252,10 @@ win.on 'close', (event) ->
 win.on 'focus', (event) -> 
     resetTimeout()
     if stashLoaded
-        if domain = extractDomain clipboard.readText()
-            setSite domain
-            $("password").focus()
-        else
-            $("site").focus()
-            $("site").setSelectionRange 0, $("site").value.length
+        updateSiteFromClipboard()
+        $("site").focus()
+        $("site").select()
+        # $("site").setSelectionRange 0, $("site").value.length
     else
         $("master").focus()
     
@@ -338,12 +331,13 @@ onKeyDown = (event) ->
     resetTimeout()
     
     switch key
-        when 'command+l', 'ctrl+l' then return toggleStash()    
-        when 'command+,', 'ctrl+,' then return toggleSettings() 
-        when 'command+p', 'ctrl+p' then return togglePrefs()    
-        when 'command+o', 'ctrl+o' then return toggleVault()    
-        when 'command+t'           then return toggleStyle()
-        when 'command+i'           then return toggleAbout()
+        when stash_key    then return toggleStash()    
+        when settings_key then return toggleSettings() 
+        when prefs_key    then return togglePrefs()    
+        when vault_key    then return toggleVault()   
+        when 'command+w'  then event.preventDefault(); event.stopPropagation(); return 
+        when 'command+t'  then return toggleStyle()
+        when 'command+i'  then return toggleAbout()
         when 'esc' 
             if not $('bubble')?        then return restoreBody()
             if $('settings').visible() then return toggleSettings()
@@ -361,7 +355,7 @@ onKeyDown = (event) ->
     
     if e == $('password')
         switch key
-            when 'backspace', 'command+x', 'ctrl+x'
+            when 'command+backspace'
                 if stash.configs[hash]?
                     if ask 'Forget <i>'+stash.configs[hash].pattern+'</i>', 'for <b>'+site+'</b>?'
                         delete stash.configs[hash]
@@ -556,7 +550,7 @@ onStashKey = (event) ->
     switch key 
         when 'right', 'down' then e?.parentElement?.nextSibling?.firstElementChild?.focus()
         when 'left', 'up'    then e?.parentElement?.previousSibling?.firstElementChild?.focus()
-        when 'backspace', 'command+x', 'ctrl+x'
+        when 'command+backspace'
             if e?.id?.length
                 if e.parentElement.nextSibling?
                     e.parentElement.nextSibling.firstElementChild.focus()
@@ -633,7 +627,7 @@ onVaultKey = (event) ->
             if e?.id?
                 toggleVaultItem e.id
                 event.preventDefault()
-        when 'backspace', 'command+x', 'ctrl+x'
+        when 'command+backspace'
             if e?.id?.length
                 if e.parentElement.nextSibling?.nextSibling?
                     e.parentElement.nextSibling.nextSibling.firstElementChild.focus()
@@ -791,6 +785,10 @@ loadPrefs = () ->
         if not values[key]?
             values[key] = prefs[key].default
     # log jsonStr values
+    stash_key     = values['stashkey']
+    prefs_key     = values['prefskey']
+    vault_key     = values['vaultkey']
+    settings_key  = values['sttgskey']
     values
 
 savePrefs = (values) ->
@@ -920,8 +918,14 @@ showPrefs = () ->
                             e.target.parentElement.select('.shortcut')[0].update key
                             prefKey = input.id
                             setPref prefKey, key
-                            if prefKey == 'shortcut'
-                                ipc.send 'globalShortcut', key
+                            switch prefKey
+                                when 'shortcut'
+                                    ipc.send 'globalShortcut', key
+                                when 'stashkey' then stash_key = key
+                                when 'vaultkey' then vault_key = key
+                                when 'prefskey' then prefs_key = key
+                                when 'sttgskey' then settings_key = key
+                            
                             input.focus()
                         else if not keyname.isModifier(key) and key != ''
                             switch key
@@ -1018,7 +1022,20 @@ showHelp = ()    -> open "https://github.com/monsterkodi/password-turtle"
      000  000     000     000     
 0000000   000     000     00000000
 ###
+
+setSite = (site) ->
+    setInput 'site', site
+    siteChanged()
     
+siteChanged = ->
+    if $("site").value.length == 0
+        hideLock()
+    masterSitePassword()
+
+updateSiteFromClipboard = () ->    
+    if domain = extractDomain clipboard.readText()
+        setSite domain 
+
 makePassword = (hash, config) -> password.make hash, config.pattern
             
 showPassword = (config) ->
