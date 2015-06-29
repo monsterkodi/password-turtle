@@ -110,13 +110,23 @@ module.exports = (grunt) ->
         bumpup:
             file: 'package.json'
             
-        clean: ['password-turtle.app*', 'style/*.css', 'js', 'pepper', '.release.sh']
+        clean: ['password-turtle.app', 'password-turtle.tgz', 'style/*.css', 'js', 'pepper', '.release.*']
             
+            
+        githubAsset:
+            options:
+                credentials: grunt.file.readJSON('.apitoken.json') 
+                repo: 'git@github.com:monsterkodi/password-turtle.git',
+                file: 'password-turtle.zip'
+                
         shell:
+            options:
+                execOptions: 
+                    maxBuffer: Infinity
             kill:
                 command: "killall Electron || echo 1"
             build: 
-                command: "node_modules/electron-packager/cli.js . password-turtle --platform=darwin --arch=x64 --prune --version=0.28.2 --app-version=0.9.2 --app-bundle-id=net.monsterkodi.password-turtle --ignore=node_modules/electron --icon=img/turtle.icns"
+                command: "node_modules/electron-packager/cli.js . password-turtle --platform=darwin --arch=x64 --prune --version=0.28.2 --app-version=1.0.2 --app-bundle-id=net.monsterkodi.password-turtle --ignore=node_modules/electron-prebuild --icon=img/turtle.icns"
             test: 
                 command: "electron ."
             start: 
@@ -143,12 +153,13 @@ module.exports = (grunt) ->
     grunt.loadNpmTasks 'grunt-contrib-stylus'
     grunt.loadNpmTasks 'grunt-contrib-clean'
     grunt.loadNpmTasks 'grunt-bower-concat'
+    grunt.loadNpmTasks 'grunt-github-release-asset'
     grunt.loadNpmTasks 'grunt-bumpup'
     grunt.loadNpmTasks 'grunt-pepper'
     grunt.loadNpmTasks 'grunt-shell'
 
     grunt.registerTask 'build',     [ 'clean', 'bumpup', 'stylus', 'salt', 'pepper', 'bower_concat', 'coffee', 'shell:kill', 'shell:build', 'shell:start' ]
-    grunt.registerTask 'release',   [ 'clean', 'stylus', 'salt', 'pepper', 'bower_concat', 'coffee', 'shell:release' ]
+    grunt.registerTask 'release',   [ 'clean', 'stylus', 'salt', 'pepper', 'bower_concat', 'coffee', 'shell:release', 'githubAsset' ]
     grunt.registerTask 'test',      [ 'clean', 'bumpup', 'stylus', 'salt', 'pepper', 'bower_concat', 'coffee', 'shell:kill', 'shell:test' ]
     grunt.registerTask 'default',   [ 'test' ]
     #grunt.registerTask 'publish',   [ 'bumpup', 'shell:publish', 'shell:npmpage' ]

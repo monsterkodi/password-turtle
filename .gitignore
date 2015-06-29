@@ -1,6 +1,8 @@
-password-turtle.app*
-.release.sh
+password-turtle.app
+password-turtle.tgz
+.release.*
 .pepper
+.apitoken.json
 node_modules
 bower_components
 style/*.css

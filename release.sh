@@ -1,10 +1,14 @@
 #!/usr/bin/env bash
 
-source ~/shell/tokens.sh
+node_modules/electron-packager/cli.js . password-turtle --app-version=::package.json:version:: --platform=darwin --arch=x64 --prune --version=0.28.2 --app-bundle-id=net.monsterkodi.password-turtle --ignore=node_modules/electron-prebuild --icon=img/turtle.icns
 
-# node_modules/electron-packager/cli.js . password-turtle --app-version=::package.json:version:: --platform=darwin --arch=x64 --prune --version=0.28.2 --app-bundle-id=net.monsterkodi.password-turtle --ignore=node_modules/electron --icon=img/turtle.icns
+rm -rf password-turtle.app/Contents/Resources/app/.*
+rm -rf password-turtle.app/Contents/Resources/default_app
+rm -f password-turtle.app/Contents/Resources/release.sh
+
 # tar cvzf password-turtle.tgz password-turtle.app
+zip -y -9 -r password-turtle.zip password-turtle.app
 
-$VERSION=::package.json:version::
-API_JSON=$(printf '{"tag_name": "v%s","target_commitish": "master","name": "v%s","body": "password-turtle version %s","draft": false,"prerelease": false}' $VERSION $VERSION $VERSION)
-curl --data "$API_JSON" https://api.github.com/repos/monsterkodi/password-turtle/releases?access_token=$GITHUB_API_TOKEN
+git commit -a -m "v::package.json:version::"
+git tag v::package.json:version::
+git push origin v::package.json:version::

@@ -2,6 +2,13 @@
   "name": "password-turtle",
   "version": "1.0.0",
   "description": "a password generator",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/monsterkodi/password-turtle.git"
+  },
+  "bugs": {
+    "url": "https://github.com/monsterkodi/password-turtle/issues"
+  },
   "dependencies": {
     "bcryptjs": "^2.1.0",
     "format": "^0.2.1",
@@ -43,6 +50,8 @@
     "grunt-contrib-coffee": "^0.13.0",
     "grunt-contrib-stylus": "^0.21.0",
     "grunt-contrib-watch": "^0.6.1",
+    "grunt-github-release-asset": "^0.1.2",
+    "grunt-github-releaser": "^0.1.17",
     "grunt-pepper": "^0.4.7",
     "grunt-shell": "^1.1.2",
     "grunt-stylus": "^0.2.1",
