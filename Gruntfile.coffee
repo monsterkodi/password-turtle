@@ -13,18 +13,18 @@ module.exports = (grunt) ->
                     textFill    : '*  '
                     textPostfix : '*/'
                 files:
-                    'asciiText' : ['*.styl']
+                    'asciiText' : ['style/*.styl']
 
         stylus:
             options:
                 compress: false
             compile:
                 files:
-                    'style.css':  ['style.styl']
+                    'style/style.css':  ['style/style.styl']
 
         watch:
             sources:
-                files: ['./*.coffee', '*.styl', '*.html']
+                files: ['./*.coffee', 'style/*.styl', '*.html']
                 tasks: ['default']
 
         coffee:
@@ -38,7 +38,7 @@ module.exports = (grunt) ->
                 dest:    'js',
                 ext:     '.js'
 
-        clean: ['*.css']
+        clean: ['style/*.css']
                             
         shell:
             options:
