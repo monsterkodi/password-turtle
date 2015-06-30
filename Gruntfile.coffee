@@ -137,6 +137,7 @@ module.exports = (grunt) ->
                 command: 'npm publish'
             npmpage:
                 command: 'open https://www.npmjs.com/package/password-turtle'
+                
     ###
     npm install --save-dev grunt-contrib-watch
     npm install --save-dev grunt-contrib-coffee
@@ -158,8 +159,7 @@ module.exports = (grunt) ->
     grunt.loadNpmTasks 'grunt-pepper'
     grunt.loadNpmTasks 'grunt-shell'
 
-    grunt.registerTask 'build',     [ 'clean', 'bumpup', 'stylus', 'salt', 'pepper', 'bower_concat', 'coffee', 'shell:kill', 'shell:build', 'shell:start' ]
+    grunt.registerTask 'build',     [ 'clean', 'stylus', 'salt', 'pepper', 'bower_concat', 'coffee', 'shell:kill', 'shell:build', 'shell:start' ]
     grunt.registerTask 'release',   [ 'clean', 'stylus', 'salt', 'pepper', 'bower_concat', 'coffee', 'shell:release', 'githubAsset' ]
-    grunt.registerTask 'test',      [ 'clean', 'bumpup', 'stylus', 'salt', 'pepper', 'bower_concat', 'coffee', 'shell:kill', 'shell:test' ]
+    grunt.registerTask 'test',      [ 'clean', 'stylus', 'salt', 'pepper', 'bower_concat', 'coffee', 'shell:kill', 'shell:test' ]
     grunt.registerTask 'default',   [ 'test' ]
-    #grunt.registerTask 'publish',   [ 'bumpup', 'shell:publish', 'shell:npmpage' ]

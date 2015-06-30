@@ -764,10 +764,10 @@ prefs =
     mask:     { default: true,        type: 'bool',     text: 'mask locked passwords'   }
     confirm:  { default: true,        type: 'bool' ,    text: 'confirm changes'         }
     dark:     { default: true,        type: 'bool',     text: 'dark theme'              }
+    sttgskey: { default: 'command+p', type: 'shortcut', text: 'pattern shortcut'        }
     stashkey: { default: 'command+l', type: 'shortcut', text: 'sites shortcut'          }
     vaultkey: { default: 'command+o', type: 'shortcut', text: 'vault shortcut'          }
-    prefskey: { default: 'command+p', type: 'shortcut', text: 'preferences shortcut'    }
-    sttgskey: { default: 'command+,', type: 'shortcut', text: 'settings shortcut'       }
+    prefskey: { default: 'command+,', type: 'shortcut', text: 'preferences shortcut'    }
 
 getPref = (key) -> loadPrefs()[key]
 setPref = (key, value) -> 
