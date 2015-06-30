@@ -6,8 +6,7 @@ rm -rf password-turtle.app/Contents/Resources/app/.*
 rm -rf password-turtle.app/Contents/Resources/default_app
 rm -f password-turtle.app/Contents/Resources/release.sh
 
-# tar cvzf password-turtle.tgz password-turtle.app
-zip -y -9 -r password-turtle.zip password-turtle.app
+ditto -c -k --rsrc --extattr --keepParent password-turtle.app password-turtle.zip
 
 git commit -a -m "v::package.json:version::"
 git tag v::package.json:version::
