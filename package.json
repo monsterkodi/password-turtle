@@ -1,7 +1,7 @@
 {
     "name": "password-turtle",
-    "version": "1.0.6",
-    "description": "a password generator",
+    "version": "1.0.1",
+    "description": "a simple password generator",
     "repository": {
         "type": "git",
         "url": "https://github.com/monsterkodi/password-turtle.git"
