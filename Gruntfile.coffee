@@ -126,7 +126,7 @@ module.exports = (grunt) ->
             kill:
                 command: "killall Electron || echo 1"
             build: 
-                command: "node_modules/electron-packager/cli.js . password-turtle --platform=darwin --arch=x64 --prune --version=0.28.2 --app-version=1.0.2 --app-bundle-id=net.monsterkodi.password-turtle --ignore=node_modules/electron-prebuild --icon=img/turtle.icns"
+                command: "bash build.sh"
             test: 
                 command: "electron ."
             start: 

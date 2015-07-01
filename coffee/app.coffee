@@ -243,7 +243,7 @@ document.observe 'dom:loaded', ->
     stashExists = fs.existsSync stashFile
     if not stashExists
         masterChanged()
-        
+                
 win.on 'close', (event) ->
     values = loadPrefs()
     values.winpos = win.getPosition()
