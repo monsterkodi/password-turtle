@@ -15,6 +15,11 @@ a:hover {
 h1 {
   color: #f80;
 }
+img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
 .box {
   position: absolute;
   font-family: sans-serif;
