@@ -160,6 +160,6 @@ module.exports = (grunt) ->
     grunt.loadNpmTasks 'grunt-shell'
 
     grunt.registerTask 'build',     [ 'clean', 'stylus', 'salt', 'pepper', 'bower_concat', 'coffee', 'shell:kill', 'shell:build', 'shell:start' ]
-    grunt.registerTask 'release',   [ 'clean', 'stylus', 'salt', 'pepper', 'bower_concat', 'coffee', 'shell:release', 'githubAsset' ]
+    grunt.registerTask 'release',   [ 'clean', 'stylus', 'salt', 'pepper', 'bower_concat', 'coffee', 'shell:build', 'shell:release', 'githubAsset' ]
     grunt.registerTask 'test',      [ 'clean', 'stylus', 'salt', 'pepper', 'bower_concat', 'coffee', 'shell:kill', 'shell:test' ]
     grunt.registerTask 'default',   [ 'test' ]
