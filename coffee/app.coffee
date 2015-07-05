@@ -1013,7 +1013,7 @@ showAbout = () ->
 ###
 
 openUrl  = (url) -> open url
-showHelp = ()    -> open "https://github.com/monsterkodi/password-turtle"
+showHelp = ()    -> open "https://monsterkodi.github.io/password-turtle/manual.html"
     
 ###
  0000000  000  000000000  00000000
