@@ -51,7 +51,7 @@ and a blue lock icon will be displayed:
 The site list has several purposes:
 
 - it provides an overview of your accounts
-- the password for sites in the list can be masked
+- the passwords for sites in the list can be masked
 - choosing a site from the list might be faster than typing it
 - changing the default pattern won't affect the sites in your site list
 

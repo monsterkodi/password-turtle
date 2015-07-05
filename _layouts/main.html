@@ -4,8 +4,13 @@
   {% include head.html %}
 
   <script>
-  function bubble(topic) {
-      
+  function bubble(topic) {      
+      var div = document.getElementById("div-"+topic);
+      div.style.display = 'unset';
+  }
+  function unbubble(topic) {      
+      var div = document.getElementById("div-"+topic);
+      div.style.display = 'none';
   }
   </script>
 
@@ -17,35 +22,75 @@
       }
 
       .bubble { 
-          position: absolute;
-          color: green; 
-          border-radius: 10px;
-          border: 1px solid red;
-          padding: 10px;
+          /*color: green;*/
+          font-weight: bold;
+          border-radius: 20px;
+          background: rgba(0,0,0,0.2);
+          padding: 20px;
       }
       
       #bubbles {
           position: relative;
+          min-width: 600px;
+      }
+
+      .tip {
+          width: 0px;
+          height: 0px;
       }
       
-      #about {
-          top: 500px;
-          left: 10%;
+      #tip-about {
+          border-left:   20px solid transparent;
+          border-right:  20px solid transparent;
+          border-bottom: 20px solid rgba(0,0,0,0.2);
+          position:  relative;
+          left: 40px;
       }
 
-      #credits {
-          top: 100px;
-          left: 20%;
+      #tip-manual, #tip-download {
+          border-left:   20px solid transparent;
+          border-right:  20px solid transparent;
+          border-top:    20px solid rgba(0,0,0,0.2);
+          position:  relative;
+          left: 40px;
       }
 
-      #manual {
-          top: 100px;
-          left: 60%;
-      }
-
-      #download {
+      #tip-credits {
+          border-top:   20px solid transparent;
+          border-bottom:  20px solid transparent;
+          border-left:    20px solid rgba(0,0,0,0.2);
+          position: absolute;
+          right: -20px;
           top: 20px;
-          left: 50%;
+      }
+      
+      .tip-bubble {
+          display: none;
+          position: absolute;
+      }
+            
+      #div-about {
+          top: 450px;
+          left: 30px;
+          color: red;
+      }
+
+      #div-credits {
+          top: 60px;
+          left: 40px;
+          color: green;
+      }
+
+      #div-manual {
+          top: 50px;
+          left: 420px;
+          color: #66f;
+      }
+
+      #div-download {
+          top: 15px;
+          left: 300px;
+          color: orange;
       }
 
   </style>
@@ -57,17 +102,17 @@
     <div class="container">
       <section id="main_content">
           <div id='bubbles'>
-          <div class='bubble' id='about'>what is password-turle?</div>
-          <div class='bubble' id='credits'>what is it made of?</div>
-          <div class='bubble' id='manual'>how does is work?</div>
-          <div class='bubble' id='download'>where can I get it?</div>
+          <div id="div-about"    class="tip-bubble"><div class="tip" id="tip-about"></div><div class='bubble' id='about'>what is password-turtle?</div></div>
+          <div id="div-credits"  class="tip-bubble"><div class="tip" id="tip-credits"></div><div class='bubble' id='credits'>what is it<br>made of?</div></div>
+          <div id="div-manual"   class="tip-bubble"><div class='bubble' id='manual'>how does<br>it work?</div><div class="tip" id="tip-manual"></div></div>
+          <div id="div-download" class="tip-bubble"><div class='bubble' id='download'>where to get it?</div><div class="tip" id="tip-download"></div></div>
           </div>
         <img src="img/turtlesq.jpg" usemap="#sheeps" id='turtles'>
         <map name="sheeps">
-            <area onmouseover="bubble('about');"    shape="rect" coords="20,220,400,480"  href="about.html"    alt="about"    title="about">
-            <area onmouseover="bubble('credits');"  shape="rect" coords="160,50,280,250"  href="credits.html"  alt="credits"  title="credits">
-            <area onmouseover="bubble('download');" shape="rect" coords="280,80,390,180"  href="download.html" alt="download" title="download">
-            <area onmouseover="bubble('manual');"   shape="rect" coords="350,150,590,320" href="manual.html"   alt="manual"   title="manual">
+            <area onmouseover="bubble('about');"    onmouseout="unbubble('about');"    shape="rect" coords="20,220,400,480"  href="about.html"   >
+            <area onmouseover="bubble('credits');"  onmouseout="unbubble('credits');"  shape="rect" coords="160,50,280,250"  href="credits.html" >
+            <area onmouseover="bubble('download');" onmouseout="unbubble('download');" shape="rect" coords="280,80,390,180"  href="download.html">
+            <area onmouseover="bubble('manual');"   onmouseout="unbubble('manual');"   shape="rect" coords="350,150,590,320" href="manual.html"  >
         </map>
       </section>
     </div>

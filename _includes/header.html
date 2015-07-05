@@ -1,15 +1,44 @@
 <header>
+  <style>
+  .link {
+      font-weight: bold;
+  }
+  
+  #about-link {
+      color: red;
+  }
+  #about-link:hover {
+      color: orange;
+  }
+  #download-link {
+      color: orange;
+  }
+  #download-link:hover {
+      color: yellow;
+  }
+  #credits-link {
+      color: green;
+  }
+  #credits-link:hover {
+      color: #3f3;
+  }
+  #manual-link {
+      color: #88f;
+  }
+  #manual-link:hover {
+      color: #ccf;
+  }
+  </style>
   <div class="container">
     <h1><a href="index.html">password-turtle</a></h1>
 
     <nav class="site-nav">
 
       <div class="trigger">
-        {% for p in site.pages %}
-          {% if p.title and p.title != "password-turtle" %}
-            <a class="page-link" href="{{ p.title }}.html">{{ p.title }}</a>
-          {% endif %}
-        {% endfor %}
+            <a class="page-link" href="about.html"    class='link' id='about-link'>about</a>
+            <a class="page-link" href="manual.html"   class='link' id='manual-link'>manual</a>
+            <a class="page-link" href="download.html" class='link' id='download-link'>download</a>
+            <a class="page-link" href="credits.html"  class='link' id='credits-link'>credits</a>
       </div>
 
     </nav>
