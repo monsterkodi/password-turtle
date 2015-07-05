@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+  {% include head.html %}
+
+  <script>
+  function bubble(topic) {
+      
+  }
+  </script>
+
+  <style>
+
+      #turtles {
+          min-width: 600px;
+          min-height: 600px;
+      }
+
+      .bubble { 
+          position: absolute;
+          color: green; 
+          border-radius: 10px;
+          border: 1px solid red;
+          padding: 10px;
+      }
+      
+      #bubbles {
+          position: relative;
+      }
+      
+      #about {
+          top: 500px;
+          left: 10%;
+      }
+
+      #credits {
+          top: 100px;
+          left: 20%;
+      }
+
+      #manual {
+          top: 100px;
+          left: 60%;
+      }
+
+      #download {
+          top: 20px;
+          left: 50%;
+      }
+
+  </style>
+
+  <body>
+
+    {% include header.html %}
+
+    <div class="container">
+      <section id="main_content">
+          <div id='bubbles'>
+          <div class='bubble' id='about'>what is password-turle?</div>
+          <div class='bubble' id='credits'>what is it made of?</div>
+          <div class='bubble' id='manual'>how does is work?</div>
+          <div class='bubble' id='download'>where can I get it?</div>
+          </div>
+        <img src="img/turtlesq.jpg" usemap="#sheeps" id='turtles'>
+        <map name="sheeps">
+            <area onmouseover="bubble('about');"    shape="rect" coords="20,220,400,480"  href="about.html"    alt="about"    title="about">
+            <area onmouseover="bubble('credits');"  shape="rect" coords="160,50,280,250"  href="credits.html"  alt="credits"  title="credits">
+            <area onmouseover="bubble('download');" shape="rect" coords="280,80,390,180"  href="download.html" alt="download" title="download">
+            <area onmouseover="bubble('manual');"   shape="rect" coords="350,150,590,320" href="manual.html"   alt="manual"   title="manual">
+        </map>
+      </section>
+    </div>
+  </body>
+</html>

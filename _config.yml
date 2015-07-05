@@ -1,0 +1,8 @@
+# Site settings
+title: knix
+email: monsterkodi@gmx.net
+description:
+baseurl: ""
+url: "http://monsterkodi.github.io/knix/"
+github_username:  monsterkodi
+markdown: kramdown

@@ -24,21 +24,10 @@ module.exports = (grunt) ->
 
         watch:
             sources:
-                files: ['style/*.styl', '*.html']
-                tasks: ['default']
+                files: ['style/*.styl', '_layouts/*.html', '_includes/*.html', '*.md']
+                tasks: ['build']
 
-        coffee:
-            options:
-                bare: true
-            coffee:
-                expand:  true,
-                flatten: true,
-                cwd:     '.',
-                src:     ['.pepper/coffee/*.coffee'],
-                dest:    'js',
-                ext:     '.js'
-
-        clean: ['style/*.css']
+        clean: ['style/*.css', '_site']
                             
         shell:
             options:
@@ -46,6 +35,8 @@ module.exports = (grunt) ->
                     maxBuffer: Infinity
             test: 
                 command: "open index.html"
+            jekyll:
+                command: "bundle exec jekyll build"
                 
     ###
     npm install --save-dev grunt-contrib-watch
@@ -65,5 +56,5 @@ module.exports = (grunt) ->
     grunt.loadNpmTasks 'grunt-pepper'
     grunt.loadNpmTasks 'grunt-shell'
 
-    grunt.registerTask 'test',      [ 'clean', 'stylus', 'salt', 'coffee', 'shell:test' ]
-    grunt.registerTask 'default',   [ 'test' ]
+    grunt.registerTask 'build',     [ 'clean', 'stylus', 'salt', 'shell:jekyll' ]
+    grunt.registerTask 'default',   [ 'build' ]
