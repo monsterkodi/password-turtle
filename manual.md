@@ -96,7 +96,7 @@ To create a new entry, just press Command-N.
 
 If you forget your master password, you won't be able to decrypt your stash file and regenerate your passwords.
 
-If you loose your stash file your default pattern, site list and vault items will be lost.
+If you loose your stash file, your default pattern, site list and vault items will be lost.
     
 Therefore: don't forget your master password and regularly backup your stash file, which is located at
 

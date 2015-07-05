@@ -3,6 +3,8 @@ title:  about
 layout: default
 ---
 
+password-turtle is a menu bar application for Mac OS X
+
 # What it does
 
 It generates a unique password from 3 ingredients:
