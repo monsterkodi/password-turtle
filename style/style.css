@@ -165,10 +165,6 @@ hr {
   border-bottom: 1px solid #b5e853;
   color: #b5e853;
 }
-.btn {
-  padding: 20px;
-  border-radius: 180px;
-}
 .icon {
   width: 64px;
   height: 64px;
@@ -176,11 +172,9 @@ hr {
 .btn:hover {
   color: #efaf31;
 }
-.footer {
-  position: relative;
-  bottom: 10px;
-  width: 100%;
-  text-align: center;
+.btn:focus {
+  border: none;
+  outline: none;
 }
 path.kitty {
   fill: #63c0f5;

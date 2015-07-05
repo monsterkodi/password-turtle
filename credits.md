@@ -1,6 +1,6 @@
 ---
 title:  credits
-layout: default
+layout: credits
 ---
 
 # Credits

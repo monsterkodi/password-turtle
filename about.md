@@ -31,3 +31,11 @@ Under normal circumstances, you won't need to copy any file from one machine to 
 
 The downside is that your passwords are bound to the master key and the pattern:
 Changing the master key or the pattern will invalidate all your passwords.
+
+# How it looks
+
+There are two themes available, a dark and a bright one:
+
+![site](img/site.png)
+
+![site](img/site-bright.png)
