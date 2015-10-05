@@ -9,3 +9,4 @@ style/*.css
 js
 web
 Icon?
+.build.sh
