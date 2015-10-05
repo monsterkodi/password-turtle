@@ -14,6 +14,7 @@ fs            = require 'fs'
 events        = require 'events'
 Tray          = require 'tray'
 BrowserWindow = require 'browser-window'
+Menu          = require 'menu'
 
 debug = false
 win   = undefined
@@ -75,10 +76,37 @@ toggleWindow = () ->
 
 createWindow = () ->
     
+    app.on 'hide', () -> console.log 'hide!'
+    
     app.on 'ready', () ->
 
         if app.dock then app.dock.hide()
-
+        
+        Menu.setApplicationMenu Menu.buildFromTemplate [
+            label: app.getName()
+            submenu: [
+                label: 'Cut'
+                accelerator: 'CmdOrCtrl+X'
+                selector: 'cut:'
+            ,
+                label: 'Copy'
+                accelerator: 'CmdOrCtrl+C'
+                selector: 'copy:'
+            ,
+                label: 'Paste'
+                accelerator: 'CmdOrCtrl+V'
+                selector: 'paste:'
+            ,
+                label: 'Select All'
+                accelerator: 'Command+A'
+                selector: 'selectAll:'            
+            ,
+                label: 'Quit'
+                accelerator: 'Command+Q'
+                click: app.quit
+            ]
+        ]
+        
         cwd = path.join __dirname, '..'
         
         iconFile = path.join cwd, 'img', 'menuicon.png'
@@ -129,7 +157,7 @@ createWindow = () ->
             x:             x
             y:             y
             width:         windowWidth
-            height:        330
+            height:        360
             frame:         false
 
         try

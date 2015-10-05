@@ -23,6 +23,7 @@ module.exports = (grunt) ->
                     join:    true
                 files:
                     '.release': ['release.sh']
+                    '.build':   ['build.sh']
 
         salt:
             options:
@@ -126,10 +127,12 @@ module.exports = (grunt) ->
             kill:
                 command: "killall Electron || echo 1"
             build: 
-                command: "bash build.sh"
+                command: "bash .build.sh"
             test: 
                 command: "electron ."
             start: 
+                command: "open password-turtle.app"
+            open: 
                 command: "open password-turtle.app"
             release:
                 command: 'bash .release.sh'

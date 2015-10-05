@@ -24,7 +24,7 @@ open      = require 'opener'
 sleep     = require 'sleep'
 ipc       = require 'ipc'
 
-win = remote.getCurrentWindow()
+win  = remote.getCurrentWindow()
 
 genHash       = cryptools.genHash
 encrypt       = cryptools.encrypt
