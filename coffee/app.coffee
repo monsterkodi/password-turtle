@@ -114,7 +114,6 @@ masterConfirmed = ->
     if mstr?.length
         if stashExists
             readStash () -> 
-                # log 'stashLoaded', stashLoaded
                 if stashLoaded
                     $('turtle').disabled = false
                     say()
@@ -522,9 +521,7 @@ writeStash = () ->
 
 readStash = (cb) ->
     if fs.existsSync stashFile
-        # log 'readStash', stashFile, mstr
         decryptFile stashFile, mstr, (err, json) -> 
-            # log 'decryptFile', err
             if err?
                 resetStash()
             else
@@ -532,7 +529,6 @@ readStash = (cb) ->
                 stash = JSON.parse(json)
                 setInput 'pattern', stash.pattern
                 updateFloppy()
-                # log jsonStr stash
             cb()
     else
         resetStash()
