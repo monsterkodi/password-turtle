@@ -25,20 +25,12 @@ module.exports = (grunt) ->
                     maxBuffer: Infinity
             kill:
                 command: "killall Electron || echo 1"
-            build: 
-                command: "bash .build.sh"
             test: 
                 command: "electron ."
             start: 
                 command: "open password-turtle.app"
             open: 
                 command: "open password-turtle.app"
-            release:
-                command: 'bash .release.sh'
-            publish:
-                command: 'npm publish'
-            npmpage:
-                command: 'open https://www.npmjs.com/package/password-turtle'
                 
     grunt.loadNpmTasks 'grunt-contrib-clean'
     grunt.loadNpmTasks 'grunt-bower-concat'

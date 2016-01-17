@@ -10,7 +10,7 @@ fs        = require 'fs'
 crypto    = require 'crypto'
 bcrypt    = require 'bcryptjs'
 zipObject = require 'lodash.zipobject'
-log       = require '../knix/log'
+log       = console.log
 
 cipherType   = 'aes-256-cbc'
 fileEncoding = encoding:'utf8'

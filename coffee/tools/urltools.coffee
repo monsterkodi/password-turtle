@@ -9,7 +9,7 @@
 _s    = require 'underscore.string'
 last  = require 'lodash.last'
 slice = require 'lodash.slice'
-log   = require '../knix/log'
+log   = console.log
 
 #╭━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╮
 #┃                                                                                                       extractSite ▢

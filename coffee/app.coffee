@@ -46,8 +46,7 @@ prefs_key     = ''
 vault_key     = ''
 settings_key  = ''
 
-log   = () -> ipc.send 'knixlog',   [].slice.call arguments, 0
-dbg   = () -> ipc.send 'knixlog',   [].slice.call arguments, 0
+log   = console.log
 
 console.log   = () -> ipc.send 'console.log',   [].slice.call arguments, 0
 console.error = () -> ipc.send 'console.error', [].slice.call arguments, 0

@@ -18,20 +18,7 @@ Menu          = require 'menu'
 
 debug = false
 win   = undefined
-knx   = undefined
 tray  = undefined
-
-###
-000   000  000   000  000  000   000  000       0000000    0000000 
-000  000   0000  000  000   000 000   000      000   000  000      
-0000000    000 0 000  000    00000    000      000   000  000  0000
-000  000   000  0000  000   000 000   000      000   000  000   000
-000   000  000   000  000  000   000  0000000   0000000    0000000 
-###
-
-ipc.on 'knixlog', (event, args) -> knx?.webContents.send 'knix_log', args
-ipc.on 'knixerror', (event, args) -> knx?.webContents.send 'knix_error', args
-ipc.on 'knixwarning', (event, args) -> knx?.webContents.send 'knix_warning', args
     
 ipc.on 'console.log',   (event, args) -> console.log.apply console, args
 ipc.on 'console.error', (event, args) -> console.log.apply console, args
@@ -69,9 +56,7 @@ toggleWindow = () ->
     return if noToggle
     if win && win.isVisible()
         win.hide()
-        # knx?.hide()
     else
-        knx?.show()
         win.show()
 
 createWindow = () ->
@@ -114,26 +99,6 @@ createWindow = () ->
         tray = new Tray iconFile
         
         tray.on 'clicked', toggleWindow
-
-        # 000   000  000   000  000  000   000
-        # 000  000   0000  000  000   000 000 
-        # 0000000    000 0 000  000    00000  
-        # 000  000   000  0000  000   000 000 
-        # 000   000  000   000  000  000   000
-
-        if debug
-            knx = new BrowserWindow
-                dir:           cwd
-                preloadWindow: true
-                x:             0
-                y:             0
-                width:         658
-                height:        800
-                frame:         false
-                show:          true
-                transparent:   true
-                
-            knx.loadUrl 'file://' + cwd + '/knx.html'
 
         # 000   000  000  000   000
         # 000 0 000  000  0000  000
