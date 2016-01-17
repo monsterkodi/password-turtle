@@ -6,11 +6,12 @@
  0000000  000   000     000     000           000      0000000    0000000   0000000  0000000 
 ###
 
-fs        = require 'fs'
-crypto    = require 'crypto'
-bcrypt    = require 'bcryptjs'
-zipObject = require 'lodash.zipobject'
-log       = console.log
+fs     = require 'fs'
+crypto = require 'crypto'
+bcrypt = require 'bcryptjs'
+
+ipc = require("electron").ipcRenderer
+log = () -> ipc.send 'console.log',   [].slice.call arguments, 0
 
 cipherType   = 'aes-256-cbc'
 fileEncoding = encoding:'utf8'
@@ -21,8 +22,8 @@ encrypt = (data, key) ->
     enc += cipher.final 'hex'
     
 decrypt = (data, key) ->
-    log 'decrypt...' + key + ':' + data
-    log 'decrypt...' + key + ':' + genHash(key)
+    # log 'decrypt...' + key + ':' + data
+    # log 'decrypt...' + key + ':' + genHash(key)
     cipher = crypto.createDecipher cipherType, genHash(key)
     dec  = cipher.update data, 'hex', 'utf8'
     dec += cipher.final 'utf8'
@@ -39,7 +40,7 @@ decryptFile = (file, key, cb) ->
             cb ['can\'t read file at', file]
             return
         try
-            log 'decrypting...' + key + ':' + encrypted
+            # log 'decrypting...' + key + ':' + encrypted
             cb null, decrypt(encrypted, key)
         catch
             cb ['can\'t decrypt file', file]
@@ -47,14 +48,17 @@ decryptFile = (file, key, cb) ->
         cb ['no file at', file]
     
 genHash = (value) -> crypto.createHash('sha512').update(value).digest('hex')
+    
 genSalt = (length) -> 
     salt = ""
     while salt.length < length
         salt += bcrypt.genSaltSync(12).substr(10)
     salt.substr 0, length
 
-exp = 
-    [
-        'encrypt', 'decrypt', 'decryptFile', 'encryptFile', 'genHash', 'genSalt'
-    ]
-module.exports = zipObject(exp.map((e) -> [e, eval(e)]))
+module.exports = 
+    encrypt:     encrypt
+    decrypt:     decrypt
+    encryptFile: encryptFile
+    decryptFile: decryptFile
+    genHash:     genHash
+    genSalt:     genSalt

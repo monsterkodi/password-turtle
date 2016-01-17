@@ -40,4 +40,6 @@ module.exports = (grunt) ->
     grunt.registerTask 'build',     [ 'clean', 'bower_concat', 'shell:kill',  'shell:build',   'shell:start' ]
     grunt.registerTask 'release',   [ 'clean', 'bower_concat', 'shell:build', 'shell:release', 'githubAsset' ]
     grunt.registerTask 'test',      [ 'clean', 'bower_concat', 'shell:kill',  'shell:test' ]
+    grunt.registerTask 'bower',     [ 'bower_concat' ]
     grunt.registerTask 'default',   [ 'test' ]
+    

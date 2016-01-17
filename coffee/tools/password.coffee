@@ -6,8 +6,7 @@
 000        000   000  0000000   0000000   00     00   0000000   000   000  0000000  
 ###
 
-zipObject = require 'lodash.zipobject'
-indexOf   = require 'lodash.indexof'
+_ = require 'lodash'
 
 charsets = [
     'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVXYZ'
@@ -20,7 +19,7 @@ charsets = [
 
 setWithChar = (char) ->
     for set in charsets
-        if indexOf(set, char) >= 0
+        if _.indexOf(set, char) >= 0
             return set
             
 isValidPattern = (pattern) ->
@@ -40,8 +39,6 @@ make = (hash, pattern) ->
         pw += cs[sum%cs.length]
     pw
     
-exp = 
-    [
-        'make', 'isValidPattern'
-    ]
-module.exports = zipObject(exp.map((e) -> [e, eval(e)]))
+module.exports = 
+    make:           make
+    isValidPattern: isValidPattern

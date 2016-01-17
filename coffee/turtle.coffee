@@ -9,7 +9,7 @@
 shortcut      = require 'global-shortcut'
 path          = require 'path'
 app           = require 'app'
-ipc           = require 'ipc'
+ipc           = require("electron").ipcMain
 fs            = require 'fs'
 events        = require 'events'
 Tray          = require 'tray'
@@ -25,8 +25,8 @@ ipc.on 'console.error', (event, args) -> console.log.apply console, args
 ipc.on 'process.exit',  (event, code) -> console.log 'exit via ipc';  process.exit code
     
 noToggle = false 
-ipc.on 'enableToggle', -> noToggle = false;console.log 'doToggle'
-ipc.on 'disableToggle', -> noToggle = true;console.log 'noToggle'
+ipc.on 'enableToggle', -> noToggle = false
+ipc.on 'disableToggle', -> noToggle = true
 ipc.on 'globalShortcut', (event, key) -> 
     shortcut.unregisterAll()
     shortcut.register key, toggleWindow
@@ -98,7 +98,7 @@ createWindow = () ->
 
         tray = new Tray iconFile
         
-        tray.on 'clicked', toggleWindow
+        tray.on 'click', toggleWindow
 
         # 000   000  000  000   000
         # 000 0 000  000  0000  000
@@ -131,7 +131,7 @@ createWindow = () ->
         catch err
             console.log 'shortcut installation failed', err
 
-        win.loadUrl 'file://' + cwd + '/turtle.html'
+        win.loadURL 'file://' + cwd + '/turtle.html'
         
         if not debug
             win.on 'blur', win.hide
@@ -158,16 +158,3 @@ loadPrefs = () ->
 
 savePrefs = (values) ->
     fs.writeFileSync prefsFile, jsonStr(values), encoding:'utf8'
-
-###
-000000000   0000000   0000000     0000000 
-   000     000   000  000   000  000   000
-   000     000   000  000   000  000   000
-   000     000   000  000   000  000   000
-   000      0000000   0000000     0000000 
-###
-###
-- autocompletion
-- snatch site from firefox
-- sort stash and other list?
-###

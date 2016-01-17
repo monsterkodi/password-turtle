@@ -29,6 +29,4 @@ devDependencies
                     process                     ^0.11.2
 main                js/turtle.js
 scripts             
-                    build   electron-packager . password-turtle --platform=darwin --arch=x64 --version=0.36.4 --ignore=node_modules/electron --icon=img/turtle.icns
-                    start   electron .
-                    bower   bower install octicons font-awesome prototype.js
+                    start   node_modules/.bin/electron .

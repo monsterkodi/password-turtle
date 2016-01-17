@@ -6,23 +6,28 @@
 000   000  000        000      
 ###
 
-clipboard = require 'clipboard'
-isEmpty   = require 'lodash.isempty'
-values    = require 'lodash.values'
-random    = require 'lodash.random'
-trim      = require 'lodash.trim'
-pad       = require 'lodash.pad'
-isNaN     = require 'lodash.isnan'
-uuid      = require 'node-uuid'
-fs        = require 'fs'
+ipc       = require("electron").ipcRenderer
+_         = require 'lodash'
 _url      = require './js/tools/urltools'
 password  = require './js/tools/password' 
 cryptools = require './js/tools/cryptools'
 keyname   = require './js/tools/keyname'
+clipboard = require 'clipboard'
+uuid      = require 'node-uuid'
 remote    = require 'remote'
 open      = require 'opener'
 sleep     = require 'sleep'
-ipc       = require 'ipc'
+fs        = require 'fs'
+
+log   = () -> ipc.send 'console.log',   [].slice.call arguments, 0
+error = () -> ipc.send 'console.error', [].slice.call arguments, 0
+
+isEmpty   = _.isEmpty
+values    = _.values
+random    = _.random
+trim      = _.trim
+pad       = _.pad
+isNaN     = _.isNaN
 
 win  = remote.getCurrentWindow()
 
@@ -45,11 +50,6 @@ stash_key     = ''
 prefs_key     = ''
 vault_key     = ''
 settings_key  = ''
-
-log   = console.log
-
-console.log   = () -> ipc.send 'console.log',   [].slice.call arguments, 0
-console.error = () -> ipc.send 'console.error', [].slice.call arguments, 0
 
 resetStash = ->
     stashLoaded = false
@@ -114,6 +114,7 @@ masterConfirmed = ->
     if mstr?.length
         if stashExists
             readStash () -> 
+                # log 'stashLoaded', stashLoaded
                 if stashLoaded
                     $('turtle').disabled = false
                     say()
@@ -228,10 +229,10 @@ initEvents = () ->
 ###
 
 document.observe 'dom:loaded', ->
-        
+
     initEvents()
     prefs = loadPrefs()
-    
+    # log prefs
     toggleStyle() if not prefs.dark
     
     $("master").focus()
@@ -324,9 +325,9 @@ logOut = ->
 ###
             
 onKeyDown = (event) ->
+
     key = keyname.ofEvent event
     e   = document.activeElement
-
     resetTimeout()
     
     switch key
@@ -344,14 +345,14 @@ onKeyDown = (event) ->
     if $('stashlist')? then return onStashKey event
     if $('vaultlist')? then return onVaultKey event
     if $('prefslist')? then return onPrefsKey event
-            
+                
     if not $('site')?
         # log 'no site?'
         return
         
     site = $('site').value
     hash = genHash(site+mstr)
-    
+        
     if e == $('password')
         switch key
             when 'command+backspace'
@@ -367,12 +368,12 @@ onKeyDown = (event) ->
                 $('site').setSelectionRange 0, $('site').value.length
                 event.preventDefault()
                 return
-                
+        
     if e == $('master') and not $('master').value.length
         if key in ['backspace', 'enter']
             logOut()
             return
-    
+        
     btnames = ['stash', 'vault', 'prefs', 'about', 'help']
     if e.id in btnames
         switch key
@@ -521,7 +522,9 @@ writeStash = () ->
 
 readStash = (cb) ->
     if fs.existsSync stashFile
+        # log 'readStash', stashFile, mstr
         decryptFile stashFile, mstr, (err, json) -> 
+            # log 'decryptFile', err
             if err?
                 resetStash()
             else
@@ -972,6 +975,7 @@ onPrefsKey = (e) ->
 ###
 
 toggleAbout = () ->
+    log 'toggle about'
     if $('about-github')
         restoreBody()
     else
@@ -979,14 +983,18 @@ toggleAbout = () ->
     
 showAbout = () ->
     saveBody()
-    version = '::package.json:version::'
-    document.body.innerHTML = '<div id="about"><h1 id="title">password-turtle</h1><sub>version %s</sub>'.fmt version
+    version = require(__dirname+'/package.json').version
+    document.body.innerHTML = """
+    <div id="about">
+        <h1 id="title">password-turtle</h1><sub>version #{version}</sub>
+    """
     githubIcon = new Element 'div', { id: 'about-github' }
     githubIcon.insert '<svg viewbox="0 0 16 16" width="80px" height="80px" class="kitty-svg"><path class="github-svg" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/></svg>'
     $('about').insert githubIcon
     $('about-github').on 'click', () -> open "https://github.com/monsterkodi/password-turtle"
     $('title').on 'click', () -> restoreBody()
     $('about').insert '<h2>credits</h2>'
+
     addLink = (text, url) ->
         link = new Element 'div', { class: 'link', id: text } 
         link.url = url

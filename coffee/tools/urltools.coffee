@@ -6,10 +6,8 @@
  0000000   000   000  0000000     000      0000000    0000000   0000000  0000000 
 ###
 
-_s    = require 'underscore.string'
-last  = require 'lodash.last'
-slice = require 'lodash.slice'
-log   = console.log
+_  = require 'lodash'
+_s = require 'underscore.string'
 
 #╭━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╮
 #┃                                                                                                       extractSite ▢
@@ -130,8 +128,8 @@ exports.extractDomain = (str) ->
         s = m[2]
         s = s.substr(4) if _s.startsWith(s, 'www.')
         split = s.split('.')
-        if last(split) in toplevelDomains
-            return (slice split, split.length-2).join '.'
+        if _.last(split) in toplevelDomains
+            return (_.slice split, split.length-2).join '.'
         else
-            log 'not in toplevelDomains:', last(s.split('.'))
+            console.log 'not in toplevelDomains:', _.last(s.split('.'))
     undefined
