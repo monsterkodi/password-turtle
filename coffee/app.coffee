@@ -74,7 +74,7 @@ masterAnim = ->
     if masterAnimDir == 1
         if $("master").value.length < 24
             $("master").value += 'x'        
-            setTimeout masterAnim, 24-$("master").value.length
+            setTimeout masterAnim, 0
             return
         else 
             masterAnimDir = -1
@@ -82,7 +82,7 @@ masterAnim = ->
         if $("master").value.length > 0
             $("master").value = $("master").value.substr(0, Math.max(0, $("master").value.length-2))
             win.setSize win.getSize()[0], Math.max(win.getSize()[1], 491-$("master").value.length*6)
-            masterAnim()
+            setTimeout masterAnim, 0
         else
             win.setSize win.getSize()[0], 491
             startTimeout getPref 'timeout'
@@ -98,8 +98,8 @@ masterAnim = ->
             
 masterFade = ->
     $('turtle').disabled = true
-    if win.getSize()[1] > 355
-        win.setSize win.getSize()[0], Math.max 355, win.getSize()[1]-12
+    if win.getSize()[1] > 360
+        win.setSize win.getSize()[0], Math.max 360, win.getSize()[1]-12
         setTimeout masterFade, 0
 
 ###
