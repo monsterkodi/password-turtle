@@ -31,6 +31,8 @@ module.exports = (grunt) ->
                 command: "open password-turtle.app"
             open: 
                 command: "open password-turtle.app"
+            build: 
+                command: "bin/build"
                 
     grunt.loadNpmTasks 'grunt-contrib-clean'
     grunt.loadNpmTasks 'grunt-bower-concat'
