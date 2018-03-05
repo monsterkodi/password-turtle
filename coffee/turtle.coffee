@@ -21,8 +21,8 @@ Menu          = electron.Menu
 args   = karg """
 
 password-turtle
-    stash  . ? stash file                   . *
-    debug  . ? log debug                    . = false . - D
+    stash  . ? stash file   . *
+    debug  . ? log debug    . = false . - D
 
 version  #{pkg.version}
 """
@@ -31,7 +31,7 @@ debug = args.debug
 win   = undefined
 tray  = undefined
     
-prefs.init shortcut:'CmdOrCtrl+F3'
+prefs.init shortcut:'CmdOrCtrl+F3', confirm: true, timeout: 2
 
 ipc.on 'console.log',   (event, args) -> log.apply console, args
 ipc.on 'console.error', (event, args) -> log.apply console, args

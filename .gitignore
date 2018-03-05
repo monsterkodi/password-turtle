@@ -6,6 +6,7 @@ password-turtle.zip
 node_modules
 bower_components
 style/*.css
+*-x64
 js
 web
 Icon?

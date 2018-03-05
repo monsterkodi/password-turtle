@@ -1,1 +1,4 @@
+ignore
+    /.*-x64/
+
 styl  . ext css . replace

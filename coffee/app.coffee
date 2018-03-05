@@ -325,10 +325,10 @@ onKeyDown = (event) ->
     e   = document.activeElement
     resetTimeout()
     
-    switch key
-        when 'command+w'  then return stopEvent event
-        when 'command+t'  then return toggleStyle()
-        when 'command+i'  then return toggleAbout()
+    switch combo
+        when 'command+w', 'ctrl+w'  then return stopEvent event
+        when 'command+.', 'ctrl+.'  then return toggleAbout()
+        when 'alt+i'                then return toggleStyle()
         when 'esc' 
             if not $('bubble')? then return restoreBody()
             if $('settings').style.display != 'none' then return toggleSettings()
@@ -345,8 +345,8 @@ onKeyDown = (event) ->
     hash = genHash(site+mstr)
         
     if e == $('password')
-        switch key
-            when 'command+backspace'
+        switch combo
+            when 'command+backspace', 'ctrl+backspace'
                 if stash.configs[hash]?
                     if ask 'Forget <i>'+stash.configs[hash].pattern+'</i>', 'for <b>'+site+'</b>?'
                         delete stash.configs[hash]
@@ -538,17 +538,19 @@ readStash = (cb) ->
 ###
 
 onStashKey = (event) ->
-    key = keyname.ofEvent event
+
+    { mod, key, combo, char} = keyinfo.forEvent event
+
     e   = document.activeElement
-    switch key 
-        when 'right', 'down' then e?.parentElement?.nextSibling?.firstElementChild?.focus()
-        when 'left', 'up'    then e?.parentElement?.previousSibling?.firstElementChild?.focus()
-        when 'command+backspace'
+    switch combo 
+        when 'right', 'down' then e?.parentElement?.nextSibling?.firstChild?.focus()
+        when 'left', 'up'    then e?.parentElement?.previousSibling?.firstChild?.focus()
+        when 'command+backspace', 'ctrl+backspace'
             if e?.id?.length
                 if e.parentElement.nextSibling?
-                    e.parentElement.nextSibling.firstElementChild.focus()
+                    e.parentElement.nextSibling.firstChild.focus()
                 else
-                    e.parentElement.previousSibling?.firstElementChild?.focus()
+                    e.parentElement.previousSibling?.firstChild?.focus()
                 delete stash.configs[e.id]
                 e.parentElement.remove()
                 writeStash()
@@ -585,12 +587,12 @@ showStash = () ->
             
         $('stashscroll').appendChild item
             
-        item.addEventListener 'mouseenter', (e) -> e.target.childElements[0]?.focus()
+        item.addEventListener 'mouseenter', (e) -> e.target.firstChild?.focus()
         $(hash).addEventListener 'click',   (e) -> restoreBody e.target.nextSibling.innerHTML
 
         initInputBorder $(hash)
                     
-    $('stashscroll').firstElementChild.firstElementChild.focus()
+    $('stashscroll').firstChild.firstChild.focus()
     
 ###
 000   000   0000000   000   000  000      000000000
@@ -601,30 +603,33 @@ showStash = () ->
 ###
 
 onVaultKey = (event) ->
-    key = keyname.ofEvent event
-    e   = document.activeElement
-    switch key 
-        when 'command+n', 'control+n'  
+    
+    { mod, key, combo, char } = keyinfo.forEvent event
+    
+    e = document.activeElement
+    
+    switch combo 
+        when 'command+n', 'ctrl+n'  
             hash = uuid.v4()
             stash.vault[hash] = key: ""
             addVaultItem hash, stash.vault[hash].key
             $(hash).focus()
             toggleVaultItem hash
             editVaultKey hash
-        when 'down'  then e?.parentElement?.nextSibling?.nextSibling?.firstElementChild?.focus()
-        when 'up'    then e?.parentElement?.previousSibling?.previousSibling?.firstElementChild?.focus()
+        when 'down'  then e?.parentElement?.nextSibling?.nextSibling?.firstChild?.focus()
+        when 'up'    then e?.parentElement?.previousSibling?.previousSibling?.firstChild?.focus()
         when 'left'  then closeVaultItem  e?.id
         when 'right' then openVaultItem   e?.id
         when 'space' 
             if e?.id?
                 toggleVaultItem e.id
                 event.preventDefault()
-        when 'command+backspace'
+        when 'command+backspace', 'ctrl+backspace'
             if e?.id?.length
                 if e.parentElement.nextSibling?.nextSibling?
-                    e.parentElement.nextSibling.nextSibling.firstElementChild.focus()
+                    e.parentElement.nextSibling.nextSibling.firstChild.focus()
                 else
-                    e.parentElement.previousSibling?.previousSibling?.firstElementChild?.focus()
+                    e.parentElement.previousSibling?.previousSibling?.firstChild?.focus()
                 delete stash.vault[e.id]
                 e.parentElement.nextSibling.remove()
                 e.parentElement.remove()
@@ -643,13 +648,13 @@ vaultArrow     = (hash) -> $(hash).nextSibling
 openVaultItem  = (hash) -> 
     vaultValue(hash).style.display = 'block'
     vaultArrow(hash).innerHTML = '▼'
-    vaultArrow(hash).classList.classList.add 'open'
+    vaultArrow(hash).classList.add 'open'
 closeVaultItem = (hash) -> 
     vaultValue(hash).style.display = 'none'
     vaultArrow(hash).innerHTML = '►'
     vaultArrow(hash).classList.remove 'open'
 toggleVaultItem = (hash) ->
-    if vaultValue(hash).getStyle('display') == 'none' then openVaultItem hash else closeVaultItem hash
+    if vaultValue(hash).style.display == 'none' then openVaultItem hash else closeVaultItem hash
 
 saveVaultKey = (e) ->
     input = $('.vault-key', e.parentElement)
@@ -710,8 +715,8 @@ addVaultItem = (hash, vaultKey, vaultValue) ->
     value.style.display = 'none'
 
     initInputBorder input
-    item.addEventListener  'mouseenter', (e) -> e.target.childElements[0]?.focus()
-    arrow.addEventListener 'click',      (e) -> toggleVaultItem $(e.target).parentElement.firstElementChild.id
+    item.addEventListener  'mouseenter', (e) -> e.target.firstChild?.focus()
+    arrow.addEventListener 'click',      (e) -> toggleVaultItem $(e.target).parentElement.firstChild.id
     input.addEventListener 'click',      (e) -> toggleVaultItem $(e.target).id
     input.addEventListener 'keydown',    (e) -> if keyname.ofEvent(e) == 'enter' then editVaultKey $(e.target).id
     value.addEventListener 'focus',      (e) -> 
@@ -737,7 +742,7 @@ showVault = () ->
     for vaultHash in Object.keys stash.vault
         addVaultItem vaultHash, stash.vault[vaultHash].key, stash.vault[vaultHash].value
             
-    $('vaultscroll').firstElementChild.firstElementChild.focus()    
+    $('vaultscroll').firstChild.firstChild.focus()    
     
 ###
 00000000   00000000   00000000  00000000   0000000
@@ -897,22 +902,21 @@ showPrefs = () ->
                     border.appendChild msg
                     msg.focus()
             
-    $('prefsscroll').firstElementChild.firstElementChild.focus()
+    $('prefsscroll').firstChild.firstChild.focus()
     
 onPrefsKey = (e) ->
     
     key  = keyname.ofEvent e
-    elem = document.activeElement
-    if elem?
+    if active = document.activeElement
         switch key 
             when 'right', 'down'
-                ($('input', $(elem.parentElement?.nextSibling?.firstElementChild.id))? or 
-                elem.parentElement?.nextSibling?.firstElementChild).focus()
+                ($('input', $(active.parentElement?.nextSibling?.firstChild.id))? or 
+                active.parentElement?.nextSibling?.firstChild).focus()
             when 'left', 'up'
-                if elem.id == 'ok'
-                    $('input', elem.parentElement.parentElement.previousSibling).focus()
+                if active.id == 'ok'
+                    $('input', active.parentElement.parentElement.previousSibling).focus()
                 else
-                    elem.parentElement?.previousSibling?.firstElementChild?.focus()
+                    active.parentElement?.previousSibling?.firstChild?.focus()
                     
 ###
  0000000   0000000     0000000   000   000  000000000
@@ -1165,7 +1169,7 @@ say = () ->
         $('say').innerHTML = args.join "<br>"
 
 ask = ->
-    if prefs.get 'confirm'
+    if prefs.get 'confirm', true
         if not $('say').innerHTML.endsWith(arguments[arguments.length-1])
             say.apply say, arguments
             $('bubble').className = "ask"
