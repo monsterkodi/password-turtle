@@ -322,16 +322,19 @@ onKeyDown = (event) ->
 
     { mod, key, combo, char } = keyinfo.forEvent event
 
-    e   = document.activeElement
+    e = document.activeElement
     resetTimeout()
     
     switch combo
-        when 'command+w', 'ctrl+w'  then return stopEvent event
+        when 'command+w', 'ctrl+w'  then return win.hide() 
         when 'command+.', 'ctrl+.'  then return toggleAbout()
-        when 'alt+i'                then return toggleStyle()
+        when 'alt+i', 'ctrl+i'      then return toggleStyle()
         when 'esc' 
             if not $('bubble')? then return restoreBody()
             if $('settings').style.display != 'none' then return toggleSettings()
+        when 'command+q', 'ctrl+q'  
+            app.exit 0
+            process.exit 0
 
     if $('stashlist')? then return onStashKey event
     if $('vaultlist')? then return onVaultKey event
