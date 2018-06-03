@@ -7,19 +7,20 @@ repository
 bugs
                 url  https://github.com/monsterkodi/password-turtle/issues
 dependencies
-                bcryptjs        ^2.3.0
+                bcryptjs        ^2.4.3
                 font-awesome    ^4.7.0
-                format          ^0.2.1
-                keycode         ^2.1.0
-                kxk             ^0.34.0
-                node-uuid       ^1.4.7
-                opener          ^1.4.1
-                sleep           ^3.0.0
-                underscore.string  ^3.2.3
+                format          ^0.2.2
+                keycode         ^2.2.0
+                kxk             ^0.125.0
+                node-uuid       ^1.4.8
+                opener          ^1.4.3
+                sleep           ^5.1.1
+                underscore.string  ^3.3.4
 devDependencies
-                electron        ^1.8.2
-                electron-packager  ^11.0.1
+                electron        ^2.0.2
+                electron-packager  ^12.1.0
                 electron-rebuild  ^1.7.3
 main            js/turtle.js
 scripts
-                win  bash ./bin/buildwin.sh
+                win   bash ./bin/buildwin.sh
+                mac   bash ./bin/buildmac.sh
