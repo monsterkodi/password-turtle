@@ -1,3 +1,8 @@
+// 0000000    00000000   000   0000000   000   000  000000000    
+// 000   000  000   000  000  000        000   000     000       
+// 0000000    0000000    000  000  0000  000000000     000       
+// 000   000  000   000  000  000   000  000   000     000       
+// 0000000    000   000  000   0000000   000   000     000       
 
 clr                   = {} 
 clr.black             = #000000
@@ -9,7 +14,7 @@ clr.gray              = #888888
 clr.gray-bright       = #cccccc
 clr.gray-very-bright  = #dddddd
 clr.gray-super-bright = #eeeeee
-clr.background        = #fafafa
+clr.background        = #ffffff
 clr.white             = #ffffff
 clr.yellow-bright     = #ffff88
 clr.yellow            = #ffff00
@@ -37,20 +42,20 @@ body
     color:            clr.gray-bright
 
 /*
-*  000  000   000  00000000   000   000  000000000
-*  000  0000  000  000   000  000   000     000   
-*  000  000 0 000  00000000   000   000     000   
-*  000  000  0000  000        000   000     000   
-*  000  000   000  000         0000000      000   
+000  000   000  00000000   000   000  000000000
+000  0000  000  000   000  000   000     000   
+000  000 0 000  00000000   000   000     000   
+000  000  0000  000        000   000     000   
+000  000   000  000         0000000      000   
 */
      
 .main-input
     background-color: clr.white
     color:            clr.gray
-    border:           1px solid transparent
+    border:           none // 1px solid transparent
     &:focus
         background-color: clr.white
-        box-shadow:       1px 1px 10px rgba(0, 0, 0, 0.25)
+        box-shadow:       1px 1px 10px rgba(0, 0, 0, 0.15)
 
 #master
     color:          clr.gray-bright
@@ -90,47 +95,43 @@ clr.password-bright = clr.blue-bright
     background:     rgba(0,0,0, 0.05)
     
 /*
-*  0000000     0000000   00000000   0000000    00000000  00000000 
-*  000   000  000   000  000   000  000   000  000       000   000
-*  0000000    000   000  0000000    000   000  0000000   0000000  
-*  000   000  000   000  000   000  000   000  000       000   000
-*  0000000     0000000   000   000  0000000    00000000  000   000
+0000000     0000000   00000000   0000000    00000000  00000000 
+000   000  000   000  000   000  000   000  000       000   000
+0000000    000   000  0000000    000   000  0000000   0000000  
+000   000  000   000  000   000  000   000  000       000   000
+0000000     0000000   000   000  0000000    00000000  000   000
 */
     
 .border
-    // box-shadow:           inset 0px 0px 12px rgba(0, 0, 0, 0.25)
     background-color:     clr.white
     border:               1px solid transparent
-    // &.focus
-        // background-color: clr.orange-bright
-        // box-shadow:       inset 1px 1px 10px rgba(0, 0, 0, 0.25)
 
 #master-border
-    box-shadow:           inset 0px 0px 12px rgba(0, 0, 0, 0.25)
+    box-shadow:           inset 0px 0px 12px rgba(0, 0, 0, 0.15)
     &.focus
         background-color: clr.white
 
 #site-border
-    box-shadow:           inset 0px 0px 12px rgba(0, 0, 0, 0.25)
+    box-shadow:           inset 0px 0px 12px rgba(0, 0, 0, 0.15)
     &.focus
         background-color: clr.site-bright
 
 #pattern-border
-    box-shadow:           inset 0px 0px 12px rgba(0, 0, 0, 0.25)
+    box-shadow:           inset 0px 0px 12px rgba(0, 0, 0, 0.15)
     &.focus
         background-color: clr.gray-very-bright
 
 #password-border
-    box-shadow:           inset 0px 0px 12px rgba(0, 0, 0, 0.25)
+    box-shadow:           inset 0px 0px 12px rgba(0, 0, 0, 0.15)
     &.focus
         background-color: clr.blue-very-bright
         
 /*
-*  000   0000000   0000000   000   000   0000000
-*  000  000       000   000  0000  000  000     
-*  000  000       000   000  000 0 000  0000000 
-*  000  000       000   000  000  0000       000
-*  000   0000000   0000000   000   000  0000000 
+000   0000000   0000000   000   000   0000000
+000  000       000   000  0000  000  000     
+000  000       000   000  000 0 000  0000000 
+000  000       000   000  000  0000       000
+000   0000000   0000000   000   000  0000000 
 */
     
 .lock    
@@ -155,28 +156,27 @@ clr.password-bright = clr.blue-bright
         color:      clr.gray-super-bright
             
 /*
-*  000000000  000   000  00000000   000000000  000      00000000
-*     000     000   000  000   000     000     000      000     
-*     000     000   000  0000000       000     000      0000000 
-*     000     000   000  000   000     000     000      000     
-*     000      0000000   000   000     000     0000000  00000000
+000000000  000   000  00000000   000000000  000      00000000
+   000     000   000  000   000     000     000      000     
+   000     000   000  0000000       000     000      0000000 
+   000     000   000  000   000     000     000      000     
+   000      0000000   000   000     000     0000000  00000000
 */
 
 #turtle
-    box-shadow:    inset 1px 1px 15px rgba(0, 0, 0, 0.2)
+    box-shadow:         inset 1px 1px 15px rgba(0, 0, 0, 0.2)
     &:focus
-        box-shadow:      4px 4px 8px rgba(0, 0, 0, 0.4)
+        box-shadow:     none
     &:active
-        box-shadow:      0px 0px  1px rgba(0, 0, 0, 0.1)
-        border: 1px solid clr.gray-most-dark
+        box-shadow:     inset 1px 1px 15px rgba(0, 0, 0, 0.3)
     background url(../img/turtle-bright.png) no-repeat
     
 /*
-*  0000000    000   000  0000000    0000000    000      00000000
-*  000   000  000   000  000   000  000   000  000      000     
-*  0000000    000   000  0000000    0000000    000      0000000 
-*  000   000  000   000  000   000  000   000  000      000     
-*  0000000     0000000   0000000    0000000    0000000  00000000
+0000000    000   000  0000000    0000000    000      00000000
+000   000  000   000  000   000  000   000  000      000     
+0000000    000   000  0000000    0000000    000      0000000 
+000   000  000   000  000   000  000   000  000      000     
+0000000     0000000   0000000    0000000    0000000  00000000
 */
 
 clr.bubble = rgba(255,255,255,0.38)
@@ -219,17 +219,17 @@ clr.bubble-ask = rgba(255,255,255,0.8)
     font-size:  17px
     
 /*
-*  0000000    000   000  000000000  000000000   0000000   000   000
-*  000   000  000   000     000        000     000   000  0000  000
-*  0000000    000   000     000        000     000   000  000 0 000
-*  000   000  000   000     000        000     000   000  000  0000
-*  0000000     0000000      000        000      0000000   000   000
+0000000    000   000  000000000  000000000   0000000   000   000
+000   000  000   000     000        000     000   000  0000  000
+0000000    000   000     000        000     000   000  000 0 000
+000   000  000   000     000        000     000   000  000  0000
+0000000     0000000      000        000      0000000   000   000
 */
 
 .button-border
     background-color:     clr.white
     color:                clr.gray-bright
-    border:               1px solid transparent
+    border:               none
     &.focus
         color:            clr.black
         background-color: clr.white
@@ -268,20 +268,20 @@ clr.bubble-ask = rgba(255,255,255,0.8)
     border:               none
     background-color:     clr.white
     &:focus
-        box-shadow:       1px 1px 10px rgba(0, 0, 0, 0.25)
+        box-shadow:       1px 1px 10px rgba(0, 0, 0, 0.15)
     &:active
         background-color: clr.gray-bright
     
 /*
-*  000   000   0000000   000   000  000      000000000
-*  000   000  000   000  000   000  000         000   
-*   000 000   000000000  000   000  000         000   
-*     000     000   000  000   000  000         000   
-*      0      000   000   0000000   0000000     000   
+000   000   0000000   000   000  000      000000000
+000   000  000   000  000   000  000         000   
+ 000 000   000000000  000   000  000         000   
+   000     000   000  000   000  000         000   
+    0      000   000   0000000   0000000     000   
 */
 
 .vault-item-border
-    border:               1px solid transparent
+    border:               none // 1px solid transparent
     background-color:     clr.white
     &.focus
         background-color: clr.orange
@@ -294,7 +294,7 @@ clr.bubble-ask = rgba(255,255,255,0.8)
         color:        clr.red
 
 .vault-value
-    border:           1px solid transparent
+    border:           none
     color:            clr.gray-medium
     box-shadow:       inset 0px 0px 10px rgba(0, 0, 0, 0.15)
 
@@ -302,10 +302,10 @@ clr.bubble-ask = rgba(255,255,255,0.8)
 .vault-overlay    
 .vault-overlay.vault-key
 .vault-overlay.vault-value
-    border:           1px solid transparent
+    border:           none
     color:            clr.black
     background-color: clr.orange
-    box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.25)
+    box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.15)
 
 .vault-arrow
     color:            clr.white
@@ -315,11 +315,11 @@ clr.bubble-ask = rgba(255,255,255,0.8)
     color:            clr.red
     
 /*
-*   0000000  000000000   0000000    0000000  000   000
-*  000          000     000   000  000       000   000
-*  0000000      000     000000000  0000000   000000000
-*       000     000     000   000       000  000   000
-*  0000000      000     000   000  0000000   000   000
+ 0000000  000000000   0000000    0000000  000   000
+000          000     000   000  000       000   000
+0000000      000     000000000  0000000   000000000
+     000     000     000   000       000  000   000
+0000000      000     000   000  0000000   000   000
 */
 
 .stash-item-border        
@@ -333,11 +333,11 @@ clr.bubble-ask = rgba(255,255,255,0.8)
         background: clr.site-bright
 
 /*
-*  00000000   00000000   00000000  00000000   0000000
-*  000   000  000   000  000       000       000     
-*  00000000   0000000    0000000   000000    0000000 
-*  000        000   000  000       000            000
-*  000        000   000  00000000  000       0000000 
+00000000   00000000   00000000  00000000   0000000
+000   000  000   000  000       000       000     
+00000000   0000000    0000000   000000    0000000 
+000        000   000  000       000            000
+000        000   000  00000000  000       0000000 
 */
 
 .pref-item-border
@@ -345,12 +345,6 @@ clr.bubble-ask = rgba(255,255,255,0.8)
     & .pref
     & .shortcut
         color:        clr.gray
-    // &.focus .int
-    // &.focus .pref   
-    // &.focus .shortcut
-        // color:        clr.black
-    // &.focus
-        // background:   clr.blue-super-bright
 
 .pref-item
 .stash-item
@@ -364,14 +358,14 @@ clr.bubble-ask = rgba(255,255,255,0.8)
     padding-left      14px    
     color:            clr.black
     background-color: clr.blue-super-bright
-    box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.25)
+    box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.15)
                 
 /*
-*   0000000   0000000     0000000   000   000  000000000
-*  000   000  000   000  000   000  000   000     000   
-*  000000000  0000000    000   000  000   000     000   
-*  000   000  000   000  000   000  000   000     000   
-*  000   000  0000000     0000000    0000000      000   
+ 0000000   0000000     0000000   000   000  000000000
+000   000  000   000  000   000  000   000     000   
+000000000  0000000    000   000  000   000     000   
+000   000  000   000  000   000  000   000     000   
+000   000  0000000     0000000    0000000      000   
 */
 
 #info

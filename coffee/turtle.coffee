@@ -112,9 +112,7 @@ createWindow = ->
         
         cwd = slash.join __dirname, '..'
         
-        iconFile = slash.join cwd, 'img', 'menuicon.png'
-
-        tray = new Tray iconFile
+        tray = new Tray slash.join cwd, 'img', 'tray.png'
         
         tray.on 'click', toggleWindow
 
