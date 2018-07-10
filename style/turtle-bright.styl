@@ -45,7 +45,6 @@ body
 */
      
 .main-input
-    border-radius     6px
     background-color: clr.white
     color:            clr.gray
     border:           1px solid transparent
@@ -99,26 +98,30 @@ clr.password-bright = clr.blue-bright
 */
     
 .border
-    box-shadow:           inset 0px 0px 12px rgba(0, 0, 0, 0.25)
+    // box-shadow:           inset 0px 0px 12px rgba(0, 0, 0, 0.25)
     background-color:     clr.white
     border:               1px solid transparent
-    &.focus
-        background-color: clr.orange-bright
-        box-shadow:       inset 1px 1px 10px rgba(0, 0, 0, 0.25)
+    // &.focus
+        // background-color: clr.orange-bright
+        // box-shadow:       inset 1px 1px 10px rgba(0, 0, 0, 0.25)
 
 #master-border
+    box-shadow:           inset 0px 0px 12px rgba(0, 0, 0, 0.25)
     &.focus
         background-color: clr.white
 
 #site-border
+    box-shadow:           inset 0px 0px 12px rgba(0, 0, 0, 0.25)
     &.focus
         background-color: clr.site-bright
 
 #pattern-border
+    box-shadow:           inset 0px 0px 12px rgba(0, 0, 0, 0.25)
     &.focus
         background-color: clr.gray-very-bright
 
 #password-border
+    box-shadow:           inset 0px 0px 12px rgba(0, 0, 0, 0.25)
     &.focus
         background-color: clr.blue-very-bright
         
@@ -166,7 +169,6 @@ clr.password-bright = clr.blue-bright
     &:active
         box-shadow:      0px 0px  1px rgba(0, 0, 0, 0.1)
         border: 1px solid clr.gray-most-dark
-    border-radius: 12px        
     background url(../img/turtle-bright.png) no-repeat
     
 /*
@@ -225,7 +227,6 @@ clr.bubble-ask = rgba(255,255,255,0.8)
 */
 
 .button-border
-    border-radius:        10px
     background-color:     clr.white
     color:                clr.gray-bright
     border:               1px solid transparent
@@ -264,7 +265,6 @@ clr.bubble-ask = rgba(255,255,255,0.8)
         background-color: clr.orange
     
 .button
-    border-radius:        4px
     border:               none
     background-color:     clr.white
     &:focus
@@ -288,7 +288,6 @@ clr.bubble-ask = rgba(255,255,255,0.8)
 
 .vault-item
     border:           none
-    border-radius:    6px    
     background-color: clr.white
     color:            clr.gray
     &:focus
@@ -346,18 +345,17 @@ clr.bubble-ask = rgba(255,255,255,0.8)
     & .pref
     & .shortcut
         color:        clr.gray
-    &.focus .int
-    &.focus .pref   
-    &.focus .shortcut
-        color:        clr.black
-    &.focus
-        background:   clr.blue-super-bright
+    // &.focus .int
+    // &.focus .pref   
+    // &.focus .shortcut
+        // color:        clr.black
+    // &.focus
+        // background:   clr.blue-super-bright
 
 .pref-item
 .stash-item
 .pref-overlay 
     border            none
-    border-radius     6px    
     background-color: clr.white   
         
 .pref-overlay.int
@@ -376,7 +374,7 @@ clr.bubble-ask = rgba(255,255,255,0.8)
 *  000   000  0000000     0000000    0000000      000   
 */
 
-#about
+#info
     color:         clr.black
 
     & h1

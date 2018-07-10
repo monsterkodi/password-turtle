@@ -6,7 +6,7 @@
    000      0000000   000   000     000     0000000  00000000
 ###
 
-{ slash, karg, prefs, log, fs } = require 'kxk'
+{ slash, args, prefs, log, fs } = require 'kxk'
 
 pkg      = require '../package.json'
 events   = require 'events'
@@ -18,27 +18,30 @@ Tray          = electron.Tray
 BrowserWindow = electron.BrowserWindow
 Menu          = electron.Menu
 
-args   = karg """
-
-password-turtle
-    stash  . ? stash file   . *
-    debug  . ? log debug    . = false . - D
-
-version  #{pkg.version}
+args = args.init """
+    stash  stash file   *
+    debug  log debug    false . - D
 """
 
-debug = args.debug
-win   = undefined
-tray  = undefined
+debug    = args.debug ? false
+win      = undefined
+tray     = undefined
+noToggle = false 
     
-prefs.init shortcut:'CmdOrCtrl+F3', confirm: true, timeout: 2
+prefs.init shortcut:'ctrl+f3', confirm: true, timeout: 2
+
+# 000  00000000    0000000  
+# 000  000   000  000       
+# 000  00000000   000       
+# 000  000        000       
+# 000  000         0000000  
 
 ipc.on 'console.log',   (event, args) -> log.apply console, args
 ipc.on 'console.error', (event, args) -> log.apply console, args
 ipc.on 'process.exit',  (event, code) -> log 'exit via ipc';  process.exit code
     
-noToggle = false 
-ipc.on 'enableToggle', -> noToggle = false
+ipc.on 'debug',         -> debug    = true
+ipc.on 'enableToggle',  -> noToggle = false
 ipc.on 'disableToggle', -> noToggle = true
 ipc.on 'globalShortcut', (event, key) ->     
     prefs.set 'shortcut', key
@@ -52,7 +55,7 @@ ipc.on 'globalShortcut', (event, key) ->
 0000000   000   000   0000000   00     00
 ###
 
-showWindow = () ->
+showWindow = ->
     win.show() unless win.isVisible()
     win.setResizable debug
     win
@@ -65,16 +68,20 @@ showWindow = () ->
    000      0000000    0000000    0000000   0000000  00000000
 ###
 
-toggleWindow = () ->
+toggleWindow = ->
     return if noToggle
     if win and win.isVisible()
         win.hide()
     else
         win.show()
 
-createWindow = () ->
+onBlur = ->
+    if not debug 
+        win.hide()
+        
+createWindow = ->
     
-    app.on 'ready', () ->
+    app.on 'ready', ->
 
         app.dock?.hide()
         
@@ -123,26 +130,28 @@ createWindow = () ->
         winpos = prefs.get 'winpos', x:Number(((screenSize.width-windowWidth)/2).toFixed()), y:0
 
         win = new BrowserWindow
-            dir:           cwd
-            preloadWindow: true
-            x:             winpos.x
-            y:             winpos.y
-            width:         windowWidth
-            height:        360
-            frame:         false
+            dir:                cwd
+            show:               false
+            backgroundColor:    '#222'
+            x:                  winpos.x
+            y:                  winpos.y
+            width:              windowWidth
+            height:             360
+            frame:              false
             
         win.webContents.on 'did-finish-load', =>
              if debug
                 win.webContents.openDevTools()
             
+        win.on 'ready-to-show', (event) -> 
+            win = event.sender
+            win.show()
+        
         electron.globalShortcut.register prefs.get('shortcut'), toggleWindow
 
         win.loadURL slash.fileUrl cwd + '/turtle.html'
         
-        if not debug
-            win.on 'blur', win.hide
+        win.on 'blur', onBlur
             
-        setTimeout showWindow, 100
-              
 createWindow()            
   

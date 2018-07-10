@@ -49,7 +49,6 @@ body
 */
      
 .main-input
-    border-radius     4px
     background-color: clr.gray-very-dark
     color:            clr.gray
     border:           1px solid clr.gray-very-dark
@@ -106,31 +105,35 @@ clr.password-bright = clr.blue-very-bright
 */
     
 .border
-    box-shadow:           inset 2px 2px 17px rgba(0, 0, 0, 0.25)
-    border:               1px solid clr.gray-very-dark
+    // border:               1px solid clr.gray-very-dark
+    border:               1px solid clr.background
     background-color:     clr.gray-dark
 
+#site-border
+#pattern-border
+#password-border
+#master-border
+    border               none
+    
+#master-border
     &.focus
         background-color: clr.orange
-        box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.75)
+        box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.5)
 
-.stash-item-border
 #site-border
     &.focus
         background-color: clr.site-medium
-        box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.75)
+        box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.5)
 
-.pref-item-border
 #pattern-border
     &.focus
         background-color: clr.pattern
-        box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.75)
+        box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.5)
 
 #password-border
     &.focus
         background-color: clr.password
-        box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.75)
-                        
+        box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.5)
             
 /*
 *  000   0000000   0000000   000   000   0000000
@@ -170,13 +173,11 @@ clr.password-bright = clr.blue-very-bright
 */
 
 #turtle
-    box-shadow:    inset 1px 1px 15px rgba(0, 0, 0, 0.5)
     &:focus
-        box-shadow:      2px 2px 15px rgba(0, 0, 0, 0.5)
+        box-shadow:      0px 0px 12px rgba(0, 0, 0, 0.5)
     &:active
         box-shadow:      0px 0px  1px rgba(0, 0, 0, 0.1)
         border: 1px solid clr.gray-most-dark
-    border-radius: 12px        
     background url(../img/turtle.png) no-repeat
         
 /*
@@ -233,12 +234,10 @@ clr.bubble-ask = rgba(0,0,0,0.8)
 */
     
 .button
-    border-radius:    4px
-    border:           1px solid clr.gray-very-dark
-    background-color: clr.gray-very-dark
+    border:             1px solid clr.background
+    background-color:   clr.background
     &:focus
         box-shadow:       0 0 10px clr.yellow
-        border:           1px solid clr.black
         background-color: clr.gray-very-dark
     &:active
         background-color: clr.gray-most-dark
@@ -260,15 +259,12 @@ clr.bubble-ask = rgba(0,0,0,0.8)
         color:               clr.site-medium
     
 .button-border
-    box-shadow:           inset 2px 2px 17px rgba(0, 0, 0, 0.25)
-    border:               1px solid clr.gray-very-dark
-    border-radius:        10px
     background-color:     clr.gray-super-dark
-    color:                gray
+    color:                clr.gray-dark
     &.focus
         color:            clr.yellow
         background-color: clr.orange        
-        box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.75)
+        box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.5)
     &.disabled
         opacity:          0.5
         color:            clr.gray-dark
@@ -277,20 +273,20 @@ clr.bubble-ask = rgba(0,0,0,0.8)
     &.focus
         color:            clr.password-bright
         background-color: clr.password
-        box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.75)
+        box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.5)
 
 #prefs-border
     &.focus
         color:            clr.pattern-bright
         background-color: clr.pattern
-        box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.75)
+        box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.5)
     
 #stash-border
 #help-border
     &.focus
         color:            clr.site-bright
         background-color: clr.site-medium
-        box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.75)
+        box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.5)
     
 /*
 *   0000000  000000000   0000000    0000000  000   000
@@ -317,16 +313,15 @@ clr.bubble-ask = rgba(0,0,0,0.8)
 */
 
 .vault-item-border
-    box-shadow:           inset 2px 2px 17px rgba(0, 0, 0, 0.25)
+    // box-shadow:           inset 2px 2px 17px rgba(0, 0, 0, 0.25)
     border:               1px solid clr.gray-very-dark
     background-color:     clr.gray-dark
     &.focus
         background-color: clr.orange
-        box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.75)
+        // box-shadow:       inset 2px 2px 17px rgba(0, 0, 0, 0.75)
 
 .vault-item
     border:           none
-    border-radius:    6px    
     background-color: clr.gray-very-dark    
     color:            clr.white
     &:focus
@@ -376,7 +371,6 @@ clr.bubble-ask = rgba(0,0,0,0.8)
 .pref-item
 .stash-item
     border:           none
-    border-radius:    6px    
     background-color: clr.gray-dark    
         
 .pref-overlay.int
@@ -395,7 +389,7 @@ clr.bubble-ask = rgba(0,0,0,0.8)
 *  000   000  0000000     0000000    0000000      000   
 */
 
-#about
+#info
     color:         clr.blue
 
     & h1
