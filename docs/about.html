@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <title>password-turtle about</title>
+    <meta name="description" content="password generator">
+    <link rel="stylesheet" type="text/css" href="style/style.css" media="screen">
+  </head>
+  <body>
+    <header>
+  <style>
+  .link {
+      font-weight: bold;
+  }
+  
+  #about-link {
+      color: red;
+  }
+  #about-link:hover {
+      color: orange;
+  }
+  #download-link {
+      color: orange;
+  }
+  #download-link:hover {
+      color: yellow;
+  }
+  #credits-link {
+      color: green;
+  }
+  #credits-link:hover {
+      color: #3f3;
+  }
+  #manual-link {
+      color: #88f;
+  }
+  #manual-link:hover {
+      color: #ccf;
+  }
+  </style>
+  <div class="container">
+    <h1><a href="index.html">password-turtle</a></h1>
+
+    <nav class="site-nav">
+
+      <div class="trigger">
+            <a class="page-link" href="about.html"    class='link' id='about-link'>about</a>
+            <a class="page-link" href="manual.html"   class='link' id='manual-link'>manual</a>
+            <a class="page-link" href="download.html" class='link' id='download-link'>download</a>
+            <a class="page-link" href="credits.html"  class='link' id='credits-link'>credits</a>
+      </div>
+
+    </nav>
+
+  </div>
+</header>
+
+
+    <div class="container">
+      <section id="main_content">
+        <p>password-turtle is a menu bar application for Mac OS X</p>
+
+<h1 id="what-it-does">What it does</h1>
+
+<p>It generates a unique password from 3 ingredients:</p>
+
+<ul>
+  <li>a master key</li>
+  <li>a pattern</li>
+  <li>a site name</li>
+</ul>
+
+<p>It stores your pattern and site names in an encrypted file on your hard drive.</p>
+
+<p>It makes it easy to have a different password for each site while only needing to remember a single master password.</p>
+
+<p>It reads site names from and writes passwords to the clipboard.</p>
+
+<p>It will log you out after a variable timeout delay.</p>
+
+<h1 id="what-it-doesnt">What it doesn’t</h1>
+
+<p>It doesn’t store any passwords.</p>
+
+<p>Instead, each password is generated on the fly via a <a href="https://en.wikipedia.org/wiki/Cryptographic_hash_function">one-way hash algorithm</a>.</p>
+
+<p>This makes it very easy to setup the program on different computers. 
+Your master key and your default pattern is all you need to access your passwords.
+Under normal circumstances, you won’t need to copy any file from one machine to another.</p>
+
+<p>The downside is that your passwords are bound to the master key and the pattern:
+Changing the master key or the pattern will invalidate all your passwords.</p>
+
+<h1 id="how-it-looks">How it looks</h1>
+
+<p>There are two themes available, a dark and a bright one:</p>
+
+<p><img src="./img/site.png" alt="site" /></p>
+
+<p><img src="./img/site-bright.png" alt="site" /></p>
+
+      </section>
+    </div>
+  </body>
+</html>

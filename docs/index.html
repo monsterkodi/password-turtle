@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <title>password-turtle</title>
+    <meta name="description" content="password generator">
+    <link rel="stylesheet" type="text/css" href="style/style.css" media="screen">
+  </head>
+  <script>
+  function bubble(topic) {      
+      var div = document.getElementById("div-"+topic);
+      div.style.display = 'unset';
+  }
+  function unbubble(topic) {      
+      var div = document.getElementById("div-"+topic);
+      div.style.display = 'none';
+  }
+  </script>
+
+  <style>
+
+      #turtles {
+          min-width: 600px;
+          min-height: 600px;
+          border-radius: 20px;
+          box-shadow: 2px 2px 17px rgba(0, 0, 0, 0.25);
+      }
+
+      .bubble { 
+          font-weight: bold;
+          border-radius: 20px;
+          background: rgba(0,0,0,0.2);
+          padding: 20px;
+      }
+      
+      #bubbles {
+          position: relative;
+          min-width: 600px;
+      }
+
+      .tip {
+          width: 0px;
+          height: 0px;
+      }
+      
+      #tip-about {
+          border-left:   20px solid transparent;
+          border-right:  20px solid transparent;
+          border-bottom: 20px solid rgba(0,0,0,0.2);
+          position:  relative;
+          left: 40px;
+      }
+
+      #tip-manual, #tip-download {
+          border-left:   20px solid transparent;
+          border-right:  20px solid transparent;
+          border-top:    20px solid rgba(0,0,0,0.2);
+          position:  relative;
+          left: 40px;
+      }
+
+      #tip-credits {
+          border-top:   20px solid transparent;
+          border-bottom:  20px solid transparent;
+          border-left:    20px solid rgba(0,0,0,0.2);
+          position: absolute;
+          right: -20px;
+          top: 20px;
+      }
+      
+      .tip-bubble {
+          display: none;
+          position: absolute;
+      }
+            
+      #div-about {
+          top: 450px;
+          left: 30px;
+          color: red;
+      }
+
+      #div-credits {
+          top: 60px;
+          left: 40px;
+          color: green;
+      }
+
+      #div-manual {
+          top: 50px;
+          left: 420px;
+          color: #66f;
+      }
+
+      #div-download {
+          top: 15px;
+          left: 300px;
+          color: orange;
+      }
+
+  </style>
+
+  <body>
+
+    <header>
+  <style>
+  .link {
+      font-weight: bold;
+  }
+  
+  #about-link {
+      color: red;
+  }
+  #about-link:hover {
+      color: orange;
+  }
+  #download-link {
+      color: orange;
+  }
+  #download-link:hover {
+      color: yellow;
+  }
+  #credits-link {
+      color: green;
+  }
+  #credits-link:hover {
+      color: #3f3;
+  }
+  #manual-link {
+      color: #88f;
+  }
+  #manual-link:hover {
+      color: #ccf;
+  }
+  </style>
+  <div class="container">
+    <h1><a href="index.html">password-turtle</a></h1>
+
+    <nav class="site-nav">
+
+      <div class="trigger">
+            <a class="page-link" href="about.html"    class='link' id='about-link'>about</a>
+            <a class="page-link" href="manual.html"   class='link' id='manual-link'>manual</a>
+            <a class="page-link" href="download.html" class='link' id='download-link'>download</a>
+            <a class="page-link" href="credits.html"  class='link' id='credits-link'>credits</a>
+      </div>
+
+    </nav>
+
+  </div>
+</header>
+    <div class="container">
+      <section id="main_content">
+          <div id='bubbles'>
+          <div id="div-about"    class="tip-bubble"><div class="tip" id="tip-about"></div><div class='bubble' id='about'>what is password-turtle?</div></div>
+          <div id="div-credits"  class="tip-bubble"><div class="tip" id="tip-credits"></div><div class='bubble' id='credits'>what is it<br>made of?</div></div>
+          <div id="div-manual"   class="tip-bubble"><div class='bubble' id='manual'>how does<br>it work?</div><div class="tip" id="tip-manual"></div></div>
+          <div id="div-download" class="tip-bubble"><div class='bubble' id='download'>where to get it?</div><div class="tip" id="tip-download"></div></div>
+          </div>
+        <img src="img/turtlesq.jpg" usemap="#sheeps" id='turtles'>
+        <map name="sheeps">
+            <area onmouseover="bubble('about');"    onmouseout="unbubble('about');"    shape="rect" coords="20,220,400,480"  href="about.html"   >
+            <area onmouseover="bubble('credits');"  onmouseout="unbubble('credits');"  shape="rect" coords="160,50,280,250"  href="credits.html" >
+            <area onmouseover="bubble('download');" onmouseout="unbubble('download');" shape="rect" coords="280,80,390,180"  href="download.html">
+            <area onmouseover="bubble('manual');"   onmouseout="unbubble('manual');"   shape="rect" coords="350,150,590,320" href="manual.html"  >
+        </map>
+      </section>
+    </div>
+  </body>
+</html>

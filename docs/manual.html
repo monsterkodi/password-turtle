@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <title>password-turtle manual</title>
+    <meta name="description" content="password generator">
+    <link rel="stylesheet" type="text/css" href="style/style.css" media="screen">
+  </head>
+  <body>
+    <header>
+  <style>
+  .link {
+      font-weight: bold;
+  }
+  
+  #about-link {
+      color: red;
+  }
+  #about-link:hover {
+      color: orange;
+  }
+  #download-link {
+      color: orange;
+  }
+  #download-link:hover {
+      color: yellow;
+  }
+  #credits-link {
+      color: green;
+  }
+  #credits-link:hover {
+      color: #3f3;
+  }
+  #manual-link {
+      color: #88f;
+  }
+  #manual-link:hover {
+      color: #ccf;
+  }
+  </style>
+  <div class="container">
+    <h1><a href="index.html">password-turtle</a></h1>
+
+    <nav class="site-nav">
+
+      <div class="trigger">
+            <a class="page-link" href="about.html"    class='link' id='about-link'>about</a>
+            <a class="page-link" href="manual.html"   class='link' id='manual-link'>manual</a>
+            <a class="page-link" href="download.html" class='link' id='download-link'>download</a>
+            <a class="page-link" href="credits.html"  class='link' id='credits-link'>credits</a>
+      </div>
+
+    </nav>
+
+  </div>
+</header>
+
+    <div class="container">
+      <section id="main_content">
+        <h1 id="manual">Manual</h1>
+
+<h2 id="setup">Setup</h2>
+
+<p>When you start the application a turtle icon will be added to your menu bar:</p>
+
+<p><img src="./img/menubar.png" alt="menubar" /></p>
+
+<p>Clicking the menu icon will open the application window and prompt you to enter your master key:</p>
+
+<p><img src="./img/welcome.png" alt="welcome" /></p>
+
+<p>… and a default pattern:</p>
+
+<p><img src="./img/pattern.png" alt="pattern" /></p>
+
+<h2 id="tips-for-choosing-a-pattern">Tips for choosing a pattern</h2>
+
+<p>The length of the pattern determines the length of the generated passwords.</p>
+
+<p>The kind of characters you use in the pattern is reflected in the password.</p>
+
+<p>If you use a pattern with some reasonable length and include some special characters and digits in it, you can probably use it for most of the sites out there.</p>
+
+<p>From now on, if you enter a site name the turtle will generate a unique password for it:</p>
+
+<p><img src="./img/site.png" alt="site" /></p>
+
+<h1 id="normal-usage">Normal Usage</h1>
+
+<p>To generate a password for a site …</p>
+
+<ul>
+  <li>activate the application</li>
+  <li>enter the master key and press Enter</li>
+  <li>enter the site name and press Enter</li>
+</ul>
+
+<p>The generated password is copied to the clipboard and ready to be pasted in your browser.</p>
+
+<h1 id="the-site-list">The site list</h1>
+
+<p>If you press Enter while the password field has focus, the current site will be added to your site list
+and a blue lock icon will be displayed:</p>
+
+<p><img src="./img/lock.png" alt="lock" /></p>
+
+<p>The site list has several purposes:</p>
+
+<ul>
+  <li>it provides an overview of your accounts</li>
+  <li>the passwords for sites in the list can be masked</li>
+  <li>choosing a site from the list might be faster than typing it</li>
+  <li>changing the default pattern won’t affect the sites in your site list</li>
+</ul>
+
+<p>This is how a site list with only 2 sites might look like:</p>
+
+<p><img src="./img/list.png" alt="list" /></p>
+
+<p>Note that the two sites have different lock icons. 
+The blue icon tells you that the site has the current default pattern attached.
+The orange lock is displayed when the site’s pattern differs from the current default pattern.</p>
+
+<h2 id="remove-sites">Remove sites</h2>
+
+<p>There are two ways to remove a site from the site list:
+either press Command-Backspace while the site is selected in the site list
+or press Command-Backspace while the password field is selected on the main screen.</p>
+
+<h1 id="pattern">Pattern</h1>
+
+<p>Clicking on the turtle image will toggle between the main screen and the pattern screen.
+The pattern screen lets you review or change your default pattern and provides a menu for accessing the other screens:</p>
+
+<p><img src="./img/patternmenu.png" alt="patternmenu" /></p>
+
+<h1 id="preferences">Preferences</h1>
+
+<p>The preferences list lets you change the keyboard shortcuts and other settings:</p>
+
+<p><img src="./img/prefs.png" alt="prefs" /></p>
+
+<h1 id="vault">Vault</h1>
+
+<p>The vault is a simple key value list that gets stored in your stash file. 
+It has no specific purpose. 
+You could use it for example to store license keys for commercial software.</p>
+
+<p><img src="./img/vault.png" alt="vault" /></p>
+
+<p>To create a new entry, just press Command-N.</p>
+
+<h1 id="caveats">Caveats</h1>
+
+<p>If you forget your master password, you won’t be able to decrypt your stash file and regenerate your passwords.</p>
+
+<p>If you loose your stash file, your default pattern, site list and vault items will be lost.</p>
+
+<p>Therefore: don’t forget your master password and regularly backup your stash file, which is located at</p>
+
+<pre>~/Library/Preferences/password-turtle.stash</pre>
+
+      </section>
+    </div>
+
+    <!-- <a href="https://github.com/monsterkodi/password-turtle" class="btn">
+  <div class="icon">
+      <svg viewBox="0 0 16 16">
+        <path class="kitty" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/>
+      </svg>
+  </div>
+  GitHub
+</a>
+ -->
+
+  </body>
+</html>
