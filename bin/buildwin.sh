@@ -7,8 +7,11 @@ if rm -rf password-turtle-win32-x64; then
 
     node_modules/.bin/electron-rebuild
     
-    node_modules/electron-packager/cli.js . password-turtle --no-prune --icon=img/turtle.ico
+    node_modules/electron-packager/cli.js . password-turtle --no-prune --icon=img/app.ico
     
-else
-    handle64 -nobanner password-turtle-win32-x64\\resources\\electron.asar
+    rm -rf password-turtle-win32-x64/resources/app/node_modules/electron-packager
+    rm -rf password-turtle-win32-x64/resources/app/node_modules/electron-rebuild
+    rm -rf password-turtle-win32-x64/resources/app/node_modules/electron
+    rm -rf password-turtle-win32-x64/resources/app/inno
+
 fi

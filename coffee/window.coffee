@@ -37,7 +37,7 @@ containsLink  = _url.containsLink
 jsonStr       = (a) -> JSON.stringify a, null, " "
 
 mstr          = undefined
-stashFile     = slash.join app.getPath('userData'), "#{@name}.noon"
+stashFile     = slash.join app.getPath('userData'), "password-turtle.stash"
 stash         = undefined
 stashExists   = false
 stashLoaded   = false
@@ -569,6 +569,7 @@ toggleStash = ->
         showStash()
 
 showStash = () ->
+    
     return if not stashLoaded
     return if empty stash.configs
 
@@ -754,8 +755,6 @@ showVault = () ->
 000        000   000  000       000            000
 000        000   000  00000000  000       0000000
 ###
-
-# prefsFile = process.env.HOME+'/Library/Preferences/password-turtle.json'
 
 prefInfo =
     shortcut: { type: 'shortcut', text: 'global shortcut'         }
