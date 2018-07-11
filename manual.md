@@ -9,15 +9,15 @@ layout: default
 
 When you start the application a turtle icon will be added to your menu bar:
 
-![menubar](img/menubar.png)
+![menubar](password-turtle/img/menubar.png)
 
 Clicking the menu icon will open the application window and prompt you to enter your master key:
 
-![welcome](img/welcome.png)
+![welcome](password-turtle/img/welcome.png)
 
 ... and a default pattern:
 
-![pattern](img/pattern.png)
+![pattern](password-turtle/img/pattern.png)
 
 ## Tips for choosing a pattern
 
@@ -29,7 +29,7 @@ If you use a pattern with some reasonable length and include some special charac
 
 From now on, if you enter a site name the turtle will generate a unique password for it:
 
-![site](img/site.png)
+![site](password-turtle/img/site.png)
 
 # Normal Usage
 
@@ -46,7 +46,7 @@ The generated password is copied to the clipboard and ready to be pasted in your
 If you press Enter while the password field has focus, the current site will be added to your site list
 and a blue lock icon will be displayed:
 
-![lock](img/lock.png)
+![lock](password-turtle/img/lock.png)
 
 The site list has several purposes:
 
@@ -57,7 +57,7 @@ The site list has several purposes:
 
 This is how a site list with only 2 sites might look like:
 
-![list](img/list.png)
+![list](password-turtle/img/list.png)
 
 Note that the two sites have different lock icons. 
 The blue icon tells you that the site has the current default pattern attached.
@@ -74,13 +74,13 @@ or press Command-Backspace while the password field is selected on the main scre
 Clicking on the turtle image will toggle between the main screen and the pattern screen.
 The pattern screen lets you review or change your default pattern and provides a menu for accessing the other screens:
 
-![patternmenu](img/patternmenu.png)
+![patternmenu](password-turtle/img/patternmenu.png)
 
 # Preferences
 
 The preferences list lets you change the keyboard shortcuts and other settings:
 
-![prefs](img/prefs.png)
+![prefs](password-turtle/img/prefs.png)
 
 # Vault
 
@@ -88,7 +88,7 @@ The vault is a simple key value list that gets stored in your stash file.
 It has no specific purpose. 
 You could use it for example to store license keys for commercial software.
 
-![vault](img/vault.png)
+![vault](password-turtle/img/vault.png)
 
 To create a new entry, just press Command-N.
     
