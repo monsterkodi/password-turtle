@@ -6,7 +6,7 @@
 00     00  000  000   000  0000000     0000000   00     00
 ###
 
-{ prefs, args, empty, elem, open, slash, stopEvent, keyinfo, last, error, log, fs, $, _ } = require 'kxk'
+{ prefs, args, empty, elem, open, slash, stopEvent, keyinfo, last, error, log, os, fs, $, _ } = require 'kxk'
 
 _url      = require './js/tools/urltools'
 password  = require './js/tools/password'
@@ -63,8 +63,25 @@ resetStash = ->
 000   000  000   000  000  000   000
 ###
 
+masterStart = ->
+
+    win.setSize win.getSize()[0], 491
+    startTimeout prefs.get 'timeout', 5    
+    if stashExists
+        $('turtle').disabled = false
+        updateSiteFromClipboard()
+        showSitePassword()
+        masterSitePassword()
+    else
+        showSettings()
+        $('buttons').style.display = 'none'
+
 masterAnimDir = 0
 masterAnim = ->
+    if os.platform() == 'darwin'
+        $("master").value = ''
+        setTimeout masterStart, 0
+        return
     if masterAnimDir == 1
         if $("master").value.length < 24
             $("master").value += 'x'
@@ -78,23 +95,17 @@ masterAnim = ->
             win.setSize win.getSize()[0], Math.max(win.getSize()[1], 491-$("master").value.length*6)
             setTimeout masterAnim, 0
         else
-            win.setSize win.getSize()[0], 491
-            startTimeout prefs.get 'timeout', 5
             masterAnimDir = 0
-            if stashExists
-                $('turtle').disabled = false
-                updateSiteFromClipboard()
-                showSitePassword()
-                masterSitePassword()
-            else
-                showSettings()
-                $('buttons').style.display = 'none'
+            masterStart()
 
 masterFade = ->
     $('turtle').disabled = true
-    if win.getSize()[1] > 360
-        win.setSize win.getSize()[0], Math.max 360, win.getSize()[1]-12
-        setTimeout masterFade, 0
+    if os.platform() == 'darwin'
+        win.setSize win.getSize()[0], 360
+    else
+        if win.getSize()[1] > 360
+            win.setSize win.getSize()[0], Math.max 360, win.getSize()[1]-12
+            setTimeout masterFade, 0
 
 ###
 000  000   000  00000000   000   000  000000000
