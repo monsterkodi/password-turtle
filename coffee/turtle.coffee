@@ -6,7 +6,7 @@
    000      0000000   000   000     000     0000000  00000000
 ###
 
-{ slash, args, prefs, fs } = require 'kxk'
+{ slash, args, prefs, fs, klog } = require 'kxk'
 
 pkg      = require '../package.json'
 events   = require 'events'
@@ -28,7 +28,7 @@ win      = undefined
 tray     = undefined
 noToggle = false 
     
-prefs.init shortcut:'ctrl+f3', confirm: true, timeout: 2
+prefs.init shortcut:'ctrl+f3' confirm:true timeout:2
 
 # 000  00000000    0000000  
 # 000  000   000  000       
@@ -36,15 +36,15 @@ prefs.init shortcut:'ctrl+f3', confirm: true, timeout: 2
 # 000  000        000       
 # 000  000         0000000  
 
-ipc.on 'console.log',   (event, args) -> log.apply console, args
-ipc.on 'console.error', (event, args) -> log.apply console, args
-ipc.on 'process.exit',  (event, code) -> log 'exit via ipc';  process.exit code
+ipc.on 'console.log'   (event, args) -> log.apply console, args
+ipc.on 'console.error' (event, args) -> log.apply console, args
+ipc.on 'process.exit'  (event, code) -> log 'exit via ipc';  process.exit code
     
-ipc.on 'debug',         -> debug    = true
-ipc.on 'enableToggle',  -> noToggle = false
-ipc.on 'disableToggle', -> noToggle = true
-ipc.on 'globalShortcut', (event, key) ->     
-    prefs.set 'shortcut', key
+ipc.on 'debug'         -> debug    = true
+ipc.on 'enableToggle'  -> noToggle = false
+ipc.on 'disableToggle' -> noToggle = true
+ipc.on 'globalShortcut' (event, key) ->     
+    prefs.set 'shortcut' key
     electron.globalShortcut.register key, toggleWindow
      
 ###
@@ -55,8 +55,12 @@ ipc.on 'globalShortcut', (event, key) ->
 0000000   000   000   0000000   00     00
 ###
 
+activating = false
+
 showWindow = ->
-    win.show() unless win.isVisible()
+    activating = true
+    win.show() 
+    win.focus() 
     win.setResizable debug
     win
 
@@ -76,13 +80,22 @@ toggleWindow = ->
         win.show()
 
 onBlur = ->
-    if not debug 
+    if not debug and not activating
         win.hide()
+    activating = false
         
 createWindow = ->
     
-    app.on 'ready', ->
+    app.on 'activate' showWindow
+    
+    app.on 'ready' ->
 
+        if app.requestSingleInstanceLock()
+            app.on 'second-instance' showWindow 
+        else
+            app.quit()
+            return
+        
         app.dock?.hide()
         
         Menu.setApplicationMenu Menu.buildFromTemplate [
@@ -149,7 +162,6 @@ createWindow = ->
         win.loadURL slash.fileUrl cwd + '/turtle.html'
         
         win.on 'blur' onBlur
-        
-            
+                    
 createWindow()            
   

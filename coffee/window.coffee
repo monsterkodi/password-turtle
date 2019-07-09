@@ -946,7 +946,7 @@ onPrefsKey = (event) ->
 ###
 
 toggleAbout = () ->
-    log 'toggle about'
+
     if $('about-github')
         restoreBody()
     else

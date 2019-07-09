@@ -1,5 +1,5 @@
 name            password-turtle
-version         1.7.0
+version         1.8.0
 description     password generator
 repository
                 type  git
@@ -10,6 +10,7 @@ dependencies
                 bcryptjs        ^2.4.3
                 font-awesome    ^4.7.0
                 format          ^0.2.2
+                konrad          ^0.133.0
                 kxk             https://github.com/monsterkodi/kxk.git
                 node-uuid       ^1.4.8
                 sleep           ^6.1.0
