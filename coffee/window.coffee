@@ -6,7 +6,7 @@
 00     00  000  000   000  0000000     0000000   00     00
 ###
 
-{ prefs, args, empty, elem, open, slash, stopEvent, keyinfo, last, error, log, os, fs, $, _ } = require 'kxk'
+{ prefs, args, empty, elem, open, slash, stopEvent, keyinfo, last, os, fs, $, _ } = require 'kxk'
 
 _url      = require './js/tools/urltools'
 password  = require './js/tools/password'
@@ -888,8 +888,6 @@ showPrefs = () ->
                     msg.addEventListener 'keydown', (event) ->
 
                         { mod, key, combo } = keyinfo.forEvent event
-                        
-                        log 'combo', combo
                         
                         input = $('input', event.target.parentElement)
                         

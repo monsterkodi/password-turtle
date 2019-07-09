@@ -11,7 +11,7 @@ crypto = require 'crypto'
 bcrypt = require 'bcryptjs'
 
 ipc = require("electron").ipcRenderer
-log = () -> ipc.send 'console.log',   [].slice.call arguments, 0
+# log = () -> ipc.send 'console.log',   [].slice.call arguments, 0
 
 cipherType   = 'aes-256-cbc'
 fileEncoding = encoding:'utf8'

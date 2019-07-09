@@ -6,7 +6,7 @@
    000      0000000   000   000     000     0000000  00000000
 ###
 
-{ slash, args, prefs, log, fs } = require 'kxk'
+{ slash, args, prefs, fs } = require 'kxk'
 
 pkg      = require '../package.json'
 events   = require 'events'
@@ -112,9 +112,9 @@ createWindow = ->
         
         cwd = slash.join __dirname, '..'
         
-        tray = new Tray slash.join cwd, 'img', 'tray.png'
+        tray = new Tray slash.join cwd, 'img' 'tray.png'
         
-        tray.on 'click', toggleWindow
+        tray.on 'click' toggleWindow
 
         # 000   000  000  000   000
         # 000 0 000  000  0000  000
@@ -125,7 +125,7 @@ createWindow = ->
         screenSize = electron.screen.getPrimaryDisplay().workAreaSize
         windowWidth = 364
 
-        winpos = prefs.get 'winpos', x:Number(((screenSize.width-windowWidth)/2).toFixed()), y:0
+        winpos = prefs.get 'winpos' x:Number(((screenSize.width-windowWidth)/2).toFixed()), y:0
 
         win = new BrowserWindow
             dir:                cwd
@@ -136,20 +136,20 @@ createWindow = ->
             width:              windowWidth
             height:             360
             frame:              false
+            webPreferences: 
+                nodeIntegration: true
             
-        win.webContents.on 'did-finish-load', =>
-             if debug
-                win.webContents.openDevTools()
-            
-        win.on 'ready-to-show', (event) -> 
+        win.on 'ready-to-show' (event) -> 
             win = event.sender
             win.show()
+            if debug then win.openDevTools()
         
         electron.globalShortcut.register prefs.get('shortcut'), toggleWindow
 
         win.loadURL slash.fileUrl cwd + '/turtle.html'
         
-        win.on 'blur', onBlur
+        win.on 'blur' onBlur
+        
             
 createWindow()            
   
