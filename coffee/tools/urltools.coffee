@@ -6,15 +6,14 @@
  0000000   000   000  0000000     000      0000000    0000000   0000000  0000000 
 ###
 
-{ _ }  = require 'kxk'
-_s = require 'underscore.string'
+{ _ } = require 'kxk'
 
 re = /(^|\s|(?:http[s]?:\/\/))(?:[\w-]+\.)+\w[\w-]+(?::[1-9]\d+)?(?:\/[\w\.-~]*)*[\?\w\d\+\-\.,;=&\/#%\$]*(?:\s|$)/
 
 exports.extractSite = (str) ->
     r = /(^|\s|(?:http[s]?:\/\/))((?:[\w-]+\.)+\w[\w-]+)(?::[1-9]\d+)?(?:\/[\w\.-~]*)*[\?\w\d\+\-\.,;=&\/#%\$]*(?:\s|$)/
     s = str.match(r)[2]
-    s = s.substr(4) if _s.startsWith(s, 'www.')
+    s = s.substr(4) if s.startsWith 'www.'
     s
 
 exports.containsLink = (str) -> str.search(re) >= 0
@@ -114,10 +113,10 @@ exports.extractDomain = (str) ->
     m = str.match r
     if m? and m.length > 2
         s = m[2]
-        s = s.substr(4) if _s.startsWith(s, 'www.')
+        s = s.substr(4) if s.startsWith 'www.'
         split = s.split('.')
         if _.last(split) in toplevelDomains
             return (_.slice split, split.length-2).join '.'
         else
-            console.log 'not in toplevelDomains:', _.last(s.split('.'))
+            log 'not in toplevelDomains:', _.last(s.split('.'))
     undefined

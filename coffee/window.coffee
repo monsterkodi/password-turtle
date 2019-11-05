@@ -6,13 +6,12 @@
 00     00  000  000   000  0000000     0000000   00     00
 ###
 
-{ prefs, args, empty, elem, open, slash, stopEvent, keyinfo, last, os, fs, $, _ } = require 'kxk'
+{ stopEvent, keyinfo, slash, stash, prefs, empty, about, elem, open, last, args, app, win, os, fs, $, _ } = require 'kxk'
 
 _url      = require './js/tools/urltools'
 password  = require './js/tools/password'
 cryptools = require './js/tools/cryptools'
 uuid      = require 'node-uuid'
-sleep     = require 'sleep'
 electron  = require 'electron'
 
 ipc       = electron.ipcRenderer

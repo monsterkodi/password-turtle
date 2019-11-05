@@ -6,7 +6,7 @@
    000      0000000   000   000     000     0000000  00000000
 ###
 
-{ slash, args, prefs, fs, klog } = require 'kxk'
+{ stash, prefs, slash, args, app, win } = require 'kxk'
 
 pkg      = require '../package.json'
 events   = require 'events'
@@ -19,11 +19,11 @@ BrowserWindow = electron.BrowserWindow
 Menu          = electron.Menu
 
 args = args.init """
-    stash  stash file   *
-    debug  log debug    false . - D
+    stash       stash file   *
+    devtools    open developer tools        false  -D
 """
 
-debug    = args.debug ? false
+debug    = args.devtools
 win      = undefined
 tray     = undefined
 noToggle = false 
@@ -155,7 +155,8 @@ createWindow = ->
         win.on 'ready-to-show' (event) -> 
             win = event.sender
             win.show()
-            if debug then win.openDevTools()
+            if args.devtools
+                win.webContents.openDevTools mode:'detach'
         
         electron.globalShortcut.register prefs.get('shortcut'), toggleWindow
 
