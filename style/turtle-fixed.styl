@@ -67,6 +67,9 @@ a
     padding-top         0px
     padding-bottom      3px
     
+#master
+    font-size       38px
+    
 .ghost
     ghost-transition()
     pointer-events  none
@@ -98,25 +101,25 @@ a
     
 .lock    
 #lock
-    top:            12px
-    opacity:        0    
+    top             14px
+    opacity         0    
     &.closed
     &.open
-        opacity:    1
+        opacity     1
 
 .bool    
-    top:            14px
-    opacity:        0    
+    top             14px
+    opacity         0    
     &.bool-true
     &.bool-false
-        opacity:    1
-        opacity:    1
+        opacity     1
+        opacity     1
 
 #floppy
-    font-size:      19px
-    top:            15px
-    text-align:     right
-    padding-right:  20px
+    font-size       19px
+    top             15px
+    text-align      right
+    padding-right   20px
     
 /*
 0000000     0000000   00000000   0000000    00000000  00000000   
@@ -129,10 +132,10 @@ a
 .border
     nodrag()
     input-transition()
-    position:      relative
-    padding:       10px
-    margin-left:   12px
-    margin-right:  12px
+    position        relative
+    padding         10px
+    margin-left     12px
+    margin-right    12px
     box-sizing      border-box
     border-radius   4px
 
@@ -140,6 +143,7 @@ a
 #pattern-border
 #master-border
 #site-border
+    height          55px      
     margin-bottom   12px
 
 #turtle
@@ -155,50 +159,58 @@ a
 #bubble
     bubble-transition()
     nodrag()
-    position:       absolute
-    top:            170px    
-    right:          27px
+    position        absolute
+    top             170px    
+    right           27px
     &.ask
     &.say
-        pointer-events: all
-        opacity:        1
+        pointer-events  all
+        opacity         1
     &.whisper
-        pointer-events: all
-        opacity:        1 
+        pointer-events  all
+        opacity         1 
     &.silent
-        pointer-events: none
-        opacity:        0
+        pointer-events  none
+        opacity         0
 
 #say-tri
     bubble-transition()
-    position:      absolute
-    width:         0
-    height:        0
-    right:         33px
+    position       absolute
+    width          0
+    height         0
+    right          33px
 
 #say-box
     bubble-transition()
-    position:         relative
-    top:              20px
-    right:            0
-    left:             0
+    position          relative
+    top               20px
+    right             0
+    left              0
 
 #say
     bubble-transition()
-    padding:          14px
-    max-height:       46px
-    min-width:        90px
-    overflow:         hidden
+    padding           14px
+    max-height        46px
+    min-width         90px
+    overflow          hidden
     
 .whisper #say
-    padding:          10px
-    padding-right:    14px
+    padding           10px
+    padding-right     14px
     
 .silent #say
-    font-size:        1px
+    font-size         1px
     
 .open:hover
-    cursor: pointer
+    cursor  pointer
+
+//  0000000   0000000  00000000    0000000   000      000      
+// 000       000       000   000  000   000  000      000      
+// 0000000   000       0000000    000   000  000      000      
+//      000  000       000   000  000   000  000      000      
+// 0000000    0000000  000   000   0000000   0000000  0000000  
+
+scrollWidth = 6px
 
 .scroll
     overflow-x hidden
@@ -206,6 +218,15 @@ a
     border 1px solid reds
     height 397px
 
+::-webkit-scrollbar
+    width                   scrollWidth
+::-webkit-scrollbar
+    height                  scrollWidth  
+    background-color        transparent
+::-webkit-scrollbar-track
+    background-color        transparent
+    
+    
 #settings
     position: absolute
     left:     0
@@ -227,6 +248,7 @@ a
     padding               10px
     margin                0px
     margin-left           13px
+    height                58px
 
 .button
     nodrag()
@@ -311,50 +333,51 @@ a
     bottom          0px
     margin          5px
     text-align      left
-    padding-left:   8px
-    padding-right:  8px
-    padding-top:    0px
-    padding-bottom: 1px
+    padding-left    8px
+    padding-right   8px
+    padding-top     0px
+    padding-bottom  1px
 
 
 .stash-item-border
     no-transition()
-    padding:  5px
+    padding   5px
     & .site
     & .lock    
     & .pattern
-        position:       absolute
-        pointer-events: none
-        top:            7px
+        position        absolute
+        pointer-events  none
+        top             7px
     & .site
-        left:      10px
+        left       10px
     & .lock
-        left:      0
-        right:     0
-        text-align: center
+        left       0
+        right      0
+        text-align  center
     & .pattern
-        left:      60%
+        left       60%
 
 .pref-item-border
     no-transition()
-    padding:  5px
+    padding   5px
     & .int
     & .shortcut
     & .bool
     & .pref    
-        position:       absolute
-        pointer-events: none
-        top:            11px
+        position        absolute
+        pointer-events  none
+        top             11px
     & .pref        
-        left:      20px
+        top             13px
+        left       20px
     & .int
     & .shortcut
     & .bool
-        right:     20px
+        right      20px
 
 .pref-item
-    width:         100%
-    height:        32px
+    width          100%
+    height         32px
     
 .pref-overlay.shortcut
 .pref-overlay.int
