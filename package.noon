@@ -1,5 +1,5 @@
 name            password-turtle
-version         1.10.0
+version         1.11.0
 description     password generator
 main            js/turtle.js
 repository
@@ -10,10 +10,10 @@ bugs
 dependencies
                 bcryptjs      ^2.4.3
                 font-awesome  ^4.7.0
-                kxk           ^0.356.0
+                kxk           ^0.389.0
                 node-uuid     ^1.4.8
 devDependencies
-                konrad          ^0.162.0
-                electron        ^7.1.0
-                electron-packager  ^14.1.0
-                electron-rebuild  ^1.8.6
+                konrad          ^0.176.0
+                electron        ^8.1.1
+                electron-packager  ^14.2.1
+                electron-rebuild  ^1.10.1
