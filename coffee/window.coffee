@@ -6,7 +6,7 @@
 00     00  000  000   000  0000000     0000000   00     00
 ###
 
-{ $, _, about, args, elem, empty, fs, keyinfo, last, open, os, post, prefs, slash, stash, stopEvent, win } = require 'kxk'
+{ $, _, about, args, elem, empty, fs, keyinfo, last, open, post, prefs, slash, stash, stopEvent } = require 'kxk'
 
 _url      = require './js/tools/urltools'
 password  = require './js/tools/password'
@@ -63,8 +63,7 @@ getWinSize =       -> electron.ipcRenderer.sendSync 'getWinSize'
 
 masterStart = ->
 
-    setWinSize getWinSize()[0], 491
-    startTimeout prefs.get 'timeout', 5    
+    startTimeout prefs.get 'timeout' 5    
     if stashExists
         $('turtle').disabled = false
         updateSiteFromClipboard()
@@ -74,40 +73,15 @@ masterStart = ->
         showSettings()
         $('buttons').style.display = 'none'
 
-masterAnimDir = 0
 masterAnim = ->
-    master =$ 'master' 
-    if os.platform() == 'darwin'
-        master.value = ''
-        setTimeout masterStart, 0
-        return
-    if masterAnimDir == 1
-        if master.value.length < 24
-            master.value += 'x'
-            setTimeout masterAnim, 0
-            return
-        else
-            masterAnimDir = -1
-    if masterAnimDir == -1
-        if master.value.length > 0
-            master.value = master.value.substr(0, Math.max(0, master.value.length-2))
-            ws = getWinSize()
-            setWinSize ws[0], Math.max(ws[1], 491-master.value.length*6)
-            setTimeout masterAnim, 0
-        else
-            masterAnimDir = 0
-            masterStart()
-
+    master =$ 'master'
+    master.value = ''
+    setWinSize 364 491
+    setTimeout masterStart, 10
+    
 masterFade = ->
     $('turtle').disabled = true
-    if os.platform() == 'darwin'
-        setWinSize getWinSize()[0], 360
-        true
-    else
-        if win.getSize()[1] > 360
-            ws = getWinSize()
-            setWinSize ws[0], Math.max 360, ws[1]-12
-            setTimeout masterFade, 0
+    setWinSize 364 360
 
 ###
 000  000   000  00000000   000   000  000000000
@@ -124,7 +98,6 @@ masterConfirmed = ->
                 if stashLoaded
                     $('turtle').disabled = false
                     say()
-                    masterAnimDir = 1
                     masterAnim()
                     $('master-timeout')?.style.width = '100%'
                     $('master-timeout')?.style.left = '0%'
@@ -133,7 +106,6 @@ masterConfirmed = ->
         else
             say ['Well chosen!', 'Nice one!', 'Good choice!'][random 2],
                 'And your <span class="open" onclick="openUrl(\'http://github.com\');">password pattern?</span>'
-            masterAnimDir = 1
             masterAnim()
 
 patternConfirmed = ->
@@ -334,34 +306,30 @@ onKeyDown = (event) ->
 
     { mod, key, combo, char } = keyinfo.forEvent event
 
-    e = document.activeElement
     resetTimeout()
 
     switch combo
-        # when 'alt+ctrl+i'           then ipc.send('debug'); win.webContents.toggleDevTools(); return 
-        # when 'alt+ctrl+l'           then return win.webContents.reloadIgnoringCache()
-        when 'command+w', 'ctrl+w'  then return electron.ipcRenderer.send 'hide'
-        when 'command+q', 'ctrl+q'  then return electron.ipcRenderer.send 'quit'
-        when 'command+.', 'ctrl+.'  then return toggleAbout()
-        when 'alt+i', 'ctrl+i'      then return toggleStyle()
+        when 'command+w' 'ctrl+w' 'command+h', 'ctrl+h' then return electron.ipcRenderer.send 'hide'
+        when 'command+q' 'ctrl+q'  then return electron.ipcRenderer.send 'quit'
+        when 'command+.' 'ctrl+.'  then return toggleAbout()
+        when 'alt+i' 'ctrl+i'      then return toggleStyle()
         when 'esc'
             if not $('bubble')? then return restoreBody()
-            if $('settings').style.display != 'none' then return toggleSettings()
+            else if $('settings').style.display != 'none' then return toggleSettings()
+            else return electron.ipcRenderer.send 'hide'
 
     if $('stashlist')? then return onStashKey event
     if $('vaultlist')? then return onVaultKey event
     if $('prefslist')? then return onPrefsKey event
-
-    if not $('site')?
-        # log 'no site?'
-        return
+    if not $('site')?  then return
 
     site = $('site').value
     hash = genHash(site+mstr)
 
+    e = document.activeElement
     if e == $('password')
         switch combo
-            when 'command+backspace', 'ctrl+backspace'
+            when 'command+backspace' 'ctrl+backspace'
                 if stash.configs[hash]?
                     if ask 'Forget <i>'+stash.configs[hash].pattern+'</i>', 'for <b>'+site+'</b>?'
                         delete stash.configs[hash]
@@ -369,35 +337,33 @@ onKeyDown = (event) ->
                         writeStash()
                         masterSitePassword()
                 return
-            when 'left', 'right', 'up', 'down'
+            when 'left' 'right' 'up' 'down'
                 $('site').focus()
                 $('site').setSelectionRange 0, $('site').value.length
                 event.preventDefault()
                 return
 
     if e == $('master') and not $('master').value.length
-        if key in ['backspace', 'enter']
+        if key in ['backspace' 'enter']
             logOut()
             return
 
-    btnames = ['stash', 'vault', 'prefs', 'about', 'help']
+    btnames = ['stash' 'vault' 'prefs' 'about' 'help']
     if e.id in btnames
         switch key
-            when 'left', 'up'
-                $(btnames[btnames.indexOf(e.id)-1]).focus()
-            when 'right', 'down'
-                $(btnames[btnames.indexOf(e.id)+1]).focus()
+            when 'left' 'up'    then $(btnames[btnames.indexOf(e.id)-1]).focus()
+            when 'right' 'down' then $(btnames[btnames.indexOf(e.id)+1]).focus()
 
     switch key
-        when 'esc'
-            if e == $('pattern') or $('settings').style.display != 'none'
-                if $('pattern').value != stash.pattern
-                    setInput 'pattern', stash.pattern
-                    patternChanged()
-                    say()
-            else
-                $('pattern').value = stash.pattern
-                patternChanged()
+        # when 'esc'
+            # if e == $('pattern') or $('settings').style.display != 'none'
+                # if $('pattern').value != stash.pattern
+                    # setInput 'pattern', stash.pattern
+                    # patternChanged()
+                    # say()
+            # else
+                # $('pattern').value = stash.pattern
+                # patternChanged()
                 # win.hide()
         when 'enter'
             switch e

@@ -8,6 +8,7 @@ repository
 bugs
                 url  https://github.com/monsterkodi/password-turtle/issues
 build
+                asar  false
                 mac
                   icon  img/app.icns
 dependencies

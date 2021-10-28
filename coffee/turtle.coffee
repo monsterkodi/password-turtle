@@ -55,23 +55,6 @@ ipc.on 'hide' (event) -> winForEvent(event).hide()
 ipc.on 'quit' -> electron.app.exit 0
     
 ###
- 0000000  000   000   0000000   000   000
-000       000   000  000   000  000 0 000
-0000000   000000000  000   000  000000000
-     000  000   000  000   000  000   000
-0000000   000   000   0000000   00     00
-###
-
-activating = false
-
-showWindow = ->
-    activating = true
-    win.show() 
-    win.focus() 
-    win.setResizable debug
-    win
-
-###
 000000000   0000000    0000000    0000000   000      00000000
    000     000   000  000        000        000      000     
    000     000   000  000  0000  000  0000  000      0000000 
@@ -79,100 +62,92 @@ showWindow = ->
    000      0000000    0000000    0000000   0000000  00000000
 ###
 
-toggleWindow = ->
-    return if noToggle
-    if win and win.isVisible()
-        win.hide()
-    else
-        win.show()
+activating = false
+showWin = -> activating = true; win?.show(); win?.focus(); electron.app.dock?.show()
+hideWin = -> win?.hide(); electron.app.dock?.hide()
 
-onBlur = ->
+onBlur = -> 
     if not debug and not activating
-        win.hide()
+        hideWin()
     activating = false
         
-createWindow = ->
-    
-    app.on 'activate' showWindow
-    
-    app.on 'ready' ->
+app.on 'activate' showWin
 
-        if app.requestSingleInstanceLock()
-            app.on 'second-instance' showWindow 
-        else
-            app.quit()
-            return
-        
-        app.dock?.hide()
-        
-        Menu.setApplicationMenu Menu.buildFromTemplate [
-            label: app.getName()
-            submenu: [
-                label: 'Cut'
-                accelerator: 'CmdOrCtrl+X'
-                selector: 'cut:'
-            ,
-                label: 'Copy'
-                accelerator: 'CmdOrCtrl+C'
-                selector: 'copy:'
-            ,
-                label: 'Paste'
-                accelerator: 'CmdOrCtrl+V'
-                selector: 'paste:'
-            ,
-                label: 'Select All'
-                accelerator: 'Command+A'
-                selector: 'selectAll:'            
-            ,
-                label: 'Quit'
-                accelerator: 'Command+Q'
-                click: app.quit
-            ]
+app.on 'ready' ->
+
+    if app.requestSingleInstanceLock()
+        app.on 'second-instance' showWin
+    else
+        app.quit()
+        return
+    
+    Menu.setApplicationMenu Menu.buildFromTemplate [
+        label: app.getName()
+        submenu: [
+            label: 'Cut'
+            accelerator: 'CmdOrCtrl+X'
+            selector: 'cut:'
+        ,
+            label: 'Copy'
+            accelerator: 'CmdOrCtrl+C'
+            selector: 'copy:'
+        ,
+            label: 'Paste'
+            accelerator: 'CmdOrCtrl+V'
+            selector: 'paste:'
+        ,
+            label: 'Select All'
+            accelerator: 'Command+A'
+            selector: 'selectAll:'            
+        ,
+            label: 'Quit'
+            accelerator: 'Command+Q'
+            click: app.quit
         ]
-        
-        cwd = slash.join __dirname, '..'
-        
-        tray = new Tray slash.join cwd, 'img' 'tray.png'
-        
-        tray.on 'click' toggleWindow
+    ]
+    
+    cwd = slash.join __dirname, '..'
+    
+    tray = new Tray slash.join cwd, 'img' 'tray.png'
+    
+    tray.on 'click' showWin
 
-        # 000   000  000  000   000
-        # 000 0 000  000  0000  000
-        # 000000000  000  000 0 000
-        # 000   000  000  000  0000
-        # 00     00  000  000   000
+    # 000   000  000  000   000
+    # 000 0 000  000  0000  000
+    # 000000000  000  000 0 000
+    # 000   000  000  000  0000
+    # 00     00  000  000   000
 
-        screenSize = electron.screen.getPrimaryDisplay().workAreaSize
-        windowWidth = 364
+    screenSize = electron.screen.getPrimaryDisplay().workAreaSize
+    windowWidth = 364
 
-        winpos = prefs.get 'winpos' x:Number(((screenSize.width-windowWidth)/2).toFixed()), y:0
+    winpos = prefs.get 'winpos' x:Number(((screenSize.width-windowWidth)/2).toFixed()), y:0
 
-        win = new BrowserWindow
-            dir:                cwd
-            show:               false
-            backgroundColor:    '#222'
-            x:                  winpos.x
-            y:                  winpos.y
-            width:              windowWidth
-            height:             360
-            frame:              false
-            webPreferences: 
-                webSecurity:            false
-                contextIsolation:       false
-                nodeIntegration:        true
-                nodeIntegrationInWorker: true
-            
-        win.on 'ready-to-show' -> 
-            win.show()
-            if args.devtools
-                win.webContents.openDevTools mode:'detach'
+    win = new BrowserWindow
+        dir:                cwd
+        show:               false
+        backgroundColor:    '#222'
+        x:                  winpos.x
+        y:                  winpos.y
+        width:              windowWidth
+        height:             360
+        frame:              false
+        webPreferences: 
+            webSecurity:            false
+            contextIsolation:       false
+            nodeIntegration:        true
+            nodeIntegrationInWorker: true
         
-        if prefs.get('shortcut')
-            electron.globalShortcut.register prefs.get('shortcut'), toggleWindow
+    win.on 'ready-to-show' -> 
+        win.show()
+        if args.devtools
+            win.webContents.openDevTools mode:'detach'
+    
+    if prefs.get('shortcut')
+        electron.globalShortcut.register prefs.get('shortcut'), showWin
 
-        win.loadURL slash.fileUrl cwd + '/turtle.html'
-        
-        win.on 'blur' onBlur
-                    
-createWindow()            
+    win.loadURL slash.fileUrl cwd + '/turtle.html'
+    
+    win.on 'blur' onBlur
+                
   
