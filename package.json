@@ -1,6 +1,6 @@
 {
   "name": "password-turtle",
-  "version": "1.11.0",
+  "version": "2.0.0",
   "description": "password generator",
   "main": "js/turtle.js",
   "repository": {
@@ -10,16 +10,20 @@
   "bugs": {
     "url": "https://github.com/monsterkodi/password-turtle/issues"
   },
+  "build": {
+    "mac": {
+      "icon": "img/app.icns"
+    }
+  },
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "font-awesome": "^4.7.0",
-    "kxk": "^0.389.0",
+    "kxk": "^0.412.0",
     "node-uuid": "^1.4.8"
   },
   "devDependencies": {
-    "konrad": "^0.176.0",
-    "electron": "^8.1.1",
-    "electron-packager": "^14.2.1",
-    "electron-rebuild": "^1.10.1"
+    "konrad": "^0.187.0",
+    "electron": "^15.3.0",
+    "electron-builder": "^22.13.1"
   }
 }

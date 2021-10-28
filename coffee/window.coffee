@@ -6,7 +6,7 @@
 00     00  000  000   000  0000000     0000000   00     00
 ###
 
-{ stopEvent, keyinfo, slash, stash, prefs, empty, about, elem, open, last, args, app, win, os, fs, $, _ } = require 'kxk'
+{ $, _, about, args, elem, empty, fs, keyinfo, last, open, os, post, prefs, slash, stash, stopEvent, win } = require 'kxk'
 
 _url      = require './js/tools/urltools'
 password  = require './js/tools/password'
@@ -16,15 +16,11 @@ electron  = require 'electron'
 
 ipc       = electron.ipcRenderer
 clipboard = electron.clipboard
-remote    = electron.remote
-app       = remote.app
 
 random    = _.random
 trim      = _.trim
 pad       = _.pad
 isNaN     = _.isNaN
-
-win       = remote.getCurrentWindow()
 
 genHash       = cryptools.genHash
 encrypt       = cryptools.encrypt
@@ -36,7 +32,7 @@ containsLink  = _url.containsLink
 jsonStr       = (a) -> JSON.stringify a, null, " "
 
 mstr          = undefined
-stashFile     = slash.join app.getPath('userData'), "password-turtle.stash"
+stashFile     = slash.join post.get('userData'), "password-turtle.stash"
 stash         = undefined
 stashExists   = false
 stashLoaded   = false
@@ -54,6 +50,9 @@ resetStash = ->
         pattern: ''
         configs: {}
 
+setWinSize = (w,h) -> electron.ipcRenderer.send 'setWinSize' w, h
+getWinSize =       -> electron.ipcRenderer.sendSync 'getWinSize'
+        
 ###
  0000000   000   000  000  00     00
 000   000  0000  000  000  000   000
@@ -64,7 +63,7 @@ resetStash = ->
 
 masterStart = ->
 
-    win.setSize win.getSize()[0], 491
+    setWinSize getWinSize()[0], 491
     startTimeout prefs.get 'timeout', 5    
     if stashExists
         $('turtle').disabled = false
@@ -77,21 +76,23 @@ masterStart = ->
 
 masterAnimDir = 0
 masterAnim = ->
+    master =$ 'master' 
     if os.platform() == 'darwin'
-        $("master").value = ''
+        master.value = ''
         setTimeout masterStart, 0
         return
     if masterAnimDir == 1
-        if $("master").value.length < 24
-            $("master").value += 'x'
+        if master.value.length < 24
+            master.value += 'x'
             setTimeout masterAnim, 0
             return
         else
             masterAnimDir = -1
     if masterAnimDir == -1
-        if $("master").value.length > 0
-            $("master").value = $("master").value.substr(0, Math.max(0, $("master").value.length-2))
-            win.setSize win.getSize()[0], Math.max(win.getSize()[1], 491-$("master").value.length*6)
+        if master.value.length > 0
+            master.value = master.value.substr(0, Math.max(0, master.value.length-2))
+            ws = getWinSize()
+            setWinSize ws[0], Math.max(ws[1], 491-master.value.length*6)
             setTimeout masterAnim, 0
         else
             masterAnimDir = 0
@@ -100,10 +101,12 @@ masterAnim = ->
 masterFade = ->
     $('turtle').disabled = true
     if os.platform() == 'darwin'
-        win.setSize win.getSize()[0], 360
+        setWinSize getWinSize()[0], 360
+        true
     else
         if win.getSize()[1] > 360
-            win.setSize win.getSize()[0], Math.max 360, win.getSize()[1]-12
+            ws = getWinSize()
+            setWinSize ws[0], Math.max 360, ws[1]-12
             setTimeout masterFade, 0
 
 ###
@@ -235,15 +238,16 @@ window.onload = ->
     initEvents()
     toggleStyle() if not prefs.get 'dark', true
 
+    $("master").blur()
     $("master").focus()
-
+    
     hideSitePassword()
     hideSettings()
     resetStash()
     stashExists = fs.existsSync stashFile
     if not stashExists
         masterChanged()
-
+        
 window.onclose = (event) ->
 
     prefs.save()
@@ -334,17 +338,15 @@ onKeyDown = (event) ->
     resetTimeout()
 
     switch combo
-        when 'alt+ctrl+i'           then ipc.send('debug'); win.webContents.toggleDevTools(); return 
-        when 'alt+ctrl+l'           then return win.webContents.reloadIgnoringCache()
-        when 'command+w', 'ctrl+w'  then return win.hide()
+        # when 'alt+ctrl+i'           then ipc.send('debug'); win.webContents.toggleDevTools(); return 
+        # when 'alt+ctrl+l'           then return win.webContents.reloadIgnoringCache()
+        when 'command+w', 'ctrl+w'  then return electron.ipcRenderer.send 'hide'
+        when 'command+q', 'ctrl+q'  then return electron.ipcRenderer.send 'quit'
         when 'command+.', 'ctrl+.'  then return toggleAbout()
         when 'alt+i', 'ctrl+i'      then return toggleStyle()
         when 'esc'
             if not $('bubble')? then return restoreBody()
             if $('settings').style.display != 'none' then return toggleSettings()
-        when 'command+q', 'ctrl+q'
-            app.exit 0
-            process.exit 0
 
     if $('stashlist')? then return onStashKey event
     if $('vaultlist')? then return onVaultKey event
@@ -396,7 +398,7 @@ onKeyDown = (event) ->
             else
                 $('pattern').value = stash.pattern
                 patternChanged()
-                win.hide()
+                # win.hide()
         when 'enter'
             switch e
                 when $("master")   then masterConfirmed()

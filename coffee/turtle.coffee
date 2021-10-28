@@ -6,7 +6,7 @@
    000      0000000   000   000     000     0000000  00000000
 ###
 
-{ stash, prefs, slash, args, app, win } = require 'kxk'
+{ app, args, prefs, slash, win } = require 'kxk'
 
 pkg      = require '../package.json'
 events   = require 'events'
@@ -28,13 +28,15 @@ win      = undefined
 tray     = undefined
 noToggle = false 
     
-prefs.init shortcut:'ctrl+f3' confirm:true timeout:2
+prefs.init shortcut:'CmdOrCtrl+F3' confirm:true timeout:2
 
 # 000  00000000    0000000  
 # 000  000   000  000       
 # 000  00000000   000       
 # 000  000        000       
 # 000  000         0000000  
+
+winForEvent = (event) -> electron.BrowserWindow.fromWebContents event.sender
 
 ipc.on 'console.log'   (event, args) -> log.apply console, args
 ipc.on 'console.error' (event, args) -> log.apply console, args
@@ -47,6 +49,11 @@ ipc.on 'globalShortcut' (event, key) ->
     prefs.set 'shortcut' key
     electron.globalShortcut.register key, toggleWindow
      
+ipc.on 'setWinSize' (event, w, h) -> winForEvent(event).setSize w, h 
+ipc.on 'getWinSize' (event, w, h) -> event.returnValue = winForEvent(event).getSize()
+ipc.on 'hide' (event) -> winForEvent(event).hide()
+ipc.on 'quit' -> electron.app.exit 0
+    
 ###
  0000000  000   000   0000000   000   000
 000       000   000  000   000  000 0 000
@@ -150,15 +157,18 @@ createWindow = ->
             height:             360
             frame:              false
             webPreferences: 
-                nodeIntegration: true
+                webSecurity:            false
+                contextIsolation:       false
+                nodeIntegration:        true
+                nodeIntegrationInWorker: true
             
-        win.on 'ready-to-show' (event) -> 
-            win = event.sender
+        win.on 'ready-to-show' -> 
             win.show()
             if args.devtools
                 win.webContents.openDevTools mode:'detach'
         
-        electron.globalShortcut.register prefs.get('shortcut'), toggleWindow
+        if prefs.get('shortcut')
+            electron.globalShortcut.register prefs.get('shortcut'), toggleWindow
 
         win.loadURL slash.fileUrl cwd + '/turtle.html'
         
