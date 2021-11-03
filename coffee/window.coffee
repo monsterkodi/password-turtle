@@ -6,7 +6,7 @@
 00     00  000  000   000  0000000     0000000   00     00
 ###
 
-{ $, _, about, args, elem, empty, fs, keyinfo, last, open, post, prefs, slash, stash, stopEvent } = require 'kxk'
+{ $, _, about, elem, empty, fs, keyinfo, last, open, post, prefs, slash, stash, stopEvent } = require 'kxk'
 
 _url      = require './js/tools/urltools'
 password  = require './js/tools/password'
@@ -1149,12 +1149,12 @@ say = () ->
         $('say').innerHTML += ' '
         $('bubble').className = 'silent'
     else
-        args = [].slice.call arguments, 0
-        if args.length == 3
-            delay = args.pop()
+        al = [].slice.call arguments, 0
+        if al.length == 3
+            delay = al.pop()
             unsay = setTimeout say, delay
         $('bubble').className = "say"
-        $('say').innerHTML = args.join "<br>"
+        $('say').innerHTML = al.join "<br>"
 
 ask = ->
     if prefs.get 'confirm', true

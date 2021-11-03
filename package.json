@@ -19,12 +19,12 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "font-awesome": "^4.7.0",
-    "kxk": "^0.412.0",
+    "kxk": "^0.418.0",
     "node-uuid": "^1.4.8"
   },
   "devDependencies": {
-    "konrad": "^0.187.0",
     "electron": "^15.3.0",
-    "electron-builder": "^22.13.1"
+    "electron-builder": "^22.13.1",
+    "konrad": "^0.189.0"
   }
 }
