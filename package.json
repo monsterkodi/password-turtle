@@ -20,7 +20,7 @@
     "bcryptjs": "^2.4.3",
     "font-awesome": "^4.7.0",
     "kxk": "^0.418.0",
-    "node-uuid": "^1.4.8"
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "electron": "^15.3.0",

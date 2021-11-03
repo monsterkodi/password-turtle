@@ -11,7 +11,7 @@
 _url      = require './js/tools/urltools'
 password  = require './js/tools/password'
 cryptools = require './js/tools/cryptools'
-uuid      = require 'node-uuid'
+uuid      = require 'uuid'
 electron  = require 'electron'
 
 ipc       = electron.ipcRenderer
