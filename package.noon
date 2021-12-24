@@ -14,9 +14,9 @@ build
 dependencies
                 bcryptjs      ^2.4.3
                 font-awesome  ^4.7.0
-                kxk           ^0.419.0
+                kxk           ^0.422.0
                 uuid          ^8.3.2
 devDependencies
-                electron        ^15.3.0
+                electron        ^15.3.1
                 electron-builder  ^22.13.1
-                konrad          ^0.191.0
+                konrad          ^0.192.0
