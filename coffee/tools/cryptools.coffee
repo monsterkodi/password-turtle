@@ -16,15 +16,32 @@ ipc = require("electron").ipcRenderer
 cipherType   = 'aes-256-cbc'
 fileEncoding = encoding:'utf8'
 
+# node's legacy crypto.createCipher()/createDecipher() derived key and iv from
+# the password with openssl's EVP_BytesToKey (md5, no salt). those functions are
+# gone from current node versions, so we do the same derivation by hand and
+# stay compatible with stash files written by older versions of this app.
+keyAndIv = (password) ->
+    data = Buffer.from password, 'utf8'
+    derived = Buffer.alloc 0
+    chunks = []
+    while Buffer.concat(chunks).length < 48
+        derived = crypto.createHash('md5').update(Buffer.concat [derived, data]).digest()
+        chunks.push derived
+    keyIv = Buffer.concat chunks
+    key: keyIv.slice 0, 32
+    iv:  keyIv.slice 32, 48
+
 encrypt = (data, key) ->
-    cipher = crypto.createCipher cipherType, genHash(key)
+    { key: aesKey, iv } = keyAndIv genHash(key)
+    cipher = crypto.createCipheriv cipherType, aesKey, iv
     enc =  cipher.update data, 'utf8', 'hex'
     enc += cipher.final 'hex'
     
 decrypt = (data, key) ->
     # log 'decrypt...' + key + ':' + data
     # log 'decrypt...' + key + ':' + genHash(key)
-    cipher = crypto.createDecipher cipherType, genHash(key)
+    { key: aesKey, iv } = keyAndIv genHash(key)
+    cipher = crypto.createDecipheriv cipherType, aesKey, iv
     dec  = cipher.update data, 'hex', 'utf8'
     dec += cipher.final 'utf8'
     

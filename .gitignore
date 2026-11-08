@@ -12,3 +12,6 @@ js
 web
 Icon?
 .build.sh
+password-turtle.desktop
+pnpm-lock.yaml
+pnpm-workspace.yaml

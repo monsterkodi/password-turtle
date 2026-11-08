@@ -1,5 +1,5 @@
 name            password-turtle
-version         2.0.0
+version         2.2.0
 description     password generator
 main            js/turtle.js
 repository
@@ -17,6 +17,11 @@ dependencies
                 kxk           ^0.422.0
                 uuid          ^8.3.2
 devDependencies
-                electron        ^15.3.1
+                electron        ^44.10.2
                 electron-builder  ^22.13.1
                 konrad          ^0.192.0
+scripts
+                postinstall  node scripts/install-electron.js
+                build  konrad
+                start  electron . --ozone-platform=x11 --force-device-scale-factor=2
+                test   node --test test/

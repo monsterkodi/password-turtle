@@ -15,7 +15,16 @@ uuid      = require 'uuid'
 electron  = require 'electron'
 
 ipc       = electron.ipcRenderer
-clipboard = electron.clipboard
+
+# electron's clipboard module lives in the main process only, and reading the
+# clipboard there can block the whole app. the browser's clipboard api does
+# the same job without blocking, so we use it and fall back to the main
+# process when it is not available (e.g. when the window is not focused).
+clipboardRead  = -> navigator.clipboard.readText()
+clipboardWrite = (text) ->
+    navigator.clipboard.writeText(text).catch (err) ->
+        log 'clipboard write failed, using the main process', err
+        ipc.send 'clipboard.writeText', text
 
 random    = _.random
 trim      = _.trim
@@ -163,7 +172,7 @@ copyPassword = ->
     resetTimeout()
     pw = currentPassword
     if pw?.length
-        clipboard.writeText pw
+        clipboardWrite pw
         $("password").focus()
         whisper '<u>password</u> copied', 2000
 
@@ -487,7 +496,7 @@ deleteStash = () ->
 
 writeStash = () ->
     stashString = JSON.stringify(stash)
-    buf = new Buffer(stashString, "utf8")
+    buf = Buffer.from(stashString, "utf8")
     cryptools.encryptFile stashFile, buf, mstr
     updateFloppy()
     if not stashLoaded
@@ -967,8 +976,11 @@ siteChanged = ->
     masterSitePassword()
 
 updateSiteFromClipboard = () ->
-    if domain = extractDomain clipboard.readText()
-        setSite domain
+    promise = clipboardRead()
+    promise.then (text) ->
+        if domain = extractDomain text
+            setSite domain
+    promise.catch (err) -> log 'clipboard read failed', err
 
 makePassword = (hash, config) -> password.make hash, config.pattern
 
