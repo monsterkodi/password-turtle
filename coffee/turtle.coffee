@@ -11,6 +11,7 @@
 pkg      = require '../package.json'
 events   = require 'events'
 electron = require 'electron'
+spawn    = require('child_process').spawn
 
 app           = electron.app
 ipc           = electron.ipcMain
@@ -70,9 +71,20 @@ ipc.on 'getWinSize' (event, w, h) -> event.returnValue = winForEvent(event).getS
 ipc.on 'hide' (event) -> winForEvent(event).hide()
 ipc.on 'quit' -> electron.app.exit 0
 
-# the renderer has no clipboard module, so it asks us to write for it
+# the renderer has no clipboard module, so it asks us to write for it.
+# the x11 selection of an xwayland client only reaches the wayland
+# clipboard when some wayland client owned it before, so on a wayland
+# desktop we hand the text to wl-copy as well.
+writeWaylandClipboard = (text) ->
+    return unless process.env.WAYLAND_DISPLAY
+    child = spawn 'wl-copy', [], stdio: ['pipe', 'ignore', 'ignore']
+    child.on 'error', (err) -> log 'wl-copy failed', err
+    child.stdin.on 'error', (err) -> log 'wl-copy failed', err
+    child.stdin.end text
+
 ipc.on 'clipboard.writeText' (event, text) ->
     electron.clipboard.writeText(text).catch (err) -> log 'clipboard write failed', err
+    writeWaylandClipboard text
     
 ###
 000000000   0000000    0000000    0000000   000      00000000

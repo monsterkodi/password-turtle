@@ -53,6 +53,13 @@ to hide it, or use the global shortcut (`ctrl+F3` by default), which toggles
 it: it shows and focuses the window, and hides it again when it is already
 there.
 
+The password is written by the main process: to the x11 selection and, on a
+wayland desktop, with `wl-copy`. The x11 selection of an xwayland client only
+reaches the wayland clipboard when some wayland client owned it before, so
+without `wl-copy` the copy would get lost whenever the wayland clipboard was
+empty. `wl-copy` gets the text on stdin, it does not show up in the process
+list.
+
 To start the app from the desktop, use the launcher in `password-turtle.desktop`
 (copy it to `~/.local/share/applications/`).
 

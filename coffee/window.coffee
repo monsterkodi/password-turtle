@@ -18,13 +18,10 @@ ipc       = electron.ipcRenderer
 
 # electron's clipboard module lives in the main process only, and reading the
 # clipboard there can block the whole app. the browser's clipboard api does
-# the same job without blocking, so we use it and fall back to the main
-# process when it is not available (e.g. when the window is not focused).
+# the same job without blocking, so we read with it and let the main process
+# do the writing - it knows about wayland.
 clipboardRead  = -> navigator.clipboard.readText()
-clipboardWrite = (text) ->
-    navigator.clipboard.writeText(text).catch (err) ->
-        log 'clipboard write failed, using the main process', err
-        ipc.send 'clipboard.writeText', text
+clipboardWrite = (text) -> ipc.send 'clipboard.writeText', text
 
 random    = _.random
 trim      = _.trim
