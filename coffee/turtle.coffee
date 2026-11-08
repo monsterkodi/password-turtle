@@ -66,7 +66,7 @@ ipc.on 'globalShortcut' (event, key) ->
     electron.globalShortcut.unregisterAll()
     electron.globalShortcut.register key, toggleWin
      
-ipc.on 'setWinSize' (event, w, h) -> winForEvent(event).setSize w, h 
+ipc.on 'setWinSize' (event, w, h) -> winForEvent(event)?.setSize w, h 
 ipc.on 'getWinSize' (event, w, h) -> event.returnValue = winForEvent(event).getSize()
 ipc.on 'hide' (event) -> winForEvent(event).hide()
 ipc.on 'quit' -> electron.app.exit 0
