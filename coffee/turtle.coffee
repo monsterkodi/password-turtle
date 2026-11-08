@@ -154,10 +154,16 @@ app.on 'ready' ->
     # 000   000  000  000  0000
     # 00     00  000  000   000
 
-    screenSize = electron.screen.getPrimaryDisplay().workAreaSize
     windowWidth = 364
+    panelOffset = 30
 
-    winpos = prefs.get 'winpos' x:Number(((screenSize.width-windowWidth)/2).toFixed()), y:0
+    # the window is centered on the display it shows up on and moved down a
+    # bit, so it does not cover the panel. the primary display is not
+    # necessarily the one we end up on, so we ask where the pointer is.
+    display = electron.screen.getDisplayNearestPoint electron.screen.getCursorScreenPoint()
+    screenWidth = display.bounds.width
+
+    winpos = prefs.get 'winpos' x:Math.round((screenWidth-windowWidth)/2), y:panelOffset
 
     win = new BrowserWindow
         dir:                cwd
